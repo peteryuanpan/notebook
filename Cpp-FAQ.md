@@ -1,4 +1,4 @@
-# C++ Primer Plus
+# C++ Primer Plus 6TH
 
 ## CHAPTER 3
 
