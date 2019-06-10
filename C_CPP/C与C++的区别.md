@@ -1,7 +1,13 @@
 ### C or C++
 ```
 linux用C写的，无C++
-https://github.com/torvalds/linux/tree/master/block
+https://github.com/torvalds/linux
+
+curl用C写的，无C++
+https://github.com/curl/curl
+
+ffmpeg也是用C写的，无C++
+https://github.com/FFmpeg/FFmpeg/
 
 StackOverflow上有讨论，为何Linux项目都用C
 https://unix.stackexchange.com/questions/23634/why-are-most-linux-programs-written-in-c
