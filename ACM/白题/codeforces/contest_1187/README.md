@@ -61,4 +61,4 @@ A = [1, 7, 1, 4, 4, 5, 6]，先排序A[1..5]，变成[1, 1, 4, 4, 7, 5, 6]，再
 
 解析：TODO
 
-代码：[/白题/codeforces/contest_1187/problemD.cpp](https://github.com/peteryuanpan/notebook/blob/master/ACM/%E7%99%BD%E9%A2%98/codeforces/contest_1187/problemD.cpp)
+代码：[ACM/白题/codeforces/contest_1187/problemD.cpp](https://github.com/peteryuanpan/notebook/blob/master/ACM/%E7%99%BD%E9%A2%98/codeforces/contest_1187/problemD.cpp)
