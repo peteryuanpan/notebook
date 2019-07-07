@@ -2,5 +2,9 @@
 |-|-|-|-|
 |Qiniu|https://www.qiniu.com/|https://github.com/qiniu|Golang|
 |Kyligence|https://kyligence.io/zh/|https://github.com/Kyligence|Java|
+|linux|https://www.kernel.org/doc/html/latest/|https://github.com/torvalds/linux|C|
+|curl|https://curl.haxx.se/|https://github.com/curl/curl|C|
+|ffmpeg|https://ffmpeg.org/ffmpeg.html|https://github.com/FFmpeg/FFmpeg|C|
+|imagemagick|https://imagemagick.org/|https://github.com/ImageMagick/ImageMagick|C|
+|openSSL|https://github.com/openssl/openssl|https://github.com/openssl|C|
 |opencv|https://github.com/opencv/opencv|https://github.com/opencv|C++|
-|OpenSSL|https://github.com/openssl/openssl|https://github.com/openssl|C|
