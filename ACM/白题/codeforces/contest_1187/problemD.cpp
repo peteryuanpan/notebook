@@ -1,7 +1,3 @@
-/**
-https://codeforces.com/contest/1187/problem/D
-*/
-
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
