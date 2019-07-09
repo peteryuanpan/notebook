@@ -8,3 +8,4 @@
 |imagemagick|https://imagemagick.org/|https://github.com/ImageMagick/ImageMagick|C|
 |openSSL|https://github.com/openssl/openssl|https://github.com/openssl|C|
 |opencv|https://github.com/opencv/opencv|https://github.com/opencv|C++|
+|oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|Shell|
