@@ -59,8 +59,10 @@ A = [1, 7, 1, 4, 4, 5, 6]，先排序A[1..5]，变成[1, 1, 4, 4, 7, 5, 6]，再
 
 ### 备注
 
-原题：https://codeforces.com/contest/1187/problem/D
+链接：https://codeforces.com/contest/1187/problem/D
 
-解析：TODO
+题目：[ACM/白题/codeforces/contest_1187/题目.pdf](https://github.com/peteryuanpan/notebook/blob/master/ACM/%E7%99%BD%E9%A2%98/codeforces/contest_1187/%E9%A2%98%E7%9B%AE.pdf)
+
+题解：[ACM/白题/codeforces/contest_1187/题解.md](https://github.com/peteryuanpan/notebook/blob/master/ACM/%E7%99%BD%E9%A2%98/codeforces/contest_1187/%E9%A2%98%E8%A7%A3.md)
 
 代码：[ACM/白题/codeforces/contest_1187/problemD.cpp](https://github.com/peteryuanpan/notebook/blob/master/ACM/%E7%99%BD%E9%A2%98/codeforces/contest_1187/problemD.cpp)
