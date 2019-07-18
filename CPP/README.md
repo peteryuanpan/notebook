@@ -1,2 +1,4 @@
 
-# C、C++
+# CPP
+
+C Plus Plus
