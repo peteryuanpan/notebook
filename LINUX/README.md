@@ -1,5 +1,5 @@
 # LINUX
 
-Torvalds Linux
+Linus Torvalds
 
 https://github.com/torvalds/linux
