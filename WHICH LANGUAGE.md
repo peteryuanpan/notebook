@@ -6,7 +6,7 @@
 |curl|https://curl.haxx.se/|https://github.com/curl/curl|C|
 |ffmpeg|https://ffmpeg.org/ffmpeg.html|https://github.com/FFmpeg/FFmpeg|C|
 |imagemagick|https://imagemagick.org/|https://github.com/ImageMagick/ImageMagick|C|
-|openSSL|https://github.com/openssl/openssl|https://github.com/openssl|C|
+|openssl|https://github.com/openssl/openssl|https://github.com/openssl|C|
 |opencv|https://github.com/opencv/opencv|https://github.com/opencv|C++|
 |oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|Shell|
 |wireshark|https://www.wireshark.org/|https://github.com/wireshark/wireshark|C|
