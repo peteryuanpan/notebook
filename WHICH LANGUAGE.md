@@ -9,3 +9,4 @@
 |openSSL|https://github.com/openssl/openssl|https://github.com/openssl|C|
 |opencv|https://github.com/opencv/opencv|https://github.com/opencv|C++|
 |oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|Shell|
+|wireshark|https://www.wireshark.org/|https://github.com/wireshark/wireshark|C|
