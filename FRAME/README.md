@@ -1,4 +1,0 @@
-
-# FRAME
-
-Frame
