@@ -3,6 +3,7 @@
 |Qiniu|https://www.qiniu.com/|https://github.com/qiniu|Golang|
 |Kyligence|https://kyligence.io/zh/|https://github.com/Kyligence|Java|
 |linux|https://www.kernel.org/doc/html/latest/|https://github.com/torvalds/linux|C|
+|nginx|http://nginx.org/|https://github.com/nginx/nginx|C|
 |curl|https://curl.haxx.se/|https://github.com/curl/curl|C|
 |ffmpeg|https://ffmpeg.org/ffmpeg.html|https://github.com/FFmpeg/FFmpeg|C|
 |imagemagick|https://imagemagick.org/|https://github.com/ImageMagick/ImageMagick|C|
