@@ -12,3 +12,4 @@
 |openssl|https://github.com/openssl/openssl|https://github.com/openssl|C|
 |wireshark|https://www.wireshark.org/|https://github.com/wireshark/wireshark|C|
 |tcpdump|https://www.tcpdump.org/|https://github.com/the-tcpdump-group/tcpdump|C|
+|tcpflow|http://downloads.digitalcorpora.org/downloads/tcpflow/|https://github.com/simsong/tcpflow|C|
