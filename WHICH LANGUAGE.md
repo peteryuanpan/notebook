@@ -3,12 +3,12 @@
 |oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|Shell|
 |Qiniu|https://www.qiniu.com/|https://github.com/qiniu|Golang|
 |Kyligence|https://kyligence.io/zh/|https://github.com/Kyligence|Java|
+|opencv|https://github.com/opencv/opencv|https://github.com/opencv|C++|
 |linux|https://www.kernel.org/doc/html/latest/|https://github.com/torvalds/linux|C|
 |nginx|http://nginx.org/|https://github.com/nginx/nginx|C|
 |curl|https://curl.haxx.se/|https://github.com/curl/curl|C|
 |ffmpeg|https://ffmpeg.org/ffmpeg.html|https://github.com/FFmpeg/FFmpeg|C|
 |imagemagick|https://imagemagick.org/|https://github.com/ImageMagick/ImageMagick|C|
 |openssl|https://github.com/openssl/openssl|https://github.com/openssl|C|
-|opencv|https://github.com/opencv/opencv|https://github.com/opencv|C++|
 |wireshark|https://www.wireshark.org/|https://github.com/wireshark/wireshark|C|
 |tcpdump|https://www.tcpdump.org/|https://github.com/the-tcpdump-group/tcpdump|C|
