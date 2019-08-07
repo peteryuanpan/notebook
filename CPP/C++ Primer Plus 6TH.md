@@ -40,7 +40,7 @@ printf("Hello, world\n");
 
 easy
 ```
-std::cout << "Hello, world" << endl;
+std::cout << "Hello, world" << std::endl;
 ```
 
 # CHAPTER 3
