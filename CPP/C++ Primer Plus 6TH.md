@@ -38,7 +38,7 @@ easy
 printf("Hello, world\n");
 ```
 
-easy
+附录J 复习题答案
 ```
 std::cout << "Hello, world" << std::endl;
 ```
@@ -52,7 +52,22 @@ std::cout << "Hello, world" << std::endl;
 3.1.3，P41
 ```
 CHAR_BIT, 8
-...
+CHAR_MAX, 
+CHAR_MIN,
+SCHAR_MAX,
+SCHAR_MIN,
+UCHAR_MAX,
+SHRT_MAX,
+SHRT_MIN,
+USHRT_MAX,
+INT_MAX,
+INT_MIN,
+UNIT_MAX,
+LONG_MAX,
+LONG_MIN,
+ULONG_MAX,
+LLONG_MAX,
+LLONG_MIN,
 ULLONG_MAX, (1 << 64) - 1
 ```
 
