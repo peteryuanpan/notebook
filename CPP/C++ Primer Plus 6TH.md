@@ -35,12 +35,33 @@
 
 easy
 ```
-printf("Hello, world\n");
+std::cout << "Hello, world" << std::endl;
 ```
 
-附录J 复习题答案
+### 什么语句可以用来创建名为 cheeses 的整数变量？
+
+easy
 ```
-std::cout << "Hello, world" << std::endl;
+int cheeses;
+```
+
+### 什么语句可以用来将值 32 赋给变量 cheeses ？
+
+easy
+```
+cheeses = 32;
+```
+
+### 什么语句可以用来将从键盘输入的值读入变量 cheeses 中？
+
+```
+std::cin >> cheeses;
+```
+
+### 什么语句可以用来打印 "We have X varieties of cheese,"，其中 X 为变量 cheeses 的当前值。
+
+```
+std::cout << "We have " << X << " varieties of cheese,";
 ```
 
 # CHAPTER 3
