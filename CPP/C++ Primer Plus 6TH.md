@@ -2,7 +2,7 @@
 
 # CHAPTER 2
 
-## 2.6, P35
+## 2.6 复习题, P35
 
 ### C++程序的模块叫什么？
 
@@ -102,6 +102,31 @@ use of undeclared identifier 'cout'
 方法一：在函数定义前 或 函数定义中，写上 using namespace std;
 方法二：在函数定义前 或 函数定义中，写上 using std::cout;
 方法三：改为 std::cout << "Please enter you Pin: ";
+```
+
+## 2.7 编程练习，P35
+
+### 编写一个C++程序，它显示您的姓名和地址。
+
+```
+```
+
+### 编写一个C++程序，它要求用户输入一个以 long 为单位的距离，然后将它转换为码（一long等于220码）。
+
+```
+```
+
+### 编写一个C++程序，它使用3个用户定义的函数（包括 main() ），并生成下面的输出：
+
+Three blind mice
+
+Three blind mice
+
+See how they run
+
+See how they run
+
+```
 ```
 
 # CHAPTER 3
