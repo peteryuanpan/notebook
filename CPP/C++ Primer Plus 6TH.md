@@ -87,7 +87,7 @@ easy
 
 easy
 ```
-当函数返回类型为 void 时
+当函数的返回类型为 void 时
 ```
 
 ### 假设您编写的 main() 函数包含如下代码，而编译器指出 cout 是一个未知的标识符。导致这种问题的原因很可能是什么？指出3种修复这种问题的方法。
@@ -96,6 +96,7 @@ cout << "Please enter you Pin: ";
 
 use of undeclared identifier 'cout'
 
+2.4.5，P34
 ```
 原因：未指明 cout 的名称空间。
 方法一：在函数定义前 或 函数定义中，写上 using namespace std;
