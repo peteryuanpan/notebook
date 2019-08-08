@@ -11,7 +11,9 @@
 函数。C++程序由一个或多个被称为函数的模块组成。
 ```
 
-### 下面的预处理器编译指令是做什么用的？#include < iostream >
+### 下面的预处理器编译指令是做什么用的？
+
+#include < iostream >
 
 2.1.3，P16
 ```
@@ -23,7 +25,9 @@
 这将导致在最终的编译之前，使用 iostream 文件的内容替换该编译指令。
 ```
 
-### 下面的语句是做什么用的？using namespace std;
+### 下面的语句是做什么用的？
+
+using namespace std;
 
 2.4.5，P34
 ```
@@ -54,14 +58,49 @@ cheeses = 32;
 
 ### 什么语句可以用来将从键盘输入的值读入变量 cheeses 中？
 
+easy
 ```
 std::cin >> cheeses;
 ```
 
 ### 什么语句可以用来打印 "We have X varieties of cheese,"，其中 X 为变量 cheeses 的当前值。
 
+easy
 ```
-std::cout << "We have " << X << " varieties of cheese,";
+std::cout << "We have " << cheese << " varieties of cheese,";
+```
+
+### 下面的函数原型指出了关于函数的哪些信息？
+
+int froop(double t);
+
+void rattle(int n);
+
+int prune(void);
+
+easy
+```
+函数返回类型、函数名、变量个数、变量名、变量类型
+```
+
+### 定义函数时，在什么情况下不必使用关键字 return ？
+
+easy
+```
+当函数返回类型为 void 时
+```
+
+### 假设您编写的 main() 函数包含如下代码，而编译器指出 cout 是一个未知的标识符。导致这种问题的原因很可能是什么？指出3种修复这种问题的方法。
+
+cout << "Please enter you Pin: ";
+
+use of undeclared identifier 'cout'
+
+```
+原因：未指明 cout 的名称空间。
+方法一：在函数定义前 或 函数定义中，写上 using namespace std;
+方法二：在函数定义前 或 函数定义中，写上 using std::cout;
+方法三：改为 std::cout << "Please enter you Pin: ";
 ```
 
 # CHAPTER 3
