@@ -1,3 +1,10 @@
+
+# ffmpeg命令
+
+以下分类灵感来源于《2-1 FFmpeg常用命令分类讲解.mp4》李超
+
+![](https://raw.githubusercontent.com/peteryuanpan/notebook/master/FFMPEG/ffmpeg%E5%91%BD%E4%BB%A4%E5%88%86%E7%B1%BB.png)
+
 ## 1.基本查询命令
 
 ### 查询机子上有哪些设备
