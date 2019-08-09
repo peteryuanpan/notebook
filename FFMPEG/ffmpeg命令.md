@@ -1,6 +1,6 @@
 ## 1.基本查询命令
 
-###查询机子上有哪些设备
+### 查询机子上有哪些设备
 
 ```
 ffmpeg -f avfoundation -list_devices true -i ""
