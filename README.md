@@ -25,6 +25,7 @@
     * [黑题](./ICPC/黑题)
  * [JAVA](./JAVA)
  * [LINUX](./LINUX)
+    * [bash命令.md](./LINUX/bash命令.md)
  * [TCP-IP](./TCP-IP)
     * [mozilla_HTTP_overview.png](./TCP-IP/mozilla_HTTP_overview.png)
  * [MY_PROBLEM.md](./MY_PROBLEM.md)
