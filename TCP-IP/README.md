@@ -1,4 +1,4 @@
 
-# TCP
+# TCP/IP
 
-Transmission Control Protocol
+Transmission Control Protocol (TCP) and the Internet Protocol (IP).
