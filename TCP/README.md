@@ -1,4 +1,0 @@
-
-# TCP
-
-Transmission Control Protocol
