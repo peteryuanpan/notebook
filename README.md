@@ -8,7 +8,7 @@
  * [CDN](./CDN)
    * [README.md](./CDN/README.md)
  * [CPP](./CPP)
-   * [C++\ Primer\ Plus\ 6TH.md](./CPP/C++\ Primer\ Plus\ 6TH.md)
+   * [C++ Primer Plus 6TH.md](./CPP/C++ Primer Plus 6TH.md)
    * [C与C++之关联project.md](./CPP/C与C++之关联project.md)
    * [C与C++之编译命令.md](./CPP/C与C++之编译命令.md)
    * [README.md](./CPP/README.md)
