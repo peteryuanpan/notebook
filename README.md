@@ -21,7 +21,7 @@
     * [数学](./ICPC/数学)
     * [数据结构](./ICPC/数据结构)
     * [白题](./ICPC/白题)
-       * [codeforces_contest_1187](./ICPC/白题/codeforces_contest_1187)
+       * [codeforces_contest_1187_ProblemD](./ICPC/白题/codeforces_contest_1187_ProblemD)
     * [黑题](./ICPC/黑题)
  * [JAVA](./JAVA)
  * [LINUX](./LINUX)
