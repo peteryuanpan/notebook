@@ -21,7 +21,7 @@
     * [数学](./ICPC/数学)
     * [数据结构](./ICPC/数据结构)
     * [白题](./ICPC/白题)
-       * [codeforces_contest_1187_ProblemD](./ICPC/白题/codeforces_contest_1187_ProblemD)
+       * [codeforces_contest_1187_ProblemD_数列A任意升序排序子序列能否变成B](./ICPC/白题/codeforces_contest_1187_ProblemD_数列A任意升序排序子序列能否变成B)
     * [黑题](./ICPC/黑题)
  * [JAVA](./JAVA)
  * [LINUX](./LINUX)
