@@ -145,9 +145,10 @@ sort -nk1
 ssh-keygen -t rsa
 ```
 
-### 读文件x并输出x[a][b][c]、x[a][b][e]
+### json文本处理
 ```
 cat x | jq '.a | .b | "\(.c),\(.e)"'
+cat x | jq '.a | .[] | .b'
 ```
 
 ### 下载url-list.txt每行URL，并保存成文件名
