@@ -1,3 +1,58 @@
+## 网络排障
+
+### 解析 ip 192.168.0.1，转成二进制查看
+```
+ipcalc 192.168.0.1
+```
+
+### 查看tcp端口开启情况
+```
+sudo lsof -i tcp:80 -s tcp:listen
+sudo lsof -i -t tcp:80 -s tcp:listen
+```
+
+### 查看本地ip
+```
+curl -4 icanhazip.com
+```
+
+### 查看本机内网ip
+```
+ipconfig getifaddr en0
+```
+
+### ab测试命令
+```
+ab -n 100 <uri>
+```
+
+### 表单上传
+```
+curl -v https://upload.qiniup.com/ -F'token=<token>' -F'file=<content>' -F'key=<key>'
+```
+
+### tcpflow抓包
+```
+tcpflow -c port 80
+```
+
+### tcpdump抓包
+```
+tcpdump -i en0 -w abc.pcap host 124.163.208.161 and port 80
+```
+
+### tcpdump查看包
+```
+tcpdump -qns 0 -A -r abc.pcap
+```
+
+### 切割pcap包
+```
+editcap -c 10000 tcpdump.pcap tcpdump/
+```
+
+## 其他
+
 ### 排序，用聚合方式实现（比直接sort高效）
 ```
 cat smalllist.txt | awk -F ' ' '{a[$4]+=$5;b[$4]+=1}END{for(i in a){print b[i],a[i],i}}' | sort -nr
@@ -28,11 +83,6 @@ cat clientip.txt | while read i; sleep 0.1; do cat curl.txt | sed "s/<clientip>/
 cd $(brew --prefix openssl)/include/openssl
 ```
 
-### 解析 ip 192.168.0.1，转成二进制查看
-```
-ipcalc 192.168.0.1
-```
-
 ### 时间戳转型输出
 ```
 echo '154139500711111' | cut -c1-10 | awk '{print strftime("%Y:%m:%d %T", $1)}'
@@ -53,12 +103,6 @@ scp -r folder root@116.62.187.159:folder
 (tail -1 1.log | awk -F '`' '{print $2}') | while read i; do grep $i 2.log -n; done
 ```
 
-### 查看tcp端口开启情况
-```
-sudo lsof -i tcp:80 -s tcp:listen
-sudo lsof -i -t tcp:80 -s tcp:listen
-```
-
 ### 杀掉进程pid
 ```
 kill -9 <pid>
@@ -74,26 +118,11 @@ iconv -f UTF-8 -t GBK f1.txt > f2.txt
 if test -s file.txt; then echo 'full'; else echo 'empty'; fi
 ```
 
-### 查看本地ip
-```
-curl -4 icanhazip.com
-```
-
-### 查看本机内网ip
-```
-ipconfig getifaddr en0
-```
-
 ### 查看磁盘空间情况
 ```
 du -h
 du -hs * | sort -h
 du -ah | sort -h
-```
-
-### ab测试命令
-```
-ab -n 100 <uri>
 ```
 
 ### 16进制转10进制
@@ -119,11 +148,6 @@ ssh-keygen -t rsa
 ### 读文件x并输出x[a][b][c]、x[a][b][e]
 ```
 cat x | jq '.a | .b | "\(.c),\(.e)"'
-```
-
-### 表单上传
-```
-curl -v https://upload.qiniup.com/ -F'token=<token>' -F'file=<content>' -F'key=<key>'
 ```
 
 ### 下载url-list.txt每行URL，并保存成文件名
@@ -164,26 +188,6 @@ top -> htop（brew install htop）
 ```
 xxx | tee A
 xxx | tee -a A（追加输出）
-```
-
-### tcpflow抓包
-```
-tcpflow -c port 80
-```
-
-### tcpdump抓包
-```
-tcpdump -i en0 -w abc.pcap host 124.163.208.161 and port 80
-```
-
-### tcpdump查看包
-```
-tcpdump -qns 0 -A -r abc.pcap
-```
-
-### 切割pcap包
-```
-editcap -c 10000 tcpdump.pcap tcpdump/
 ```
 
 ### 将奇偶行合为一行
