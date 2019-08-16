@@ -1,4 +1,4 @@
-## 网络排障
+# 网络排障
 
 ### 查看本地ip
 ```
@@ -51,7 +51,7 @@ tcpdump -qns 0 -A -r abc.pcap
 editcap -c 10000 tcpdump.pcap tcpdump/
 ```
 
-## 文本处理
+# 文本处理
 
 ### while枚举每行并替换
 ```
@@ -95,7 +95,7 @@ paste -d "\t" file1.txt file2.txt
 iconv -f UTF-8 -t GBK f1.txt > f2.txt
 ```
 
-## 其他
+# 其他
 
 ### cd到brew中/include/openssl的所在目录
 ```
@@ -107,7 +107,7 @@ cd $(brew --prefix openssl)/include/openssl
 echo '154139500711111' | cut -c1-10 | awk '{print strftime("%Y:%m:%d %T", $1)}'
 ```
 
-### 同步本地文件gebo123.txt 到远程磁盘上
+### 同步本地文件夹到远程磁盘上
 ```
 scp -r folder root@116.62.187.159:folder
 ```
