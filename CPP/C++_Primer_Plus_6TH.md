@@ -35,61 +35,6 @@ using namespace std;
 将 using namespace std; 放在特定的函数定义中，让该函数能够使用名称空间 std 中的所有元素。
 ```
 
-### 什么语句可以用来打印短语"Hello, world"，然后开始新的一行？
-
-easy
-```
-std::cout << "Hello, world" << std::endl;
-```
-
-### 什么语句可以用来创建名为 cheeses 的整数变量？
-
-easy
-```
-int cheeses;
-```
-
-### 什么语句可以用来将值 32 赋给变量 cheeses ？
-
-easy
-```
-cheeses = 32;
-```
-
-### 什么语句可以用来将从键盘输入的值读入变量 cheeses 中？
-
-easy
-```
-std::cin >> cheeses;
-```
-
-### 什么语句可以用来打印 "We have X varieties of cheese,"，其中 X 为变量 cheeses 的当前值。
-
-easy
-```
-std::cout << "We have " << cheese << " varieties of cheese,";
-```
-
-### 下面的函数原型指出了关于函数的哪些信息？
-
-int froop(double t);
-
-void rattle(int n);
-
-int prune(void);
-
-easy
-```
-函数返回类型、函数名、变量个数、变量名、变量类型
-```
-
-### 定义函数时，在什么情况下不必使用关键字 return ？
-
-easy
-```
-当函数的返回类型为 void 时
-```
-
 ### 假设您编写的 main() 函数包含如下代码，而编译器指出 cout 是一个未知的标识符。导致这种问题的原因很可能是什么？指出3种修复这种问题的方法。
 
 cout << "Please enter you Pin: ";
@@ -102,31 +47,6 @@ use of undeclared identifier 'cout'
 方法一：在函数定义前 或 函数定义中，写上 using namespace std;
 方法二：在函数定义前 或 函数定义中，写上 using std::cout;
 方法三：改为 std::cout << "Please enter you Pin: ";
-```
-
-## 2.7 编程练习，P35
-
-### 编写一个C++程序，它显示您的姓名和地址。
-
-```
-```
-
-### 编写一个C++程序，它要求用户输入一个以 long 为单位的距离，然后将它转换为码（一long等于220码）。
-
-```
-```
-
-### 编写一个C++程序，它使用3个用户定义的函数（包括 main() ），并生成下面的输出：
-
-Three blind mice
-
-Three blind mice
-
-See how they run
-
-See how they run
-
-```
 ```
 
 # CHAPTER 3
