@@ -51,7 +51,7 @@ tcpdump -qns 0 -A -r abc.pcap
 editcap -c 10000 tcpdump.pcap tcpdump/
 ```
 
-## 其他
+## 文本处理
 
 ### 排序，用聚合方式实现（比直接sort高效）
 ```
@@ -78,6 +78,46 @@ cat curl.txt | sed 's/<clientip>/223.104.251.15/g'
 cat clientip.txt | while read i; sleep 0.1; do cat curl.txt | sed "s/<clientip>/$i/g" | sh; done
 ```
 
+### grep子串匹配
+```
+grep -w '223\.104\.2\.5'
+```
+
+### 查看1.log的最后一行在2.log的哪几行
+```
+(tail -1 1.log | awk -F '`' '{print $2}') | while read i; do grep $i 2.log -n; done
+```
+
+### 转f1.txt为f2.txt，并utf-8编码
+```
+iconv -f UTF-8 -t GBK f1.txt > f2.txt
+```
+
+### 按照,分隔，再按照第1列排序
+```
+sort -t, -nk1 file
+sort -nk1
+```
+
+### json文本处理
+```
+cat x | jq '.a | .b | "\(.c),\(.e)"'
+cat x | jq '.a | .[] | .b'
+```
+
+### 重定向输出到A
+```
+xxx | tee A
+xxx | tee -a A（追加输出）
+```
+
+### 将奇偶行合为一行
+```
+cat 1.txt | awk 'NR%2 == 1{printf("%s\t",$0);}; NR%2 == 0{printf("%s\n",$0);}'
+```
+
+## 其他
+
 ### cd到brew中/include/openssl的所在目录
 ```
 cd $(brew --prefix openssl)/include/openssl
@@ -88,29 +128,14 @@ cd $(brew --prefix openssl)/include/openssl
 echo '154139500711111' | cut -c1-10 | awk '{print strftime("%Y:%m:%d %T", $1)}'
 ```
 
-### grep子串匹配
-```
-grep -w '223\.104\.2\.5'
-```
-
 ### 同步本地文件gebo123.txt 到远程磁盘上
 ```
 scp -r folder root@116.62.187.159:folder
 ```
 
-### 查看1.log的最后一行在2.log的哪几行
-```
-(tail -1 1.log | awk -F '`' '{print $2}') | while read i; do grep $i 2.log -n; done
-```
-
 ### 杀掉进程pid
 ```
 kill -9 <pid>
-```
-
-### 转f1.txt为f2.txt，并utf-8编码
-```
-iconv -f UTF-8 -t GBK f1.txt > f2.txt
 ```
 
 ### 判断file.txt是否存在
@@ -134,21 +159,9 @@ printf "%d\n" 0xFF
 python -c 'print(int("FF", 16))'
 ```
 
-### 按照,分隔，再按照第1列排序
-```
-sort -t, -nk1 file
-sort -nk1
-```
-
 ### 生成公钥私钥
 ```
 ssh-keygen -t rsa
-```
-
-### json文本处理
-```
-cat x | jq '.a | .b | "\(.c),\(.e)"'
-cat x | jq '.a | .[] | .b'
 ```
 
 ### 下载url-list.txt每行URL，并保存成文件名
@@ -183,15 +196,4 @@ lscpu
 curl -> http（brew install httpie）
 cat -> ccat（brew install ccat）
 top -> htop（brew install htop）
-```
-
-### 重定向输出到A
-```
-xxx | tee A
-xxx | tee -a A（追加输出）
-```
-
-### 将奇偶行合为一行
-```
-cat 1.txt | awk 'NR%2 == 1{printf("%s\t",$0);}; NR%2 == 0{printf("%s\n",$0);}'
 ```
