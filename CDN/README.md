@@ -1,4 +1,0 @@
-
-# CDN
-
-Content Delivery Network

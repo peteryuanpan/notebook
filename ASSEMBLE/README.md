@@ -1,4 +1,0 @@
-
-# Assemble
-
-Assembly Language

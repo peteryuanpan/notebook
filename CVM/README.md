@@ -1,3 +1,0 @@
-# CVM
-
-Cloud Virtual Machine.
