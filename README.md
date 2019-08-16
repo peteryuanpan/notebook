@@ -3,6 +3,8 @@
  * [ASSEMBLE](./ASSEMBLE)
     * [学习汇编的意义.md](./ASSEMBLE/学习汇编的意义.md)
     * [汇编码分析及原理.md](./ASSEMBLE/汇编码分析及原理.md)
+    * [汇编语言学习笔记.md](./ASSEMBLE/汇编语言学习笔记.md)
+    * [《汇编语言(第3版)\ 》王爽著.pdf](./ASSEMBLE/《汇编语言(第3版)\ 》王爽著.pdf)
  * [CDN](./CDN)
  * [CPP](./CPP)
     * [C++_Primer_Plus_6TH.md](./CPP/C++_Primer_Plus_6TH.md)
