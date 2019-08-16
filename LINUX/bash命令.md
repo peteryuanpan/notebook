@@ -1,3 +1,52 @@
+# LINUX
+
+### screen异步窗口命令
+```
+screen -RL jobname
+"use ctr + A + D to quit"
+screen -ls
+screen -r jobname
+```
+
+### 查看linux cpu配置
+```
+lscpu
+```
+
+### 命令升级变色
+```
+curl -> http（brew install httpie）
+cat -> ccat（brew install ccat）
+top -> htop（brew install htop）
+```
+
+### 同步本地文件夹到linux上
+```
+scp -r folder root@116.62.187.159:folder
+```
+
+### 杀掉进程pid
+```
+kill -9 <pid>
+```
+
+### 判断file.txt是否存在
+```
+if test -s file.txt; then echo 'full'; else echo 'empty'; fi
+```
+
+### 查看磁盘空间情况
+```
+du -h
+du -hs * | sort -h
+du -ah | sort -h
+```
+
+### 生成公钥私钥
+```
+ssh-keygen -t rsa
+```
+
 # 网络排障
 
 ### 查看本地ip
@@ -107,28 +156,6 @@ cd $(brew --prefix openssl)/include/openssl
 echo '154139500711111' | cut -c1-10 | awk '{print strftime("%Y:%m:%d %T", $1)}'
 ```
 
-### 同步本地文件夹到远程磁盘上
-```
-scp -r folder root@116.62.187.159:folder
-```
-
-### 杀掉进程pid
-```
-kill -9 <pid>
-```
-
-### 判断file.txt是否存在
-```
-if test -s file.txt; then echo 'full'; else echo 'empty'; fi
-```
-
-### 查看磁盘空间情况
-```
-du -h
-du -hs * | sort -h
-du -ah | sort -h
-```
-
 ### 16进制转10进制
 ```
 echo $((16#FF))
@@ -136,11 +163,6 @@ echo "ibase=16; FF" | bc
 perl -le 'print hex("FF");'
 printf "%d\n" 0xFF
 python -c 'print(int("FF", 16))'
-```
-
-### 生成公钥私钥
-```
-ssh-keygen -t rsa
 ```
 
 ### 下载url-list.txt每行URL，并保存成文件名
@@ -155,24 +177,4 @@ done
 ### 检测a.b.com在1.2.3.4的证书时间
 ```
 echo | openssl s_client -servername a.b.com -connect 1.2.3.4:443 2>/dev/null | openssl x509 -noout -dates
-```
-
-### screen异步窗口命令
-```
-screen -RL jobname
-"use ctr + A + D to quit"
-screen -ls
-screen -r jobname
-```
-
-### 查看linux cpu配置
-```
-lscpu
-```
-
-### 命令升级变色
-```
-curl -> http（brew install httpie）
-cat -> ccat（brew install ccat）
-top -> htop（brew install htop）
 ```
