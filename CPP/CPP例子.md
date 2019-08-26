@@ -38,7 +38,7 @@ x
 x
 x
 0x7ffee2079680
-➜  ~ cat b2.cpp
+➜  ~ cat c.cpp
 #include <iostream>
 
 int main() {
@@ -51,7 +51,7 @@ int main() {
 	printf("%p\n", &b);
 	return 0;
 }
-➜  ~ g++ b2.cpp -o exec_b2; ./exec_b2
+➜  ~ g++ c.cpp -o exec_c; ./exec_c
 x
 0x7ffee487c6db
 0x7ffee487c6db
