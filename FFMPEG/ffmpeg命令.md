@@ -83,6 +83,12 @@ ffmpeg -i 1.mp4 -ss 00:00:00 -to 00:01:00 -c copy 1-1min.mp4
 ffmpeg -i out.h264 -i out.aac -vcodec copy -acodec copy out.mp4
 ```
 
+### 多路视频同窗并行播放
+
+```
+ffmpeg -i 1.mp4 -i 2.mp4 -i 3.mp4 -i 4.mp4 -filter_complex "[0:v]pad=iw*2:ih*2[a];[a][1:v]overlay=w[b];[b][2:v]overlay=0:h[c];[c][3:v]overlay=w:h" out.mp4
+```
+
 ## 6.图片/视频互转命令
 
 ### 转码（mp4转flv）
