@@ -80,7 +80,7 @@ ffmpeg -i 1.mp4 -ss 00:00:00 -to 00:01:00 -c copy 1-1min.mp4
 ### 音视频合并
 
 ```
-ffmpeg -i out.h264 -i out.aac -vcodec copy -acodec copy out.mp4
+ffmpeg -i 1.h264 -i 1.aac -vcodec copy -acodec copy 1.mp4
 ```
 
 ### 多路视频同窗并行播放
