@@ -70,7 +70,7 @@ TODO
 ### 分辨率
 
 ```
-ffmpeg -i 1.mp4 -vf scale=640:360 1-2.mp4 -hide_banner
+ffmpeg -i 1.mp4 -vf scale=640:360 1-2.mp4
 ```
 
 ### 裁剪
