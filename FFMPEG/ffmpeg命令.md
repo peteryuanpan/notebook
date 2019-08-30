@@ -79,6 +79,17 @@ ffmpeg -i 1.mp4 -vf scale=640:360 1-2.mp4
 ffmpeg -i 1.mp4 -ss 00:00:00 -to 00:01:00 -c copy 1-1min.mp4
 ```
 
+### 音视频拼接
+
+```
+ffmpeg -f concat -i list.txt -c copy out.mp4
+
+cat list.txt
+file 1.mp4
+file 2.mp4
+file 3.mp4
+```
+
 ### 音视频合并
 
 ```
