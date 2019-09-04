@@ -49,6 +49,11 @@ ssh-keygen -t rsa
 
 # 网络排障
 
+### curl测试各阶段时间
+```
+curl -vo/dev/null -s -w %{remote_ip}::%{time_namelookup}::%{time_connect}::%{time_starttransfer}::%{time_total}::%{speed_download}"\n" http://tswork.peterpy.cn/universe/maichong.mp4
+```
+
 ### 查看本地ip
 ```
 curl -4 icanhazip.com
