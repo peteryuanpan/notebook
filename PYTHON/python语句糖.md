@@ -1,5 +1,7 @@
 
-读取文件
+# IO
+
+### 读取文件
 ```
 def read(filename):
         with open(filename) as f:
@@ -8,7 +10,7 @@ def read(filename):
         return x
 ```
 
-输出到文件
+### 输出到文件
 ```
 def write(outfile, text):
         # outfile = open('', 'w')
