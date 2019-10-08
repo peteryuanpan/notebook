@@ -13,6 +13,11 @@ screen -r jobname
 lscpu
 ```
 
+### 查看文件元信息
+```
+file <x>
+```
+
 ### 命令升级变色
 ```
 curl -> http（brew install httpie）
