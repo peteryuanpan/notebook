@@ -26,7 +26,7 @@
  * [LINUX](./LINUX)
     * [bash命令.md](./LINUX/bash命令.md)
  * [PYTHON](./PYTHON)
-    * [语句糖.md](./PYTHON/语句糖.md)
+    * [python语句糖.md](./PYTHON/python语句糖.md)
  * [TCP-IP](./TCP-IP)
     * [mozilla_HTTP_overview.png](./TCP-IP/mozilla_HTTP_overview.png)
  * [WEBSITE](./WEBSITE)
