@@ -19,12 +19,6 @@ ffmpeg -f avfoundation -list_devices true -i ""
 ffprobe -v quiet -show_format -print_format json -show_streams URL
 ```
 
-### 查询流详细信息
-
-```
-fprobe URL -show_streams
-```
-
 ## 2.录制命令
 
 ### 录屏（按q结束，下同）
