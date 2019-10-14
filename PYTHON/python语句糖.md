@@ -28,3 +28,12 @@ def write(outfile, text):
         outfile.write(text+"\n")
 ```
 
+# Qiniu
+
+### base64
+
+```
+from qiniu import utils
+utils.urlsafe_base64_decode('')
+utils.urlsafe_base64_encode('')
+```
