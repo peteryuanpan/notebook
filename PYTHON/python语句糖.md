@@ -21,6 +21,15 @@ def read(filename):
         return x
 ```
 
+### 读取gzip文件
+```
+import gzip
+def readgzip(filename):
+	with gzip.open(filename, 'rb') as f:
+		file_content = f.read()
+	return file_content
+```
+
 ### 输出到文件
 ```
 def write(outfile, text):
