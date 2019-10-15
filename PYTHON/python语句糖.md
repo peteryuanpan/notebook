@@ -1,5 +1,5 @@
 
-# Encode
+# BASE
 
 ### UTF-8
 ```
@@ -8,6 +8,12 @@
 ```
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+```
+
+### url decode
+```
+import urllib
+urllib.unquote('')
 ```
 
 # IO
@@ -39,7 +45,7 @@ def write(outfile, text):
 
 # Qiniu
 
-### base64
+### base64 encode/decode
 
 ```
 from qiniu import utils
