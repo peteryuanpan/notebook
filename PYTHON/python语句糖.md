@@ -30,10 +30,10 @@ except Exception as e:
 ```
 class ClassName(object):
 
-	member_name = ''
+	__member_name = ''
 
 	def __init__(self):
-		self.member_name = ''
+		self.__member_name = ''
 ```
 
 # IO
