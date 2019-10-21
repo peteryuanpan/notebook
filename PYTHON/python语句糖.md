@@ -24,6 +24,18 @@ except Exception as e:
 	print(e)
 ```
 
+# CLASS
+
+### class init
+```
+class ClassName(object):
+
+	member_name = ''
+
+	def __init__(self):
+		self.member_name = ''
+```
+
 # IO
 
 ### 读取文件
