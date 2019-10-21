@@ -16,6 +16,14 @@ import urllib
 urllib.unquote('')
 ```
 
+### try except
+```
+try:
+	1
+except Exception as e:
+	print(e)
+```
+
 # IO
 
 ### 读取文件
