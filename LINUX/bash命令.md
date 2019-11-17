@@ -149,7 +149,7 @@ paste -d "\t" file1.txt file2.txt
 (tail -1 1.log | awk -F '`' '{print $2}') | while read i; do grep $i 2.log -n; done
 ```
 
-### 转f1.txt为f2.txt，并utf-8编码
+### 将文件编码格式从utf-8转为gbk
 ```
 iconv -f UTF-8 -t GBK f1.txt > f2.txt
 ```
