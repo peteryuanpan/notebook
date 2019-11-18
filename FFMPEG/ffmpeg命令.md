@@ -97,7 +97,7 @@ file input-3.mp4
 ### 音视频合并
 
 ```
-ffmpeg -i input.h264 -i 1.aac -vcodec copy -acodec copy out.mp4
+ffmpeg -i input.h264 -i input.aac -vcodec copy -acodec copy out.mp4
 ```
 
 ### 多路视频同窗并行播放
