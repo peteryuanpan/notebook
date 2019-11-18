@@ -44,7 +44,7 @@ ffmpeg -f avfoundation -i 1:0 -r 29.97 -c:v libx264 -crf 0 -c:a aac_at -profile:
 ### 抽取音频流
 
 ```
-ffmpeg -i 1.mp4 -acodec copy -vn out.aac
+ffmpeg -i input.mp4 -acodec copy -vn out.aac
 
 acodec：指定音频编码器
 copy：指明只拷贝，不做编解码
@@ -54,7 +54,7 @@ vn：v代表视频，n 代表 no 也就是无视频的意思
 ### 抽取视频流
 
 ```
-ffmpeg -i 1.mp4 -vcodec copy -an out.h264
+ffmpeg -i input.mp4 -vcodec copy -an out.h264
 
 vcodec：指定视频编码器
 copy：指明只拷贝，不做编解码
@@ -66,7 +66,7 @@ ac：a表示视频，n 代表 no 也就是无音频的意思
 ### 将mp4视频moov前置
 
 ```
-ffmpeg -i 1.mp4 -movflags faststart -acodec copy -vcodec copy output.mp4
+ffmpeg -i input.mp4 -movflags faststart -acodec copy -vcodec copy output.mp4
 ```
 
 ## 5.裁剪与合并命令
@@ -74,13 +74,13 @@ ffmpeg -i 1.mp4 -movflags faststart -acodec copy -vcodec copy output.mp4
 ### 分辨率
 
 ```
-ffmpeg -i 1.mp4 -vf scale=640:360 1-2.mp4
+ffmpeg -i input.mp4 -vf scale=640:360 output.mp4
 ```
 
 ### 裁剪
 
 ```
-ffmpeg -i 1.mp4 -ss 00:00:00 -to 00:01:00 -c copy 1-1min.mp4
+ffmpeg -i input.mp4 -ss 00:00:00 -to 00:01:00 -c copy output.mp4
 ```
 
 ### 音视频拼接
@@ -89,21 +89,21 @@ ffmpeg -i 1.mp4 -ss 00:00:00 -to 00:01:00 -c copy 1-1min.mp4
 ffmpeg -f concat -i list.txt -c copy out.mp4
 
 cat list.txt
-file 1.mp4
-file 2.mp4
-file 3.mp4
+file input-1.mp4
+file input-2.mp4
+file input-3.mp4
 ```
 
 ### 音视频合并
 
 ```
-ffmpeg -i 1.h264 -i 1.aac -vcodec copy -acodec copy 1.mp4
+ffmpeg -i input.h264 -i 1.aac -vcodec copy -acodec copy out.mp4
 ```
 
 ### 多路视频同窗并行播放
 
 ```
-ffmpeg -i 1.mp4 -i 2.mp4 -i 3.mp4 -i 4.mp4 -filter_complex "[0:v]pad=iw*2:ih*2[a];[a][1:v]overlay=w[b];[b][2:v]overlay=0:h[c];[c][3:v]overlay=w:h" -filter_complex "amix=inputs=4:duration=first:dropout_transition=4" out.mp4
+ffmpeg -i input-1.mp4 -i input-2.mp4 -i input-3.mp4 -i input-4.mp4 -filter_complex "[0:v]pad=iw*2:ih*2[a];[a][1:v]overlay=w[b];[b][2:v]overlay=0:h[c];[c][3:v]overlay=w:h" -filter_complex "amix=inputs=4:duration=first:dropout_transition=4" out.mp4
 ```
 
 ## 6.图片/视频互转命令
@@ -111,19 +111,19 @@ ffmpeg -i 1.mp4 -i 2.mp4 -i 3.mp4 -i 4.mp4 -filter_complex "[0:v]pad=iw*2:ih*2[a
 ### 转码（mp4转flv）
 
 ```
-ffmpeg -i 1.mp4 -vcodec copy -acodec copy 1.flv
+ffmpeg -i input.mp4 -vcodec copy -acodec copy out.flv
 ```
 
 ### 转码（m3u8转mp4）
 
 ```
-ffmpeg -protocol_whitelist "file,http,https,tcp,tls" -i 1.m3u8 -c copy 1.mp4
+ffmpeg -protocol_whitelist "file,http,https,tcp,tls" -i input.m3u8 -c copy output.mp4
 ```
 
 ### 切片（mp4转m3u8）
 
 ```
-ffmpeg -i 1.mp4 -c:v libx264 -hls_time 60 -hls_list_size 0 -c:a aac -strict -2 -f hls 1.m3u8
+ffmpeg -i input.mp4 -c:v libx264 -hls_time 60 -hls_list_size 0 -c:a aac -strict -2 -f hls output.m3u8
 ```
 
 ## 7.直播相关命令
