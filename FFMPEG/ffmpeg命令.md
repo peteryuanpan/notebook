@@ -63,7 +63,11 @@ ac：a表示视频，n 代表 no 也就是无音频的意思
 
 ## 4.处理原始数据命令
 
-TODO
+### 将mp4视频moov前置
+
+```
+ffmpeg -i 1.mp4 -movflags faststart -acodec copy -vcodec copy output.mp4
+```
 
 ## 5.裁剪与合并命令
 
