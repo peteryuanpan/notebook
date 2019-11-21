@@ -8,6 +8,28 @@ screen -ls
 screen -r jobname
 ```
 
+### 安文件系统于磁盘
+```
+lsblk -f
+parted /dev/<NAME>
+mklabel gpt
+mkpart primary 0% 100%
+print
+quit
+mkfs.ext4 /dev/<NAME>
+mkfs.ntfs /dev/<NAME>
+```
+
+### 查看实时带宽
+```
+nload -m
+```
+
+### 查看磁盘IO实时情况
+````
+iostat -x 1 10
+```
+
 ### 查看linux cpu配置
 ```
 lscpu
