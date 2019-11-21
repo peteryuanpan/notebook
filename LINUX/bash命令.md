@@ -1,12 +1,18 @@
 # LINUX
 
-### screen异步窗口命令
+# 监控查询
+
+### 查看实时带宽
 ```
-screen -RL jobname
-"use ctr + A + D to quit"
-screen -ls
-screen -r jobname
+nload -m
 ```
+
+### 查看磁盘IO实时情况
+```
+iostat -x 1 10
+```
+
+# 磁盘文件
 
 ### 安文件系统于磁盘
 ```
@@ -20,46 +26,9 @@ mkfs.ext4 /dev/<NAME>
 mkfs.ntfs /dev/<NAME>
 ```
 
-### 查看实时带宽
-```
-nload -m
-```
-
-### 查看磁盘IO实时情况
-```
-iostat -x 1 10
-```
-
-### 查看linux cpu配置
-```
-lscpu
-```
-
-### 查看文件元信息
-```
-file <x>
-```
-
-### 命令升级变色
-```
-curl -> http（brew install httpie）
-cat -> ccat（brew install ccat）
-top -> htop（brew install htop）
-```
-
 ### 同步本地文件夹到linux上
 ```
 scp -r folder root@116.62.187.159:folder
-```
-
-### 杀掉进程pid
-```
-kill -9 <pid>
-```
-
-### 判断file.txt是否存在
-```
-if test -s file.txt; then echo 'full'; else echo 'empty'; fi
 ```
 
 ### 查看磁盘空间情况
@@ -69,9 +38,58 @@ du -hs * | sort -h
 du -ah | sort -h
 ```
 
-### 生成公钥私钥
+### 查看文件元信息
 ```
-ssh-keygen -t rsa
+file <x>
+```
+
+### 判断file.txt是否存在
+```
+if test -s file.txt; then echo 'full'; else echo 'empty'; fi
+```
+
+# 文本处理
+
+### while枚举每行并替换
+```
+cat clientip.txt | while read i; sleep 0.1; do cat curl.txt | sed "s/<clientip>/$i/g" | sh; done
+```
+
+### 排序，用聚合方式实现（比直接sort高效）
+```
+cat smalllist.txt | awk -F ' ' '{a[$4]+=$5;b[$4]+=1}END{for(i in a){print b[i],a[i],i}}' | sort -nr
+```
+
+### 按照,分隔，再按照第1列排序
+```
+sort -t, -nk1 file
+sort -nk1
+```
+
+### json文本处理
+```
+cat x | jq '.a | .b | "\(.c),\(.e)"'
+cat x | jq '.a | .[] | .b'
+```
+
+### 将奇偶行合为一行
+```
+cat 1.txt | awk 'NR%2 == 1{printf("%s\t",$0);}; NR%2 == 0{printf("%s\n",$0);}'
+```
+
+### 整合两个文件，用'\t'隔离每行
+```
+paste -d "\t" file1.txt file2.txt
+```
+
+### 查看1.log的最后一行在2.log的哪几行
+```
+(tail -1 1.log | awk -F '`' '{print $2}') | while read i; do grep $i 2.log -n; done
+```
+
+### 将文件编码格式从utf-8转为gbk
+```
+iconv -f UTF-8 -t GBK f1.txt > f2.txt
 ```
 
 # 网络排障
@@ -132,51 +150,37 @@ tcpdump -qns 0 -A -r abc.pcap
 editcap -c 10000 tcpdump.pcap tcpdump/
 ```
 
-# 文本处理
-
-### while枚举每行并替换
-```
-cat clientip.txt | while read i; sleep 0.1; do cat curl.txt | sed "s/<clientip>/$i/g" | sh; done
-```
-
-### 排序，用聚合方式实现（比直接sort高效）
-```
-cat smalllist.txt | awk -F ' ' '{a[$4]+=$5;b[$4]+=1}END{for(i in a){print b[i],a[i],i}}' | sort -nr
-```
-
-### 按照,分隔，再按照第1列排序
-```
-sort -t, -nk1 file
-sort -nk1
-```
-
-### json文本处理
-```
-cat x | jq '.a | .b | "\(.c),\(.e)"'
-cat x | jq '.a | .[] | .b'
-```
-
-### 将奇偶行合为一行
-```
-cat 1.txt | awk 'NR%2 == 1{printf("%s\t",$0);}; NR%2 == 0{printf("%s\n",$0);}'
-```
-
-### 整合两个文件，用'\t'隔离每行
-```
-paste -d "\t" file1.txt file2.txt
-```
-
-### 查看1.log的最后一行在2.log的哪几行
-```
-(tail -1 1.log | awk -F '`' '{print $2}') | while read i; do grep $i 2.log -n; done
-```
-
-### 将文件编码格式从utf-8转为gbk
-```
-iconv -f UTF-8 -t GBK f1.txt > f2.txt
-```
-
 # 其他
+
+### screen异步窗口命令
+```
+screen -RL jobname
+"use ctr + A + D to quit"
+screen -ls
+screen -r jobname
+```
+
+### 查看linux cpu配置
+```
+lscpu
+```
+
+### 命令升级变色
+```
+curl -> http（brew install httpie）
+cat -> ccat（brew install ccat）
+top -> htop（brew install htop）
+```
+
+### 杀掉进程pid
+```
+kill -9 <pid>
+```
+
+### 生成公钥私钥
+```
+ssh-keygen -t rsa
+```
 
 ### cd到brew中/include/openssl的所在目录
 ```
