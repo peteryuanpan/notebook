@@ -26,16 +26,16 @@ mkfs.ext4 /dev/<NAME>
 mkfs.ntfs /dev/<NAME>
 ```
 
-### 同步本地文件夹到linux上
-```
-scp -r folder root@116.62.187.159:folder
-```
-
 ### 查看磁盘空间情况
 ```
 du -h
 du -hs * | sort -h
 du -ah | sort -h
+```
+
+### 同步本地文件夹到linux上
+```
+scp -r folder root@116.62.187.159:folder
 ```
 
 ### 查看文件元信息
