@@ -32,6 +32,5 @@
  * [WEBSITE](./WEBSITE)
  * [WINDOWS](./WINDOWS)
     * [bash命令.md](./WINDOWS/bash命令.md)
- * [MY_PROBLEM.md](./MY_PROBLEM.md)
  * [tree.sh](./tree.sh)
  * [WHICH_LANGUAGE.md](./WHICH_LANGUAGE.md)
