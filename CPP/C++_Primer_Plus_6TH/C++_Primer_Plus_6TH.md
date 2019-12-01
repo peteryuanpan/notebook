@@ -2,18 +2,14 @@
 
 # CHAPTER 2
 
-## 2.6 复习题, P35
-
-### C++程序的模块叫什么？
+### C++程序的模块叫什么？（2.6 复习题, P35）
 
 2.5，P34
 ```
 函数。C++程序由一个或多个被称为函数的模块组成。
 ```
 
-### 下面的预处理器编译指令是做什么用的？
-
-#include < iostream >
+### 预处理器#include < iostream >编译指令是做什么用的？（2.6 复习题, P35）
 
 2.1.3，P16
 ```
@@ -25,9 +21,7 @@
 这将导致在最终的编译之前，使用 iostream 文件的内容替换该编译指令。
 ```
 
-### 下面的语句是做什么用的？
-
-using namespace std;
+### 语句using namespace std;是做什么用的？（2.6 复习题, P35）
 
 2.4.5，P34
 ```
@@ -35,11 +29,7 @@ using namespace std;
 将 using namespace std; 放在特定的函数定义中，让该函数能够使用名称空间 std 中的所有元素。
 ```
 
-### 假设您编写的 main() 函数包含如下代码，而编译器指出 cout 是一个未知的标识符。导致这种问题的原因很可能是什么？指出3种修复这种问题的方法。
-
-cout << "Please enter you Pin: ";
-
-use of undeclared identifier 'cout'
+### 假设您编写的 main() 函数包含如下代码：cout << "Please enter you Pin: ";use of undeclared identifier 'cout'，而编译器指出 cout 是一个未知的标识符。导致这种问题的原因很可能是什么？指出3种修复这种问题的方法。（2.6 复习题, P35）
 
 2.4.5，P34
 ```
@@ -50,8 +40,6 @@ use of undeclared identifier 'cout'
 ```
 
 # CHAPTER 3
-
-## 3.1.3, P41
 
 ### #include < climits > 中18种常量符号是什么？分别对应的值是多少？
 
@@ -79,16 +67,12 @@ ULLONG_MAX, (1 << 64) - 1
 
 # CHAPTER 4
 
-## 4.6.1, P97
-
 ### 枚举量的值可以是非整形吗？
 
 4.6.1，P97
 ```
 不可以
 ```
-
-## 4.6.1, P97
 
 ### enum A{a, b = 100, c}，a、b、c的值分别是多少？
 
