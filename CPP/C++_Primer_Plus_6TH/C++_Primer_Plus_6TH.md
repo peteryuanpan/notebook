@@ -53,7 +53,7 @@ use of undeclared identifier 'cout'
 
 ## 3.1.3, P41
 
-### climits中18种常量符号是什么？分别对应的值是多少？
+### #include < climits > 中18种常量符号是什么？分别对应的值是多少？
 
 3.1.3，P41
 ```
