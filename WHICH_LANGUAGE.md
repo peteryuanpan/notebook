@@ -10,7 +10,7 @@
 |curl|https://curl.haxx.se/<br>https://github.com/curl/curl|C|
 |ffmpeg|https://ffmpeg.org/ffmpeg.html<br>https://github.com/FFmpeg/FFmpeg|C|
 |imagemagick|https://imagemagick.org/<br>https://github.com/ImageMagick/ImageMagick|C|
-|openssl|https://github.com/openssl/openssl<br>https://github.com/openssl|C|
+|openssl|https://github.com/openssl|C|
 |wireshark|https://www.wireshark.org/<br>https://github.com/wireshark/wireshark|C|
 |tcpdump|https://www.tcpdump.org/<br>https://github.com/the-tcpdump-group/tcpdump|C|
-|axel|https://github.com/axel-download-accelerator/axel<br>https://github.com/axel-download-accelerator/axel|C
+|axel|https://github.com/axel-download-accelerator/axel|C
