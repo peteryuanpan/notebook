@@ -38,6 +38,6 @@
     * [mozilla_HTTP_overview.png](./TCP-IP/mozilla_HTTP_overview.png)
  * [WEBSITE](./WEBSITE)
  * [WINDOWS](./WINDOWS)
-    * [bash命令.md](./WINDOWS/bash命令.md)
+    * [cmd命令.md](./WINDOWS/cmd命令.md)
  * [tree.sh](./tree.sh)
  * [WHICH_LANGUAGE.md](./WHICH_LANGUAGE.md)
