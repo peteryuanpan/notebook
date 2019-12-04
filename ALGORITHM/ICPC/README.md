@@ -11,6 +11,7 @@ International Collegiate Programming Contest
 |002|求和为零的三元组的去重解|[链接](白题/leetcode_problem15_求和为零的三元组的去重解/README.md)|白题|2019-12-01|合适面试|
 |003|Kruskal算法的一种应用|[链接](图论/uva_1395_Kruskal算法的一种应用)|图论|2019-12-01|经典题|
 |004|线段树板题|[链接](数据结构/uestc_problem_838_线段树板题)|数据结构|2019-12-04|2014 UESTC Training|
+|005|线段树懒操作|[链接](数据结构/uestc_problem_838_线段树懒操作)|数据结构|2019-12-04|2014 UESTC Training|
 
 ### 新建README模板
 ```
