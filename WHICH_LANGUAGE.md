@@ -1,16 +1,16 @@
 |ItsName|Site|Language|
 |-|-|-|
 |oh-my-zsh|https://github.com/robbyrussell/oh-my-zsh|Shell|
-|Qiniu|https://www.qiniu.com/  https://github.com/qiniu|Golang|
-|Kyligence|https://kyligence.io/zh/  https://github.com/Kyligence|Java|
+|Qiniu|https://www.qiniu.com/<br>https://github.com/qiniu|Golang|
+|Kyligence|https://kyligence.io/zh/<br>https://github.com/Kyligence|Java|
 |opencv|https://github.com/opencv/opencv|C++|
-|tcpflow|http://downloads.digitalcorpora.org/downloads/tcpflow/  https://github.com/simsong/tcpflow|C++|
-|linux|https://www.kernel.org/doc/html/latest/ \r https://github.com/torvalds/linux|C|
-|nginx|http://nginx.org/  https://github.com/nginx/nginx|C|
-|curl|https://curl.haxx.se/  https://github.com/curl/curl|C|
-|ffmpeg|https://ffmpeg.org/ffmpeg.html  https://github.com/FFmpeg/FFmpeg|C|
-|imagemagick|https://imagemagick.org/  https://github.com/ImageMagick/ImageMagick|C|
-|openssl|https://github.com/openssl/openssl  https://github.com/openssl|C|
-|wireshark|https://www.wireshark.org/  https://github.com/wireshark/wireshark|C|
-|tcpdump|https://www.tcpdump.org/  https://github.com/the-tcpdump-group/tcpdump|C|
-|axel|https://github.com/axel-download-accelerator/axel  https://github.com/axel-download-accelerator/axel|C
+|tcpflow|http://downloads.digitalcorpora.org/downloads/tcpflow/<br>https://github.com/simsong/tcpflow|C++|
+|linux|https://www.kernel.org/doc/html/latest/<br>https://github.com/torvalds/linux|C|
+|nginx|http://nginx.org/<br>https://github.com/nginx/nginx|C|
+|curl|https://curl.haxx.se/<br>https://github.com/curl/curl|C|
+|ffmpeg|https://ffmpeg.org/ffmpeg.html<br>https://github.com/FFmpeg/FFmpeg|C|
+|imagemagick|https://imagemagick.org/<br>https://github.com/ImageMagick/ImageMagick|C|
+|openssl|https://github.com/openssl/openssl<br>https://github.com/openssl|C|
+|wireshark|https://www.wireshark.org/<br>https://github.com/wireshark/wireshark|C|
+|tcpdump|https://www.tcpdump.org/<br>https://github.com/the-tcpdump-group/tcpdump|C|
+|axel|https://github.com/axel-download-accelerator/axel<br>https://github.com/axel-download-accelerator/axel|C
