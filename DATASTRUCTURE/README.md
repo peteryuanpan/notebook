@@ -1,3 +1,0 @@
-# DATASTRUCTURE
-
-Datastructure
