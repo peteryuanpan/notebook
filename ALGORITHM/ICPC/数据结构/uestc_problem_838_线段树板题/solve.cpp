@@ -34,7 +34,7 @@ void update(int id, int l, int r, int x, int v) {
 
 long long query(int id, int ql ,int qr, int l, int r) {
     if (ql == l && qr == r) {
-        return (long long) tree[id];
+        return tree[id];
     }
     int mid = (l + r) >> 1;
     if (qr <= mid) return query(id<<1, ql, qr, l, mid);
