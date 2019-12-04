@@ -13,7 +13,7 @@ International Collegiate Programming Contest
 
 ### 新建README模板
 ```
-# 线段树板题
+# 题目
 ### 题意
 ### 条件范围
 ### 样例输入1
