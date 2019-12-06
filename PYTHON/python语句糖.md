@@ -27,6 +27,8 @@ except Exception as e:
 ### date time
 ```
 from datetime import datetime, timedelta
+def today():
+	return datetime.strftime(datetime.now(), "%Y-%m-%d")
 def yesterday():
 	return datetime.strftime(datetime.now() - timedelta(1), "%Y-%m-%d")
 ```
