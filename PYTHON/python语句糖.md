@@ -24,6 +24,13 @@ except Exception as e:
 	print(e)
 ```
 
+### date time
+```
+from datetime import datetime, timedelta
+def yesterday():
+	return datetime.strftime(datetime.now() - timedelta(1), "%Y-%m-%d")
+```
+
 # CLASS
 
 ### class init
