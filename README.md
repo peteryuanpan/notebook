@@ -28,6 +28,8 @@
     * [面试](./DATABASE/面试)
        * [选择题](./DATABASE/面试/选择题)
  * [JAVA](./JAVA)
+    * [MyBatis](./JAVA/MyBatis)
+       * [MyBatis相比于JDBC及Hibernate的优点.md](./JAVA/MyBatis/MyBatis相比于JDBC及Hibernate的优点.md)
     * [面试](./JAVA/面试)
        * [选择题](./JAVA/面试/选择题)
        * [问答题](./JAVA/面试/问答题)
