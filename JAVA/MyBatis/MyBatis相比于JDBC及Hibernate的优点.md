@@ -1,4 +1,4 @@
-### MyBatis相比于JDBC及Hibernate的优点.md
+### MyBatis相比于JDBC及Hibernate的优点
 
 ```
 MyBatis是一个半自动化的持久层框架
