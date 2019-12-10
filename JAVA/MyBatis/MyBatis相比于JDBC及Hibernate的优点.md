@@ -1,4 +1,4 @@
-[bilibili MyBatis 视频教程全集 P1 MyBatis简介](https://www.bilibili.com/video/av59564271/?pikaqiu)
+### MyBatis相比于JDBC及Hibernate的优点.md
 
 ```
 MyBatis是一个半自动化的持久层框架
@@ -19,3 +19,6 @@ MyBatis，相比于JDBC及Hibernate
 - 支持将针对sql语句做特殊优化，满足开发后期需求
 - 轻量级、半自动框架
 ```
+
+### Reference
+- [bilibili MyBatis 视频教程全集 P1 MyBatis简介](https://www.bilibili.com/video/av59564271/?pikaqiu)
