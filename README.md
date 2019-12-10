@@ -29,7 +29,7 @@
        * [选择题](./DATABASE/面试/选择题)
     * [数据库四大特性以及事务隔离级别.md](./DATABASE/数据库四大特性以及事务隔离级别.md)
  * [DESIGN_PATTER](./DESIGN_PATTER)
-    * [设计模式的六大准则.md](./DESIGN_PATTER/设计模式的六大准则.md)
+    * [设计模式的六大原则.md](./DESIGN_PATTER/设计模式的六大原则.md)
  * [JAVA](./JAVA)
     * [JVM](./JAVA/JVM)
        * [JAVA内存区域.md](./JAVA/JVM/JAVA内存区域.md)
