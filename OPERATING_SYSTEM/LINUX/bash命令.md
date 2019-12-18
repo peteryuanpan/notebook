@@ -50,6 +50,17 @@ if test -s file.txt; then echo 'full'; else echo 'empty'; fi
 
 # 文本处理
 
+### bash乱码
+```
+vi ~/.zshrc 或者 vi ~/.bashrc
+添加
+export LC_ALL=en_US.UTF-8  
+export LANG=en_US.UTF-8
+再输入
+source ~/.zshrc
+```
+# 文本处理
+
 ### while枚举每行并替换
 ```
 cat clientip.txt | while read i; sleep 0.1; do cat curl.txt | sed "s/<clientip>/$i/g" | sh; done
