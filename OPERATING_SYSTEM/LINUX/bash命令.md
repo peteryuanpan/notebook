@@ -57,7 +57,7 @@ vi ~/.zshrc 或者 vi ~/.bashrc
 export LC_ALL=en_US.UTF-8  
 export LANG=en_US.UTF-8
 再输入
-source ~/.zshrc
+source ~/.zshrc 或者 source ~/.bashrc
 ```
 # 文本处理
 
