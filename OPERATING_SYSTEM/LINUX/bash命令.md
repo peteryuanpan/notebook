@@ -94,12 +94,12 @@ iconv -f UTF-8 -t GBK f1.txt > f2.txt
 
 ### vim 空格和TAB转换
 ```
-空格替换为TAB：
+空格替换为TAB
 :set ts=4
 :set noexpandtab
 :%retab!
 
-TAB替换为空格：
+TAB替换为空格
 :set ts=4
 :set expandtab
 :%retab!
