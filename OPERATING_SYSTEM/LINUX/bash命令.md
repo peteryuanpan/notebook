@@ -92,6 +92,19 @@ paste -d "\t" file1.txt file2.txt
 iconv -f UTF-8 -t GBK f1.txt > f2.txt
 ```
 
+### vim 空格和TAB转换
+```
+空格替换为TAB：
+:set ts=4
+:set noexpandtab
+:%retab!
+
+TAB替换为空格：
+:set ts=4
+:set expandtab
+:%retab!
+```
+
 # 网络排障
 
 ### curl测试各阶段时间
