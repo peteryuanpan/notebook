@@ -1,4 +1,4 @@
-# codeforces_contest1266_problemA_排列能否被60整除
+# 排列能否被60整除
 
 ### 题意
 
