@@ -12,6 +12,7 @@ International Collegiate Programming Contest
 |003|Kruskal算法求连通图的自定义函数解|[链接](图论/uva_1395_Kruskal算法求连通图的自定义函数解)|图论|2019-12-01|经典题|
 |004|线段树单点加法区间求和|[链接](数据结构/uestc_problem_838_线段树单点加法区间求和)|数据结构|2019-12-04|2014 UESTC Training|
 |005|线段树区间加法区间求和|[链接](数据结构/uestc_problem_838_线段树区间加法区间求和)|数据结构|2019-12-04|2014 UESTC Training|
+|006|排列能否被60整除|[链接](白题/codeforces_contest1266_problemA_排列能否被60整除)|白题|2019-12-18||
 
 ### 新建README模板
 ```
