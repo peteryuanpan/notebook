@@ -26,7 +26,6 @@ public:
 						left++;
 					}
 					
-					
                     right--;
                     left++;
 					
