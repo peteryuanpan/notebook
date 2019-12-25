@@ -14,6 +14,7 @@ International Collegiate Programming Contest
 |005|线段树区间加法区间求和|[链接](数据结构/uestc_problem_838_线段树区间加法区间求和)|数据结构|2019-12-04|2014 UESTC Training|
 |006|排列能否被60整除|[链接](白题/codeforces_contest1266_problemA_排列能否被60整除)|白题|2019-12-18||
 |007|基于最大公约数的矩阵构造题|[链接](白题/codeforces_contest1266_problemC_基于最大公约数的矩阵构造题)|白题|2019-12-18||
+|008|输出串是两个输入串的母序列且规则|[链接](动态规划/codeforces_contest1272_problemF_输出串是两个输入串的母序列且规则)|动态规划|2019-12-25||
 
 ### 新建README模板
 ```
