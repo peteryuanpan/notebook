@@ -189,6 +189,7 @@ docker build -t <REPOSITORY:TAG> .
 
 ### 运行镜像
 ```
+docker run -t -i <REPOSITORY:TAG> bash
 docker run -p <port:port> <REPOSITORY:TAG>
 ```
 
