@@ -174,6 +174,34 @@ tcpdump -qns 0 -A -r abc.pcap
 editcap -c 10000 tcpdump.pcap tcpdump/
 ```
 
+# DOCKER
+
+### 查询镜像及容器
+```
+docker images
+docker ps
+```
+
+### 通过dockerfile打包镜像
+```
+docker build -t <REPOSITORY:TAG> .
+```
+
+### 运行镜像
+```
+docker run -p <port:port> <REPOSITORY:TAG>
+```
+
+### 登录到实例上
+```
+docker exec -ti <CONTAINER ID> bash
+```
+
+### 将容器打包再成镜像
+```
+docker commit -a "" -m "" <CONTAINER ID> <REPOSITORY:TAG>
+```
+
 # 其他
 
 ### screen异步窗口命令
