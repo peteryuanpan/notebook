@@ -202,6 +202,25 @@ docker exec -ti <CONTAINER ID> bash
 docker commit -a "" -m "" <CONTAINER ID> <REPOSITORY:TAG>
 ```
 
+## qdoractl
+
+https://developer.qiniu.com/dora/tools/1222/qdoractl
+
+### 将本地镜像推送到服务端
+```
+qdoractl push <REPOSITORY:TAG>
+```
+
+### 查看instance
+```
+qdoractl instance <ufop> --all
+```
+
+### 登录到实例上
+```
+qdoractl attach <instance ID> --region <region> --instance <ufop>
+```
+
 # 其他
 
 ### screen异步窗口命令
