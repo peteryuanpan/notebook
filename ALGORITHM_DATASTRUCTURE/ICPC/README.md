@@ -18,19 +18,8 @@ International Collegiate Programming Contest
 |009|商品打折券的最大化使用|[链接](动态规划/codeforces_contest1282_problemB2_商品打折券的最大化使用)|codeforces|串|动态规划|2019-12-25|
 |010|合并且排序K个指针表|[链接](白题/leetcode_problem23_合并且排序K个指针表)|leetcode|串|白题-指针|2019-12-27|
 |011|求解next_permutation|[链接](白题/leetcode_problem31_求解next_permutation)|leetcode|串|白题-排列|2019-12-27|
-
-### 新建README模板
-```
-# 题目
-### 题意
-### 条件范围
-### 样例输入1
-### 样例输出1
-### 样例解释1
-### 关联链接
-```
  
-结构
+### 结构
 ```
 树结构问题
 |----二叉树
@@ -48,7 +37,7 @@ International Collegiate Programming Contest
 |----数学函数
  ```
  
-标签
+### 标签
 ```
 数据结构
 |----线段树
@@ -108,4 +97,15 @@ International Collegiate Programming Contest
 |----排列
 |----指针
 |----暴力
+```
+
+### 新建README模板
+```
+# 题目
+### 题意
+### 条件范围
+### 样例输入1
+### 样例输出1
+### 样例解释1
+### 关联链接
 ```
