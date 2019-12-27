@@ -18,10 +18,10 @@
  * };
  */
  class Solution {
-public:    
+ public:    
     ListNode * mergeKLists(vector<ListNode*>& lists) {   
     }
- }
+ };
 ```
 
 ### 条件范围
