@@ -17,6 +17,7 @@ International Collegiate Programming Contest
 |008|输出串是两个输入串的母序列且规则|[链接](动态规划/codeforces_contest1272_problemF_输出串是两个输入串的母序列且规则)|codeforces|动态规划|2019-12-25|
 |009|商品打折券的最大化使用|[链接](动态规划/codeforces_contest1282_problemB2_商品打折券的最大化使用)|codeforces|动态规划|2019-12-25|
 |010|合并且排序K个指针表|[链接](白题/leetcode_problem23_合并且排序K个指针表)|leetcode|白题|2019-12-27|
+|011|求解next_permutation|[链接](白题/leetcode_problem31_求解next_permutation)|leetcode|白题|2019-12-27|
 
 ### 新建README模板
 ```
