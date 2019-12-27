@@ -19,7 +19,7 @@
  */
  class Solution {
 public:    
-    ListNode * merge2Lists(ListNode * l1, ListNode * l2) {   
+    ListNode * mergeKLists(vector<ListNode*>& lists) {   
     }
  }
 ```
