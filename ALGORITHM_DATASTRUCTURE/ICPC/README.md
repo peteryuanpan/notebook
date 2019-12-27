@@ -88,8 +88,8 @@ International Collegiate Programming Contest
 |----数学函数
      |----概率、期望
      |----排列、组合
-     |----快速傅里叶变换(FFT)
      |----导数、微积分
+     |----快速傅里叶变换(FFT)
 白题
 |----二分、三分
 |----构造
