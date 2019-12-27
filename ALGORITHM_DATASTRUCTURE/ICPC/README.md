@@ -72,11 +72,15 @@ International Collegiate Programming Contest
 |----数学三角形
 |----背包
 |----公共子串、子序列
+|----动态规划与其他结构结合
 图论
 |----有向无环图(DAG)
 |----并查集
 |----最小生成树
 |----最短路
+     |----Dikstra
+     |----Bellman-Ford、SPFA
+     |----Floyd
 |----tarjan
 |----网络流
 搜索
