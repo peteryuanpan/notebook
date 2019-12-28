@@ -33,6 +33,17 @@ def yesterday():
 	return datetime.strftime(datetime.now() - timedelta(1), "%Y-%m-%d")
 ```
 
+# STRING
+
+### split多个分隔符
+```
+python3
+>>> import re
+>>> a = 'Beautiful, is; better*than\nugly[1](2)'
+>>> re.split('; |, |\*|\n|\[|\]|\(|\)', a)
+['Beautiful', 'is', 'better', 'than', 'ugly', '1', '', '2', '']
+```
+
 # OS
 
 ### 运行
@@ -42,6 +53,14 @@ def run_bash(cmd):
         stream = os.popen(cmd)
         output = stream.read()
         return output
+```
+
+### 判断文件/目录是否存在
+```
+import os.path
+path = ''
+os.path.isfile(path)
+os.path.isdir(path)
 ```
 
 # IO
