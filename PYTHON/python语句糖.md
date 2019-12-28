@@ -37,10 +37,11 @@ def yesterday():
 
 ### split多个分隔符
 ```
+python3
 >>> import re
->>> a='Beautiful, is; better*than\nugly[1]'
->>> re.split('; |, |\*|\n|\[|\]',a)
-['Beautiful', 'is', 'better', 'than', 'ugly', '1', '']
+>>> a='Beautiful, is; better*than\nugly[1](2)'
+>>> re.split('; |, |\*|\n|\[|\]|\(|\)', a)
+['Beautiful', 'is', 'better', 'than', 'ugly', '1', '', '2', '']
 ```
 
 # OS
