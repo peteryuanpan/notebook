@@ -33,16 +33,15 @@ def yesterday():
 	return datetime.strftime(datetime.now() - timedelta(1), "%Y-%m-%d")
 ```
 
-# CLASS
+# OS
 
-### class init
+### 运行
 ```
-class ClassName(object):
-
-	__member_name = ''
-
-	def __init__(self):
-		self.__member_name = ''
+import os
+def run_bash(cmd):
+        stream = os.popen(cmd)
+        output = stream.read()
+        return output
 ```
 
 # IO
@@ -70,6 +69,18 @@ def readgzip(filename):
 def write(outfile, text):
         # outfile = open('', 'w')
         outfile.write(text+"\n")
+```
+
+# CLASS
+
+### class init
+```
+class ClassName(object):
+
+	__member_name = ''
+
+	def __init__(self):
+		self.__member_name = ''
 ```
 
 # Qiniu
