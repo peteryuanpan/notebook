@@ -44,6 +44,13 @@ def run_bash(cmd):
         return output
 ```
 
+### 判断文件是否存在
+```
+import os.path
+def file_exists(file_path):
+        return os.path.isfile(file_path)
+```
+
 # IO
 
 ### 读取文件
