@@ -10,4 +10,4 @@
 |--|--|--|--|--|--|
 |001|数据库四大特性及事务隔离级别|[链接](https://github.com/peteryuanpan/notebook/blob/master/DATABASE/数据库四大特性及事物隔离级别.md)|网络|计算机基础-数据库|2019-12-29|
 |002|设计模式的六大原则|[链接](https://github.com/peteryuanpan/notebook/tree/master/DESIGN_PATTER/设计模式的六大原则.md)|网络|编程语言-设计模式|2019-12-29|
-|003|基于String对堆栈内存的理解|TODO|网络|编程语言-JAVA|2019-12-29|
+|003|StringPool与堆栈内存的理解|TODO|网络|编程语言-JAVA|2019-12-29|
