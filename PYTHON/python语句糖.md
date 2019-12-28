@@ -44,11 +44,12 @@ def run_bash(cmd):
         return output
 ```
 
-### 判断文件是否存在
+### 判断文件/目录是否存在
 ```
 import os.path
-def file_exists(file_path):
-        return os.path.isfile(file_path)
+path = ''
+os.path.isfile(path)
+os.path.isdir(path)
 ```
 
 # IO
