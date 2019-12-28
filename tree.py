@@ -23,7 +23,7 @@ def both_in_line(line, *chars):
 
 def main():
 	# make README.md
-	run_bash('sh tree.sh')
+	run_bash('sh tree.sh > README.md')
 	# solve
 	README = read('./README.md')
 	for line in README:
