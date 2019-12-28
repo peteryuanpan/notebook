@@ -20,7 +20,7 @@
     * [FFMPEG](./C++/FFMPEG)
        * [ffmpeg命令](./C++/FFMPEG/ffmpeg命令.md)
  * [DATABASE](./DATABASE)
-    * [数据库四大特性以及事务隔离级别](./DATABASE/数据库四大特性以及事务隔离级别.md)
+    * [数据库四大特性及事物隔离级别](./DATABASE/数据库四大特性及事物隔离级别.md)
  * [DESIGN_PATTER](./DESIGN_PATTER)
     * [设计模式的六大原则](./DESIGN_PATTER/设计模式的六大原则.md)
  * [JAVA](./JAVA)
