@@ -33,6 +33,16 @@ def yesterday():
 	return datetime.strftime(datetime.now() - timedelta(1), "%Y-%m-%d")
 ```
 
+# STRING
+
+### split多个分隔符
+```
+>>> import re
+>>> a='Beautiful, is; better*than\nugly[1]'
+>>> re.split('; |, |\*|\n|\[|\]',a)
+['Beautiful', 'is', 'better', 'than', 'ugly', '1', '']
+```
+
 # OS
 
 ### 运行
