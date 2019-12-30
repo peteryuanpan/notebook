@@ -72,11 +72,12 @@ International Collegiate Programming Contest
 搜索
 |----BFS、DFS
 |----启发式搜索
-     |----A*搜索
-     |----Alpha-Beta搜索
-     |----蚁群算法
-     |----遗传算法
+     |----A*算法
+     |----Alpha-Beta算法
      |----模拟退火算法
+     |----遗传算法
+     |----蚁群算法
+     |----粒子群优化算法
 数学
 |----几何
      |----叉积
