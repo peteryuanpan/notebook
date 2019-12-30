@@ -8,7 +8,7 @@
     * [设计模式的六大原则](./BASE_PROBLEM/设计模式的六大原则.md)
  * [C++](./C++)
     * [汇编语言](./C++/汇编语言)
-    * [常用FFMPEG命令](./C++/常用FFMPEG命令.md)
+    * [常用ffmpeg命令](./C++/常用ffmpeg命令.md)
  * [DATABASE](./DATABASE)
     * [数据库四大特性及事物隔离级别](./DATABASE/数据库四大特性及事物隔离级别.md)
  * [JAVA](./JAVA)
