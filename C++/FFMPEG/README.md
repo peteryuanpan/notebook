@@ -1,4 +1,0 @@
-
-# FFmpeg
-
-FFmpeg
