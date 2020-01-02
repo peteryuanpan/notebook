@@ -5,7 +5,7 @@
     * [各大OnlineJudge算法问题收集](./ALGORITHM_DATASTRUCTURE/各大OnlineJudge算法问题收集)
  * [BASE_PROBLEM](./BASE_PROBLEM)
     * [基础问题收集及自我总结](./BASE_PROBLEM/基础问题收集及自我总结)
-    * [设计模式的六大原则](./BASE_PROBLEM/设计模式的六大原则.md)
+    * [程序设计问题自研](./BASE_PROBLEM/程序设计问题自研)
  * [C++](./C++)
     * [汇编语言](./C++/汇编语言)
  * [DATABASE](./DATABASE)
