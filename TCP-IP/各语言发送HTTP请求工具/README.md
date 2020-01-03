@@ -1,6 +1,6 @@
 # 各语言发送HTTP请求工具
 
-|序号|基础功能|链接|java-okhttp3|c-curl|python-requests|golang-net/http|
+|序号|基础功能|链接|java-okhttp3|c-curl|golang-net/http|python-requests|
 |--|--|--|--|--|--|--|
 |01|发送一个http请求，包含基本五要素|TODO|支持|支持|支持|支持|
 |02|设置请求响应超时时间||||||
