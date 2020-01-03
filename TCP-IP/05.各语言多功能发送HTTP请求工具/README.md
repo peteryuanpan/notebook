@@ -1,4 +1,4 @@
-# 各语言发送HTTP请求工具
+# 各语多功能言发送HTTP请求工具
 
 |序号|基础功能|链接|java-okhttp3|c-curl|golang-net/http|python-requests|
 |--|--|--|--|--|--|--|
