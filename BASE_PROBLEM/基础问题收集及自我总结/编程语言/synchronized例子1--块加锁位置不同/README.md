@@ -1,6 +1,6 @@
 # synchronized例子1--块加锁位置不同
 
-考虑以下例子，buy_ticket_1 及 buy_ticket_2 两种情况，输出结果有较大区别
+### 考虑以下例子，buy_ticket_1 及 buy_ticket_2 两种情况，输出结果有较大区别
 
 ```JAVA
 public class Web12306Example1 implements Runnable {
@@ -109,4 +109,6 @@ final---->码畜---->0
 final---->码蝗---->0
 ```
 
-buy_ticket_1 及 buy_ticket_2 两种情况，输出结果有较大区别。为什么？
+### buy_ticket_1 及 buy_ticket_2 两种情况，输出结果有较大区别。为什么？
+
+主要是因为 Integer，是一个 final 类，在 ticketNumber = ticketNumber - 1; 中，栈中的 ticketNumber 指向了堆中不同的地址，这样 synchronized 
