@@ -24,9 +24,13 @@
 
 #### 举几个CPU被中断/软件产生异常的例子
 > 鼠标点击、键盘输入
+
 > 接收到 http request，开始处理
+
 > 程序中有除以整数零
+
 > 访问无效内存
+
 > StackOverFlow、MemoryOutOfLimit
 
 #### JAVA执行try、catch，在操作系统底层执行了什么？
