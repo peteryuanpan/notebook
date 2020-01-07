@@ -212,3 +212,107 @@ final---->码蝗---->-1
 ### synchronized 锁住的是栈中的对象还是堆中的内存？
 
 在上面的例子中，是堆中的地址变了的，现在来做个测试，即让栈中多个对象指向同一个堆中的内存，在不同线程中synchronized分别锁住这些对象，会有什么结果
+
+```Java
+import java.util.ArrayList;
+import java.util.List;
+
+public class SynchronizedExample1 implements Runnable {
+
+    static class IntegerClass {
+        Integer x;
+        public IntegerClass() {
+            x = 0;
+        }
+    }
+    static IntegerClass integerClass;
+    static List<IntegerClass> integerClass_Array;
+    static IntegerClass integerClass_0;
+    static IntegerClass integerClass_1;
+    static IntegerClass integerClass_2;
+    static IntegerClass integerClass_3;
+    static IntegerClass integerClass_4;
+    static IntegerClass integerClass_5;
+    static IntegerClass integerClass_6;
+    static IntegerClass integerClass_7;
+    static IntegerClass integerClass_8;
+    static IntegerClass integerClass_9;
+    
+    static {
+        integerClass = new IntegerClass();
+        integerClass_0 = integerClass;
+        integerClass_1 = integerClass;
+        integerClass_2 = integerClass;
+        integerClass_3 = integerClass;
+        integerClass_4 = integerClass;
+        integerClass_5 = integerClass;
+        integerClass_6 = integerClass;
+        integerClass_7 = integerClass;
+        integerClass_8 = integerClass;
+        integerClass_9 = integerClass;
+        integerClass_Array = new ArrayList<IntegerClass>();
+        integerClass_Array.add(integerClass_0);
+        integerClass_Array.add(integerClass_1);
+        integerClass_Array.add(integerClass_2);
+        integerClass_Array.add(integerClass_3);
+        integerClass_Array.add(integerClass_4);
+        integerClass_Array.add(integerClass_5);
+        integerClass_Array.add(integerClass_6);
+        integerClass_Array.add(integerClass_7);
+        integerClass_Array.add(integerClass_8);
+        integerClass_Array.add(integerClass_9);
+    }
+    
+    @Override
+    public void run() {
+        String name = Thread.currentThread().getName();
+        Integer name_i = Integer.parseInt(name);
+        //System.out.println("running currentThread " + name_i);
+        synchronized(integerClass_Array.get(name_i)) {
+            integerClass_Array.get(name_i).x = integerClass_Array.get(name_i).x + 1;
+            System.out.println("currentThread " + name_i + ": " + integerClass_Array.get(name_i).x);
+        }
+    }
+    
+    public static void main(String[] args) {
+        SynchronizedExample1 ex1 = new SynchronizedExample1();
+        for (Integer i = 0; i < 10; i ++) {
+            new Thread(ex1, i.toString()).start();
+        }
+    }
+
+}
+```
+
+输出结果，第一次
+```
+currentThread 0: 1
+currentThread 1: 2
+currentThread 2: 3
+currentThread 3: 4
+currentThread 4: 5
+currentThread 5: 6
+currentThread 6: 7
+currentThread 7: 8
+currentThread 8: 9
+currentThread 9: 10
+
+```
+
+输出结果，第二次
+```
+currentThread 0: 1
+currentThread 2: 2
+currentThread 1: 3
+currentThread 3: 4
+currentThread 4: 5
+currentThread 5: 6
+currentThread 6: 7
+currentThread 7: 8
+currentThread 8: 9
+currentThread 9: 10
+```
+
+多尝试几次输出，可以发现，currentThread 可能不是递增的，但输出的 integerClass_Array.get(name_i).x 一定是递增的
+
+***因此我们可以得出结论，synchronized 锁住的是堆中的内存***
