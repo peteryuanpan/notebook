@@ -1,4 +1,4 @@
-# synchronized锁住的是栈中的对象还是堆中的内存
+# synchronized锁住的是栈中的对象还是堆中的对象
 
 ### 考虑以下例子，buy_ticket_1 及 buy_ticket_2 两种情况，输出结果有较大区别
 
@@ -209,11 +209,11 @@ final---->码蝗---->-1
 
 可以看出，码蝗多输出了一个-1，这是符合预期的，主要是 buy_ticket_1 及 buy_ticket_2 的结果，都是按顺序递减了
 
-### synchronized 锁住的是栈中的对象还是堆中的内存？
+### synchronized 锁住的是栈中的对象还是堆中的对象？
 
-在上面的例子中，是「栈中的对象不变，堆中的地址变」
+在上面的例子中，是「栈中的对象不变，堆中的对象变」
 
-现在来做个测试，即让「栈中的对象变，堆中的地址不变」，会有什么结果
+现在来做个测试，即让「栈中的对象变，堆中的对象不变」，会有什么结果
 
 ```Java
 public class SynchronizedExample1 implements Runnable {
@@ -277,4 +277,4 @@ currentThread 9: 10
 
 多尝试几次输出，可以发现，currentThread 可能不是递增的，但输出的 integerClass_0.x 一定是递增的
 
-***因此我们可以得出结论，synchronized 锁住的是堆中的内存***
+***因此我们可以得出结论，synchronized 锁住的是堆中的对象***
