@@ -229,11 +229,10 @@ public class SynchronizedExample1 implements Runnable {
     @Override
     public void run() {
         String name = Thread.currentThread().getName();
-        Integer name_i = Integer.parseInt(name);
         IntegerClass integerClass_0 = integerClass;
         synchronized(integerClass_0) {
             integerClass_0.x = integerClass_0.x + 1;
-            System.out.println("currentThread " + name_i + ": " + integerClass_0.x);
+            System.out.println("currentThread " + name + ": " + integerClass_0.x);
         }
     }
     
