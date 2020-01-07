@@ -1,4 +1,4 @@
-# synchronized例子1--块加锁位置不同
+# synchronized锁住的是栈中的对象还是堆中的地址
 
 ### 考虑以下例子，buy_ticket_1 及 buy_ticket_2 两种情况，输出结果有较大区别
 
