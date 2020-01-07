@@ -111,7 +111,7 @@ final---->码蝗---->0
 
 ### buy_ticket_1 输出结果顺序是递减的，buy_ticket_2 是非递减的，为什么？
 
-主要是因为 Integer，是一个 final 类，在「ticketNumber = ticketNumber - 1;」中，栈中的 ticketNumber 指向了堆中不同的地址，这样 synchronized 锁住的就不是同一个内存地址了（此现象对于 String 类也一样）
+主要是因为 Integer，是一个 final 类，在「ticketNumber = ticketNumber - 1;」中，栈中的 ticketNumber 指向了堆中不同的对象，这样 synchronized 锁住的就不是同一个内存地址了（此现象对于 String 类也一样）
 
 如果程序改为以下
 
