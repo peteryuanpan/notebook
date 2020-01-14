@@ -3,8 +3,6 @@
  * [ALGORITHM_DATASTRUCTURE](./ALGORITHM_DATASTRUCTURE)
     * [00.基础问题](./ALGORITHM_DATASTRUCTURE/00.基础问题)
     * [01.各大OnlineJudge算法问题](./ALGORITHM_DATASTRUCTURE/01.各大OnlineJudge算法问题)
-    * [02.程序设计问题自研](./ALGORITHM_DATASTRUCTURE/02.程序设计问题自研)
-    * [Linux在CPU调度中对红黑树的实现](./ALGORITHM_DATASTRUCTURE/Linux在CPU调度中对红黑树的实现)
  * [C++](./C++)
     * [汇编语言](./C++/汇编语言)
  * [DATABASE](./DATABASE)
