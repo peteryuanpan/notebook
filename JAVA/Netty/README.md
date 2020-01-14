@@ -31,3 +31,7 @@ Netty是一个基于NIO的客户端、服务端的Java编程框架，使用Netty
 [Java核心（五）深入理解BIO、NIO、AIO](https://zhuanlan.zhihu.com/p/51453522)
 
 [浅谈“阻塞同步”，“BIO、NIO、AIO”](https://www.jianshu.com/p/8ad464ed516e)
+
+[Java NIO 视频教程全集（13P）| 3 小时从入门到精通](https://www.bilibili.com/video/av59543731?p=1)
+
+[网络应用框架 Netty 视频教程全集（91P）| 61 小时从入门到精通](https://www.bilibili.com/video/av59683486?pikaqiu)
