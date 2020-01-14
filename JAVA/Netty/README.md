@@ -21,3 +21,13 @@ Netty是一个基于NIO的客户端、服务端的Java编程框架，使用Netty
 |08|衍生出的NIO模型|TODO|自研|2019-01-14|
 |09|BIO、NIO、AIO的区别及优缺点|[链接](BIO_NIO_AIO的区别及优缺点)|自研|2019-01-14|
 ||再谈NIO的多路复用|TODO|自研||
+
+### Reference
+
+[Snailclimb/JavaGuide:BIO-NIO-AIO](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/BIO-NIO-AIO.md)
+
+[如何理解BIO、NIO、AIO的区别？](https://juejin.im/post/5dbba5df6fb9a0204a08ae55)
+
+[Java核心（五）深入理解BIO、NIO、AIO](https://zhuanlan.zhihu.com/p/51453522)
+
+[浅谈“阻塞同步”，“BIO、NIO、AIO”](https://www.jianshu.com/p/8ad464ed516e)
