@@ -11,6 +11,8 @@
 
 - Socket 基于网络操作的 IO
 
+### 字节流与字符流的区别是什么？
+
 ### Reference
 
 [Java核心（五）深入理解BIO、NIO、AIO](https://zhuanlan.zhihu.com/p/51453522)
