@@ -7,6 +7,12 @@ Netty是一个基于NIO的客户端、服务端的Java编程框架，使用Netty
 
 有了Netty，就可以实现HTTP服务器，FTP服务器，UDP服务器，RPC服务器，WebSocket服务器，Redis的Proxy服务器，MySQL的Proxy服务器等等。  
 
+### 精华总结
+
+文章总结：
+
+视频总结：
+
 ### 文章列表
 
 |序号|标题|链接|来源|创建时间|
