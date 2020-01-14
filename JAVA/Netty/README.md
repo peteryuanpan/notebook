@@ -34,4 +34,8 @@ Netty是一个基于NIO的客户端、服务端的Java编程框架，使用Netty
 
 [Java NIO 视频教程全集（13P）| 3 小时从入门到精通](https://www.bilibili.com/video/av59543731?p=1)
 
+[Netty实战入门详解——让你彻底记住什么是Netty](https://www.cnblogs.com/nanaheidebk/p/11025362.html)
+
+[彻底理解Netty，这一篇文章就够了](https://juejin.im/post/5bdaf8ea6fb9a0227b02275a)
+
 [网络应用框架 Netty 视频教程全集（91P）| 61 小时从入门到精通](https://www.bilibili.com/video/av59683486?pikaqiu)
