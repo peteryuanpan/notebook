@@ -33,7 +33,7 @@ public class SocketServer {
 
 而BIO、NIO、AIO之间的区别就在于这些操作是同步还是异步，阻塞还是非阻塞。
 
-# 补充
+### 补充
 
 传统的 IO 大致可以分为4种类型：
 
