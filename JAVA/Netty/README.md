@@ -20,4 +20,3 @@ Netty是一个基于NIO的客户端、服务端的Java编程框架，使用Netty
 ||Selector选择器|[链接](Selector选择器)|自研|2019-01-14|
 ||衍生出的NIO模型|TODO|自研|2019-01-14|
 ||BIO、NIO、AIO的区别及优缺点|[链接](BIO_NIO_AIO的区别及优缺点)|自研|2019-01-14|
-||Netty基于NIO编程有哪些特性|TODO||2019-01-14|
