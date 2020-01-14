@@ -33,18 +33,6 @@ public class SocketServer {
 
 而***BIO、NIO、AIO之间的区别就在于这些操作是同步还是异步，阻塞还是非阻塞。***
 
-### 补充
-
-传统的 IO 大致可以分为4种类型：
-
-InputStream、OutputStream 基于字节操作的 IO
-
-Writer、Reader 基于字符操作的 IO
-
-File 基于磁盘操作的 IO
-
-Socket 基于网络操作的 IO
-
 ### Reference
 
 [如何理解BIO、NIO、AIO的区别？](https://juejin.im/post/5dbba5df6fb9a0204a08ae55)
