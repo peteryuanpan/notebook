@@ -11,3 +11,8 @@ BIO（Blocking I/O）是操作系统的一种IO模型，它是同步、阻塞的
 
 ### 简介
 
+1
+
+### Reference
+
+[Snailclimb/JavaGuide:BIO-NIO-AIO](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/BIO-NIO-AIO.md)
