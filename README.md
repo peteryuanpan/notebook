@@ -2,7 +2,7 @@
 
  * [ALGORITHM_DATASTRUCTURE](./ALGORITHM_DATASTRUCTURE)
     * [00.基础问题](./ALGORITHM_DATASTRUCTURE/00.基础问题)
-    * [01.各大OnlineJudge算法问题集](./ALGORITHM_DATASTRUCTURE/01.各大OnlineJudge算法问题集)
+    * [01.各大OnlineJudge算法问题](./ALGORITHM_DATASTRUCTURE/01.各大OnlineJudge算法问题)
     * [02.程序设计问题自研](./ALGORITHM_DATASTRUCTURE/02.程序设计问题自研)
     * [Linux在CPU调度中对红黑树的实现](./ALGORITHM_DATASTRUCTURE/Linux在CPU调度中对红黑树的实现)
  * [C++](./C++)
@@ -16,7 +16,7 @@
     * [03.MyBatis](./JAVA/03.MyBatis)
  * [OPERATING_SYSTEM](./OPERATING_SYSTEM)
     * [00.基础问题](./OPERATING_SYSTEM/00.基础问题)
-    * [01.常用操作系统命令合集](./OPERATING_SYSTEM/01.常用操作系统命令合集)
+    * [01.常用操作系统命令](./OPERATING_SYSTEM/01.常用操作系统命令)
  * [PYTHON](./PYTHON)
     * [常用python语句糖](./PYTHON/常用python语句糖.md)
  * [TCP-IP](./TCP-IP)
