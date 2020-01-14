@@ -8,11 +8,7 @@
 
 |序号|题目|链接|来源|大标签-小标签|创建时间|
 |--|--|--|--|--|--|
-||JAVA基础常见知识点|[链接](JAVA基础常见知识点)|[来源](https://github.com/Snailclimb/JavaGuide)|编程语言-JAVA|2019-01-14|
-||JAVA容器集合常见知识点|[链接](JAVA容器集合常见知识点)|[来源](https://github.com/Snailclimb/JavaGuide)|编程语言-JAVA|2019-01-14|
-||JAVA并发基础常见知识点|[链接](JAVA并发基础常见知识点)|[来源](https://github.com/Snailclimb/JavaGuide)|编程语言-JAVA|2019-01-14|
-||JAVA并发进阶常见知识点|[链接](JAVA并发进阶常见知识点)|[来源](https://github.com/Snailclimb/JavaGuide)|编程语言-JAVA|2019-01-14|
-||JAVA线程池学习总结|[链接](JAVA线程池学习总结)|[来源](https://github.com/Snailclimb/JavaGuide)|编程语言-JAVA|2019-01-14|
+||Snailclimb/JavaGuide知识点汇总|[链接](Snailclimb_JavaGuide)|[来源](https://github.com/Snailclimb/JavaGuide)|编程语言-JAVA|2019-01-14|
 ||JVM内存区域的五大部分|TODO|经典|编程语言-JAVA|2019-01-08|
 ||JAVA栈中的reference指向堆中对象|TODO|自研|编程语言-JAVA|2019-12-31|
 ||JAVA对象创建的五大步骤|TODO|经典|编程语言-JAVA|2019-01-08|
