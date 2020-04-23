@@ -59,7 +59,6 @@ export LANG=en_US.UTF-8
 再输入
 source ~/.zshrc 或者 source ~/.bashrc
 ```
-# 文本处理
 
 ### while枚举每行并替换
 ```
@@ -174,6 +173,26 @@ tcpdump -qns 0 -A -r abc.pcap
 editcap -c 10000 tcpdump.pcap tcpdump/
 ```
 
+### 下载url-list.txt每行URL，并保存成文件名
+```
+cat url-list.txt | while read i; do
+	echo $i;
+	file=$(echo $i | cut -d "?" -f 1 | rev | cut -d "/" -f 1 | rev);
+	curl -o $file $i
+done
+```
+
+### wget下载，取content-disposition，以多重文件夹形式保存
+```
+wget --content-disposition -i url_file
+wget -m -c --content-disposition -i url_file
+```
+
+### 检测a.b.com在1.2.3.4的证书时间
+```
+echo | openssl s_client -servername a.b.com -connect 1.2.3.4:443 2>/dev/null | openssl x509 -noout -dates
+```
+
 # DOCKER
 
 ### 查询镜像及容器
@@ -220,26 +239,6 @@ qdoractl instance <ufop> --all
 ### 登录到实例上
 ```
 qdoractl attach <instance ID> --region <region> --instance <ufop>
-```
-
-### 下载url-list.txt每行URL，并保存成文件名
-```
-cat url-list.txt | while read i; do
-	echo $i;
-	file=$(echo $i | cut -d "?" -f 1 | rev | cut -d "/" -f 1 | rev);
-	curl -o $file $i
-done
-```
-
-### wget下载，取content-disposition，以多重文件夹形式保存
-```
-wget --content-disposition -i url_file
-wget -m -c --content-disposition -i url_file
-```
-
-### 检测a.b.com在1.2.3.4的证书时间
-```
-echo | openssl s_client -servername a.b.com -connect 1.2.3.4:443 2>/dev/null | openssl x509 -noout -dates
 ```
 
 # 其他
