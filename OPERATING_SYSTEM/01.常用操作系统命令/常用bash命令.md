@@ -116,7 +116,7 @@ TAB替换为空格
 :%retab!
 ```
 
-# 网络排障
+# 网络相关
 
 ### curl测试各阶段时间
 ```
@@ -222,6 +222,26 @@ qdoractl instance <ufop> --all
 qdoractl attach <instance ID> --region <region> --instance <ufop>
 ```
 
+### 下载url-list.txt每行URL，并保存成文件名
+```
+cat url-list.txt | while read i; do
+	echo $i;
+	file=$(echo $i | cut -d "?" -f 1 | rev | cut -d "/" -f 1 | rev);
+	curl -o $file $i
+done
+```
+
+### wget下载，取content-disposition，以多重文件夹形式保存
+```
+wget --content-disposition -i url_file
+wget -m -c --content-disposition -i url_file
+```
+
+### 检测a.b.com在1.2.3.4的证书时间
+```
+echo | openssl s_client -servername a.b.com -connect 1.2.3.4:443 2>/dev/null | openssl x509 -noout -dates
+```
+
 # 其他
 
 ### screen异步窗口命令
@@ -271,18 +291,4 @@ echo "ibase=16; FF" | bc
 perl -le 'print hex("FF");'
 printf "%d\n" 0xFF
 python -c 'print(int("FF", 16))'
-```
-
-### 下载url-list.txt每行URL，并保存成文件名
-```
-cat url-list.txt | while read i; do
-	echo $i;
-	file=$(echo $i | cut -d "?" -f 1 | rev | cut -d "/" -f 1 | rev);
-	curl -o $file $i
-done
-```
-
-### 检测a.b.com在1.2.3.4的证书时间
-```
-echo | openssl s_client -servername a.b.com -connect 1.2.3.4:443 2>/dev/null | openssl x509 -noout -dates
 ```
