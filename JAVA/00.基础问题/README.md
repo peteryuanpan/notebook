@@ -9,7 +9,7 @@
 |序号|题目|链接|来源|
 |--|--|--|--|
 ||Snailclimb/JavaGuide知识点汇总|[链接](Snailclimb_JavaGuide)|[Github](https://github.com/Snailclimb/JavaGuide)|
-||JAVA创建线程的三大方法|TODO|经典|
+||JAVA创建线程的三大方法|TODO||
 
 ## 32个JAVA面试必考点 
 
