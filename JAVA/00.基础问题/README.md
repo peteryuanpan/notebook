@@ -10,9 +10,9 @@
 
 地址：https://pc-shop.xiaoe-tech.com/appcCrwMYBx6232/columnist_detail?id=p_5c6393656155a_0AafWOdu
 
-|序号|标题|视频链接|
+|序号|标题|目录|
 |--|--|--|
-|01|课时01.技术人职业发展路径|[链接](https://tswork.peterpy.cn/32个JAVA面试必考点/第01讲：技术人职业发展路径.mp4)|
+|01|课时01.技术人职业发展路径|/32个JAVA面试必考点/第01讲：技术人职业发展路径.mp4|
 
 ## 自研问题总结
 
