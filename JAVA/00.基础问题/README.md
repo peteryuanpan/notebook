@@ -13,8 +13,10 @@
 
 ## 32个JAVA面试必考点 
 
-新浪微博技术专家张雷
+作者：新浪微博技术专家张雷
+
+地址：https://pc-shop.xiaoe-tech.com/appcCrwMYBx6232/columnist_detail?id=p_5c6393656155a_0AafWOdu
 
 |序号|标题|视频链接|
 |--|--|--|
-|01|课时01.技术人职业发展路径|[链接](https://tswork.peterpy.cn/32个JAVA面试必考点/课时01.技术人职业发展路径.mp4)|
+|01|课时01.技术人职业发展路径|[链接](https://tswork.peterpy.cn/32个JAVA面试必考点/第01讲：技术人职业发展路径.mp4)|
