@@ -117,7 +117,7 @@ ffmpeg -i input.mp4 -vcodec copy -acodec copy out.flv
 ### 转码（m3u8转mp4）
 
 ```
-ffmpeg -protocol_whitelist "file,http,https,tcp,tls" -i input.m3u8 -c copy output.mp4
+ffmpeg -protocol_whitelist "file,http,https,tcp,tls,crypto" -i input.m3u8 -c copy output.mp4
 ```
 
 ### 切片（mp4转m3u8）
