@@ -1,23 +1,32 @@
 
-# ICPC
+# 简介
 
-International Collegiate Programming Contest
+这是我的刷题笔记本，以Leetcode为主，其他OnlineJudge为辅，记录下刷过的问题、源码、题解等
+
+### OnlineJudge及相关主页
+
+|名称|全称|主页|
+|--|--|--|
+|ICPC|International Collegiate Programming Contest|https://icpc.global/|
+|UESTC|University of Electronic Science and Technology of China|https://acm.uestc.edu.cn/home|
+|Leetcode|The World's Leading Online Programming Contest|https://leetcode-cn.com/|
+|UVA|UVA Online Judge|https://onlinejudge.org/index.php|
 
 ### 题目列表
 
-|序号|题目|链接|来源|大标签-小标签|
-|--|--|--|--|--|
-|001|任意升序排序数列A的子串能否变成B|[链接](串结构问题/codeforces_contest1187_problemD_任意升序排序数列A的子串能否变成B)|codeforces|白题-排列|
-|002|求和为零的三元组的去重解|[链接](串结构问题/leetcode_problem15_求和为零的三元组的去重解)|leetcode|白题-二分|
-|003|Kruskal算法求连通图的自定义函数解|[链接](图结构问题/uva_1395_Kruskal算法求连通图的自定义函数解)|uva|图论-最小生成树|
-|004|线段树单点加法区间求和|[链接](树结构问题/uestc_problem_838_线段树单点加法区间求和)|uestc|数据结构-线段树|
-|005|线段树区间加法区间求和|[链接](树结构问题/uestc_problem_839_线段树区间加法区间求和)|uestc|数据结构-线段树|
-|006|全排列能否被60整除|[链接](串结构问题/codeforces_contest1266_problemA_全排列能否被60整除)|codeforces|白题-排列|
-|007|基于最大公约数的矩阵构造题|[链接](串结构问题/codeforces_contest1266_problemC_基于最大公约数的矩阵构造题)|codeforces|白题-构造|
-|008|输出串是两个输入串的母序列且规则|[链接](串结构问题/codeforces_contest1272_problemF_输出串是两个输入串的母序列且规则)|codeforces|动态规划|
-|009|商品打折券的最大化使用|[链接](串结构问题/codeforces_contest1282_problemB2_商品打折券的最大化使用)|codeforces|动态规划|
-|010|合并且排序K个指针表|[链接](串结构问题/leetcode_problem23_合并且排序K个指针表)|leetcode|白题-指针|
-|011|求解next_permutation|[链接](串结构问题/leetcode_problem31_求解next_permutation)|leetcode|白题-排列|
+|序号|题目|链接|来源|大标签|小标签|
+|--|--|--|--|--|--|
+|001|任意升序排序数列A的子串能否变成B|[链接](串结构问题/codeforces_contest1187_problemD_任意升序排序数列A的子串能否变成B)|codeforces|白题|排列|
+|002|求和为零的三元组的去重解|[链接](串结构问题/leetcode_problem15_求和为零的三元组的去重解)|leetcode|白题|二分|
+|003|Kruskal算法求连通图的自定义函数解|[链接](图结构问题/uva_1395_Kruskal算法求连通图的自定义函数解)|uva|图论|最小生成树|
+|004|线段树单点加法区间求和|[链接](树结构问题/uestc_problem_838_线段树单点加法区间求和)|uestc|数据结构|线段树|
+|005|线段树区间加法区间求和|[链接](树结构问题/uestc_problem_839_线段树区间加法区间求和)|uestc|数据结构|线段树|
+|006|全排列能否被60整除|[链接](串结构问题/codeforces_contest1266_problemA_全排列能否被60整除)|codeforces|白题|排列|
+|007|基于最大公约数的矩阵构造题|[链接](串结构问题/codeforces_contest1266_problemC_基于最大公约数的矩阵构造题)|codeforces|白题|构造|
+|008|输出串是两个输入串的母序列且规则|[链接](串结构问题/codeforces_contest1272_problemF_输出串是两个输入串的母序列且规则)|codeforces|动态规划||
+|009|商品打折券的最大化使用|[链接](串结构问题/codeforces_contest1282_problemB2_商品打折券的最大化使用)|codeforces|动态规划||
+|010|合并且排序K个指针表|[链接](串结构问题/leetcode_problem23_合并且排序K个指针表)|leetcode|白题|指针|
+|011|求解next_permutation|[链接](串结构问题/leetcode_problem31_求解next_permutation)|leetcode|白题|排列|
  
 ### 标签
 ```
