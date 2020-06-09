@@ -18,9 +18,9 @@
 |--|--|--|--|--|--|
 |001|任意升序排序数列A的子串能否变成B|[contest1187_problemD](Codeforces/contest1187_problemD_任意升序排序数列A的子串能否变成B)|codeforces|白题|排列|
 |002|求和为零的三元组的去重解|[problem15](Leetcode/problem15_求和为零的三元组的去重解)|leetcode|白题|二分|
-|003|Kruskal算法求连通图的自定义函数解|[problem_1395](UVA/problem_1395_Kruskal算法求连通图的自定义函数解)|uva|图论|最小生成树|
-|004|线段树单点加法区间求和|[problem_838](UESTC/problem_838_线段树单点加法区间求和)|uestc|数据结构|线段树|
-|005|线段树区间加法区间求和|[problem_839](UESTC/problem_839_线段树区间加法区间求和)|uestc|数据结构|线段树|
+|003|Kruskal算法求连通图的自定义函数解|[problem1395](UVA/problem1395_Kruskal算法求连通图的自定义函数解)|uva|图论|最小生成树|
+|004|线段树单点加法区间求和|[problem838](UESTC/problem838_线段树单点加法区间求和)|uestc|数据结构|线段树|
+|005|线段树区间加法区间求和|[problem839](UESTC/problem839_线段树区间加法区间求和)|uestc|数据结构|线段树|
 |006|全排列能否被60整除|[contest1266_problemA](Codeforces/contest1266_problemA_全排列能否被60整除)|codeforces|白题|排列|
 |007|基于最大公约数的矩阵构造题|[contest1266_problemC](Codeforces/contest1266_problemC_基于最大公约数的矩阵构造题)|codeforces|白题|构造|
 |008|输出串是两个输入串的母序列且规则|[contest1272_problemF](Codeforces/contest1272_problemF_输出串是两个输入串的母序列且规则)|codeforces|动态规划||
