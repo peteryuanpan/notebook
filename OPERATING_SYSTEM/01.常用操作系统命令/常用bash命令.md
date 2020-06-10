@@ -33,8 +33,9 @@ mkfs.ntfs /dev/<NAME>
 
 ### 查看磁盘空间情况
 ```
-du -h
-du -hs * | sort -h
+df -h
+du -h | sort -rn | head
+du -hs * | sort -rn | head
 du -ah | sort -h
 ```
 
