@@ -15,8 +15,8 @@ tswork
 |序号|目录|总结|
 |--|--|--|
 |first|/32个JAVA面试必考点/开篇寄寓：建立年薪50万的能力框架.mp4||
-|01|/32个JAVA面试必考点/第01讲：技术人职业发展路径.mp4|[面试前的准备工作](https://github.com/peteryuanpan/notebook/issues/3)|
-|02.1|/32个JAVA面试必考点/第02讲（上）：操作系统与计算机网络.mp4|[知识点汇总-操作系统](https://github.com/peteryuanpan/notebook/issues/4)|
+|01|/32个JAVA面试必考点/第01讲：技术人职业发展路径.mp4|[32个JAVA面试必考点：面试前的准备工作](https://github.com/peteryuanpan/notebook/issues/3)|
+|02.1|/32个JAVA面试必考点/第02讲（上）：操作系统与计算机网络.mp4|[32个JAVA面试必考点：知识点汇总-操作系统](https://github.com/peteryuanpan/notebook/issues/4)|
 |02.2|/32个JAVA面试必考点/第02讲（下）：Java语言特性与设计模式.mp4||
 |03|/32个JAVA面试必考点/第03讲：深入浅出JVM.mp4||
 |04|/32个JAVA面试必考点/第04讲：并发与多线程.mp4||
