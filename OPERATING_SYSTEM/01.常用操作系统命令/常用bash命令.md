@@ -184,7 +184,7 @@ editcap -c 10000 tcpdump.pcap tcpdump/
 cat url-list.txt | while read i; do
 	echo $i;
 	file=$(echo $i | cut -d "?" -f 1 | rev | cut -d "/" -f 1 | rev);
-	curl -o $file $i
+	echo curl -o $file $i | sh;
 done
 ```
 
