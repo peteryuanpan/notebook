@@ -15,7 +15,7 @@
 
 一次完整的HTTP请求，包括 dns请求、tcp连接、ssl握手、首包等待、剩余包传输
 
-![](https://github.com/peteryuanpan/http-log/blob/master/docment/whole_http.jpg)
+![](docment/whole_http.jpg)
 
 # 基于CURL-C
 
@@ -62,7 +62,7 @@ dnslookup: 0.028 | connect: 0.035 | appconnect: 0.054 | pretransfer: 0.054 | sta
 
 # 基于OKHTTP-JAVA
 
-代码DEMO：https://github.com/peteryuanpan/http-log/blob/master/src/main/OKHTTP3_LOG.java
+代码DEMO：[OKHTTP3_LOG.java](src/main/OKHTTP3_LOG.java)
 
 ### 日志例子
 
@@ -162,11 +162,11 @@ class HttpEventListener extends EventListener {
 
 打开开发者模式（F12），找到 Network - Name - Timing，查看瀑布图
 
-![](https://github.com/peteryuanpan/http-log/blob/master/docment/chrome_F12.png)
+![](docment/chrome_F12.png)
 
 一次完整的HTTP请求，包括 Queueing、Stalled、DNS Lookup、Initial Connection、SSL、Request sent、Waiting(TTFB)、Content Downloading 几个部分
 
-![](https://github.com/peteryuanpan/http-log/blob/master/docment/chrome_http.png)
+![](docment/chrome_http.png)
 
 # Reference
 
