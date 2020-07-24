@@ -146,7 +146,6 @@ class HttpEventListener extends EventListener {
     @Override
     public void requestHeadersEnd(Call call, Request request) {
         super.requestHeadersEnd(call, request);
-        System.out.println("request headers end.");
         long nanoTime = System.nanoTime();
         System.out.printf("request headers end, cost %.3fs.\n", (nanoTime - requestHeadersStartNanos) / 1000000000d);
         System.out.println("request headers: [" + request.headers().toString().replace("\n", ", ") + "]");
