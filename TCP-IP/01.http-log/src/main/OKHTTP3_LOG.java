@@ -1,5 +1,3 @@
-package main;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -19,26 +17,26 @@ import okhttp3.Response;
 
 public class OKHTTP3_LOG {
 
-	public static void main(String[] args) {
-		OkHttpClient client = new OkHttpClient.Builder()
-		          .eventListenerFactory(HttpEventListener.FACTORY)
-		          .build();
-		Request request = new Request.Builder()
-				.url("https://www.qiniu.com/?a=1&b=2")
-				.build();
-		Call call = client.newCall(request);
-		try {
-			Response response = call.execute();
-			//System.out.println(response.body().string());
-			response.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    public static void main(String[] args) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .eventListenerFactory(HttpEventListener.FACTORY)
+                .build();
+        Request request = new Request.Builder()
+                .url("https://www.qiniu.com/?a=1&b=2")
+                .build();
+        Call call = client.newCall(request);
+        try {
+            Response response = call.execute();
+            //System.out.println(response.body().string());
+            response.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 class HttpEventListener extends EventListener {
-	
+
     public static final Factory FACTORY = new Factory() {
         final AtomicLong nextCallId = new AtomicLong(1L);
 
@@ -47,7 +45,7 @@ class HttpEventListener extends EventListener {
             return new HttpEventListener(callId, call.request().url(), System.nanoTime());
         }
     };
-    
+
     private long callStartNanos;
     private long dnsStartNanos;
     private long connectStartNanos;
@@ -90,10 +88,10 @@ class HttpEventListener extends EventListener {
 
     @Override
     public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
-    	super.connectStart(call, inetSocketAddress, proxy);
-    	System.out.println("connect start.");
-    	System.out.println("server ip: " + inetSocketAddress.getAddress().getHostAddress());
-    	connectStartNanos = System.nanoTime();
+        super.connectStart(call, inetSocketAddress, proxy);
+        System.out.println("connect start.");
+        System.out.println("server ip: " + inetSocketAddress.getAddress().getHostAddress());
+        connectStartNanos = System.nanoTime();
     }
 
     @Override
