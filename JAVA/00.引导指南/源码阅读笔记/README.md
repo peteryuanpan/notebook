@@ -7,6 +7,6 @@
 
 ### 阅读笔记
 
-|笔记链接|关键点|
+|笔记链接|总结|
 |--|--|
-|[源码阅读笔记：芋道 lab-68-spring-security-oauth 之 Spring Security OAuth2 学习](https://github.com/peteryuanpan/notebook/issues/25)|1. XXX<br>2. XXX|
+|[源码阅读笔记：芋道 lab-68-spring-security-oauth 之 Spring Security OAuth2 学习](https://github.com/peteryuanpan/notebook/issues/25)|1. <br>2. |
