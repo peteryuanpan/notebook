@@ -7,6 +7,6 @@
 
 ### 阅读笔记
 
-|文章标题含链接|源码链接|提出的问题|问题的答案|
-|--|--|--|--|
-|[芋道 Spring Security OAuth2 单点登录](http://www.iocoder.cn/Spring-Security/OAuth2-learning-sso/)|[链接](https://github.com/YunaiV/SpringBoot-Labs/tree/master/lab-68-spring-security-oauth)|TODO<br>TODO|TODO<br>TODO|
+|文章标题含链接|源码链接|提出的问题及答案|
+|--|--|--|
+|[芋道 Spring Security OAuth2 单点登录](http://www.iocoder.cn/Spring-Security/OAuth2-learning-sso/)|[链接](https://github.com/YunaiV/SpringBoot-Labs/tree/master/lab-68-spring-security-oauth)|详细记录：[issue25](https://github.com/peteryuanpan/notebook/issues/25)<br>关键点<br>1. XXX<br>2. XXX|
