@@ -9,4 +9,4 @@
 
 |笔记链接|关键点|
 |--|--|
-|[源码阅读笔记：芋道 Spring Security OAuth2 入门、存储器、单点登录](https://github.com/peteryuanpan/notebook/issues/25)|1. XXX<br>2. XXX|
+|[源码阅读笔记：芋道 lab-68-spring-security-oauth 之 Spring Security OAuth2 学习](https://github.com/peteryuanpan/notebook/issues/25)|1. XXX<br>2. XXX|
