@@ -1,22 +1,5 @@
 # LINUX
 
-# 监控查询
-
-### 查看实时带宽
-```
-nload -m
-```
-
-### 查看磁盘IO实时情况
-```
-iostat -x 1 10
-```
-
-### 查看进程情况
-```
-ps aux
-```
-
 # 磁盘文件
 
 ### 安文件系统于磁盘
@@ -29,6 +12,11 @@ print
 quit
 mkfs.ext4 /dev/<NAME>
 mkfs.ntfs /dev/<NAME>
+```
+
+### 查看磁盘IO实时情况
+```
+iostat -x 1 10
 ```
 
 ### 查看磁盘空间情况
@@ -121,7 +109,7 @@ TAB替换为空格
 :%retab!
 ```
 
-# 网络相关
+# tcp协议簇
 
 ### curl测试各阶段时间
 ```
@@ -142,6 +130,12 @@ ipconfig getifaddr en0
 ```
 sudo lsof -i tcp:80 -s tcp:listen
 sudo lsof -i -t tcp:80 -s tcp:listen
+```
+
+### 查看tcp端口监听情况
+```
+netstat -antlpe | grep 8080
+telnet 127.0.0.1 8080
 ```
 
 ### 解析 ip 192.168.0.1，转成二进制查看
@@ -269,11 +263,6 @@ cat -> ccat（brew install ccat）
 top -> htop（brew install htop）
 ```
 
-### 杀掉进程pid
-```
-kill -9 <pid>
-```
-
 ### 生成公钥私钥
 ```
 ssh-keygen -t rsa
@@ -296,4 +285,19 @@ echo "ibase=16; FF" | bc
 perl -le 'print hex("FF");'
 printf "%d\n" 0xFF
 python -c 'print(int("FF", 16))'
+```
+
+### 查看实时带宽
+```
+nload -m
+```
+
+### 查看进程情况
+```
+ps aux
+```
+
+### 杀掉进程pid
+```
+kill -9 <pid>
 ```
