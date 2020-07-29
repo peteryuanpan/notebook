@@ -34,9 +34,8 @@ mkfs.ntfs /dev/<NAME>
 ### 查看磁盘空间情况
 ```
 df -h
-du -h | sort -rn | head
-du -hs * | sort -rn | head
-du -ah | sort -h
+du -h
+du | sort -rn | head
 ```
 
 ### 同步本地文件夹到linux上
