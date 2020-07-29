@@ -36,6 +36,7 @@ mkfs.ntfs /dev/<NAME>
 df -h
 du -h
 du | sort -rn | head
+（du后单位是KB）
 ```
 
 ### 同步本地文件夹到linux上
