@@ -1,4 +1,0 @@
-
-# CPP
-
-C Plus Plus
