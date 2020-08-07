@@ -79,7 +79,7 @@ def read(filename):
 import gzip
 def readgzip(filename):
 	with gzip.open(filename, 'rb') as f:
-		file_content = f.read()
+		file_content = f.readlines()
 	return file_content
 ```
 
