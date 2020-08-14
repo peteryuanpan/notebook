@@ -1,4 +1,6 @@
 
+# Java字节码例子解读
+
 |字段|原文|理解|例子|
 |--|--|--|--|
 |astore<br>dstore<br>fstore<br>istore<br>lstore|store a reference into a local variable #index<br>store a double value into a local variable #index<br>store a float value into a local variable #index<br>store int value into variable #index<br>store a long value in a local variable #index|将value存储进一个局部变量|TODO：link|
