@@ -10,6 +10,7 @@
 |0xb8|invokestatic|TODO|TODO|
 |0xb9|invokeinterface|TODO|TODO|
 |0xbc|newarray|创建一个指定原始类型（如int, float, char…）的数组，并将其引用值压入栈顶|TODO|
+|0xbd|anewarray|创建一个引用型（如类，接口，数组）的数组，并将其引用值压入栈顶|TODO|
 
 ### 参考
 - [JVM字节码指令手册](https://www.cnblogs.com/xpwi/p/11360692.html)
