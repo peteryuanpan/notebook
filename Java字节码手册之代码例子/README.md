@@ -1,0 +1,15 @@
+
+# Java字节码手册之代码例子
+
+|指令码|助记符|说明|代码例子|
+|--|--|--|--|
+|0x3a|astore|将栈顶引用型数值存入指定本地变量|TODO|
+|0x12|ldc|将int型常量值从常量池中推送至栈顶|TODO|
+|0xb6|invokevirtual|TODO|TODO|
+|0xb7|invokespecial|调用超类构造方法，实例初始化方法，私有方法|TODO|
+|0xb8|invokestatic|TODO|TODO|
+|0xb9|invokeinterface|TODO|TODOO|
+
+### 参考
+- [JVM字节码指令手册](https://www.cnblogs.com/xpwi/p/11360692.html)
+- [维基百科Java字节码介绍列表](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)
