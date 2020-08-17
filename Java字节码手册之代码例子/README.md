@@ -8,7 +8,7 @@
 |0xb6|invokevirtual|TODO|TODO|
 |0xb7|invokespecial|调用超类构造方法，实例初始化方法，私有方法|TODO|
 |0xb8|invokestatic|TODO|TODO|
-|0xb9|invokeinterface|TODO|TODOO|
+|0xb9|invokeinterface|TODO|TODO|
 |0xbc|newarray|创建一个指定原始类型（如int, float, char…）的数组，并将其引用值压入栈顶|TODO|
 
 ### 参考
