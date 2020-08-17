@@ -10,4 +10,5 @@
 |invokespecial|invoke instance method on object objectref and puts the result on the stack (might be void); the method is identified by method reference index in constant pool|调用实例方法，将结果放于栈上|TODO|
 
 ### 参考
-- https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings
+- [JVM字节码指令手册](https://www.cnblogs.com/xpwi/p/11360692.html)
+- [维基百科Java字节码介绍列表](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)
