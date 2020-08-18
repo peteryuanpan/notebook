@@ -10,7 +10,9 @@
 
 无论讨论什么，我们先需要将定义讨论清楚，否则就会有无穷的争执。
 
-JAVA虚拟机是...
+JAVA虚拟机是一种能够运行JAVA字节码程序的虚拟机器。
+
+> A Java virtual machine (JVM) is a virtual machine that enables a computer to run Java programs as well as programs written in other languages that are also compiled to Java bytecode. From https://en.wikipedia.org/wiki/Java_virtual_machine.
 
 ### JAVA语言的水深
 
