@@ -1,5 +1,5 @@
 
-# Java字节码手册之代码例子
+# JAVA字节码手册之代码例子
 
 |指令码|助记符|说明|代码例子|
 |--|--|--|--|
@@ -14,4 +14,4 @@
 
 ### 参考
 - [JVM字节码指令手册](https://www.cnblogs.com/xpwi/p/11360692.html)
-- [维基百科Java字节码介绍列表](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)
+- [维基百科JAVA字节码介绍列表](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)
