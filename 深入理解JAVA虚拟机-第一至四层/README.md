@@ -62,8 +62,8 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 
 JAVA虚拟机
 - 类加载机制与执行子系统：TODO
-- Class类文件结构与字节码手册
-- 内存模型之运行时数据区域
+- Class类文件结构与字节码手册：TODO
+- 内存模型之运行时数据区域：TODO
 - 对象的创建使用与内存布局
 - 指针压缩与JVM调优实战
 - 垃圾收集算法与垃圾收集器
