@@ -48,7 +48,7 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）。参考 [J
 
 不深入包含第 4 层，含义是只是用源码例子来解释，但不会去深入分析，甚至去编写JVM源码的一部分code来理解。。做不到
 
-push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror ，接下来放分析、Debug都用它
+push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror ，接下来分析、Debug都用它
 
 ### 如何学习JVM
 
