@@ -76,4 +76,6 @@ JAVA虚拟机
 
 ### JVM运行时环境全景图
 
+这份图在其他文章中会经常用的，它描述了JVM运行时环境的基本元素、关系等
+
 ![image](http://tswork.peterpy.cn/java_runtime.png)
