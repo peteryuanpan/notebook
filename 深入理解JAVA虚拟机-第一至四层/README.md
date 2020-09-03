@@ -73,3 +73,7 @@ JAVA虚拟机
 ### 文章大纲
 
 标题 => 定义、解释 => 问题1、回答1、...、问题n、回答n（回答要准确、简扼，能证明则证明）
+
+### JVM运行时环境全景图
+
+![image](http://tswork.peterpy.cn/java_runtime.png)
