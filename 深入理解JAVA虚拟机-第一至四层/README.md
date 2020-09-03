@@ -65,6 +65,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
   - [类加载的定义](类加载机制.md#类加载的定义)
   - [类加载的输入和输出结果](类加载机制.md#类加载的输入和输出结果)
   - [InstanceKlass和InstanceMirrorKlass是什么](类加载机制.md#instanceklass和instancemirrorklass是什么)
+  - [类加载什么时候会进行](类加载机制.md#类加载什么时候会进行)
   
 #### 第2章：Class类文件结构与字节码手册
 
