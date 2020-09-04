@@ -72,6 +72,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
     - [new或getstatic或putstatic或invokestatic](#new或getstatic或putstatic或invokestatic)
     - [优先加载父类](#优先加载父类)
     - [反射](#反射)
+  - [类加载笔试题统一解法][#类加载笔试题统一解法]
   - [运行期动态类加载](#运行期动态类加载)
   - [广义的类文件是二进制字节流](#广义的类文件是二进制字节流)
   - [类加载的五个过程](#类加载的五个过程)
@@ -798,6 +799,23 @@ System.out.println("11");，输出11
 InterfaceClassLoaderTest11.a.toString(); 对应 getstatic InterfaceClassLoaderTest11.a，会对InterfaceClassLoaderTest11进行类加载，InterfaceClassLoaderTest13 a和InterfaceClassLoaderTest15 b都是static的，它们都执行了new，都会加载这两个类，因此输出33和55
 
 对接口进行类加载时，不会加载其父接口
+
+### 类加载笔试题统一解法
+
+通过上面例子，我们见到了一些关于类加载触发时机、父子类类加载关系的题目，基本上题型都一样，给一段简单的代码，请问代码的输出结果是什么，有的是问答题，有的是选择题，这类题目在Java基础笔试中占一定比重
+
+经过总结，统一解法满足以下节点
+1、main函数所在类先进行加载，结束后调用main方法
+2、默认情况下，已经加载过的类不会加载（非默认情况是指自定义类加载器）
+3、类加载会在“准备”阶段，执行static修饰的代码块（static{}），对static修饰的域（field，即成员变量）进行赋值
+4、类加载执行顺序与代码书写顺序一致
+5、当遇到new、getstatic、putstatic 或 invokestatic 这4条字节码指令时，会进行类加载且插入结算
+
+下面我们以几个典型例子来证明上面统一解法的合理性
+
+#### 类加载笔试题统一解法例子1
+
+TODO
 
 ### 运行期动态类加载
 
