@@ -56,12 +56,6 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 
 一个好方法：学习了一块知识点后，自己开视频录制，复述出来，一遍一遍地过，直到讲明白为止
 
-### JVM运行时环境全景图
-
-这份图在其他文章中会经常用的，它描述了JVM运行时环境的基本元素、关系等
-
-![image](http://tswork.peterpy.cn/java_runtime.png)
-
 ### 文章目录（不断修改中...）
 
 #### 文章大纲
