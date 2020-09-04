@@ -72,7 +72,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
     - [new或getstatic或putstatic或invokestatic](#new或getstatic或putstatic或invokestatic)
     - [优先加载父类](#优先加载父类)
     - [反射](#反射)
-  - [类加载笔试题统一解法][#类加载笔试题统一解法]
+  - [类加载笔试题统一解法](#类加载笔试题统一解法)
   - [运行期动态类加载](#运行期动态类加载)
   - [广义的类文件是二进制字节流](#广义的类文件是二进制字节流)
   - [类加载的五个过程](#类加载的五个过程)
