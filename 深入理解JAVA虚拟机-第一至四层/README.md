@@ -64,22 +64,22 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 
 #### 第1章：类加载机制与类加载器
 - [类加载机制](#类加载机制)
-  - [类加载的定义](类加载机制.md#类加载的定义)
-  - [类加载的输入和输出结果](类加载机制.md#类加载的输入和输出结果)
-  - [InstanceKlass和InstanceMirrorKlass是什么](类加载机制.md#instanceklass和instancemirrorklass是什么)
-  - [类加载什么时候会进行](类加载机制.md#类加载什么时候会进行)
-    - [加载mainClass](类加载机制.md#当虚拟机启动时用户需要指定一个要执行的主类包含main方法的那个类虚拟机会先初始化这个主类)
-    - [new、getstatic、putstatic、invokestatic](类加载机制.md#遇到-newgetstaticputstatic-或-invokestatic-这4条字节码指令时如果类没有进行过初始化则需要先)
-    - [优先加载父类](类加载机制.md#当初始化一个类的时候如果发现其父类还没有进行过初始化则需要先触发其父类的初始化)
-    - [反射](类加载机制.md#使用-javalangreflect-包的方法对类进行反射调用的时候如果类没有进行过初始化则需要先触发其初始化)
-  - [运行期动态类加载](类加载机制.md#运行期动态类加载)
-  - [广义的类文件是二进制字节流](类加载机制.md#广义的类文件是二进制字节流)
-  - [类加载的五个过程](类加载机制.md#类加载的五个过程)
-    - [加载](类加载机制.md#加载)
-    - [验证](类加载机制.md#验证)
-    - [准备](类加载机制.md#准备)
-    - [解析](类加载机制.md#解析)
-    - [初始化](类加载机制.md#初始化)
+  - [类加载的定义](#类加载的定义)
+  - [类加载的输入和输出结果](#类加载的输入和输出结果)
+  - [InstanceKlass和InstanceMirrorKlass是什么](#instanceklass和instancemirrorklass是什么)
+  - [类加载什么时候会进行](#类加载什么时候会进行)
+    - [加载mainClass](#加载mainClass)
+    - [new或getstatic或putstatic或invokestatic](#new或getstatic或putstatic或invokestatic)
+    - [优先加载父类](#优先加载父类)
+    - [反射](#反射)
+  - [运行期动态类加载](#运行期动态类加载)
+  - [广义的类文件是二进制字节流](#广义的类文件是二进制字节流)
+  - [类加载的五个过程](#类加载的五个过程)
+    - [加载](#加载)
+    - [验证](#验证)
+    - [准备](#准备)
+    - [解析](#解析)
+    - [初始化](#初始化)
 - [类加载器]
   - 三种系统类加载器
     - 启动类加载器
@@ -261,7 +261,9 @@ class InstanceMirrorKlass: public InstanceKlass {
 
 前四种情况可以分别举一下例子吗？
 
-#### 当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类
+#### 加载mainClass
+
+当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类
 
 ```java
 package com.luban.ziya.classload;
@@ -295,7 +297,9 @@ JavaMain(void * _args)
     CHECK_EXCEPTION_NULL_LEAVE(mainClass);
 ```
 
-#### 遇到 new、getstatic、putstatic 或 invokestatic 这4条字节码指令时，如果类没有进行过初始化，则需要先触发其初始化
+#### new或getstatic或putstatic或invokestatic
+
+遇到 new、getstatic、putstatic 或 invokestatic 这4条字节码指令时，如果类没有进行过初始化，则需要先触发其初始化
 
 new：[JAVA字节码手册/new](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/new.md)
 
@@ -307,7 +311,9 @@ invokestatic：[JAVA字节码手册/invokestatic](https://github.com/peteryuanpa
 
 注意：newarray，anewarray不会触发类加载
 
-#### 当初始化一个类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化
+#### 优先加载父类
+
+当初始化一个类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化
 
 invokestatic一个类时，会先去加载它的父类，参考：[JAVA字节码手册/invokestatic#code2](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/invokestatic.md#code2)
 
@@ -315,7 +321,9 @@ invokestatic一个类时，不会去加载它的子类，参考：[JAVA字节码
 
 同理，getstatic、putstatic、new一个类时，会先去加载它的父类，不会加载它的子类
 
-#### 使用 java.lang.reflect 包的方法对类进行反射调用的时候，如果类没有进行过初始化，则需要先触发其初始化
+#### 反射
+
+使用 java.lang.reflect 包的方法对类进行反射调用的时候，如果类没有进行过初始化，则需要先触发其初始化
 
 ```java
 package com.luban.ziya.classload;
