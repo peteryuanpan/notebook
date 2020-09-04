@@ -266,9 +266,9 @@ class InstanceMirrorKlass: public InstanceKlass {
 当虚拟机启动时，用户需要指定一个要执行的主类（包含main()方法的那个类），虚拟机会先初始化这个主类
 
 ```java
-package com.luban.ziya.classload;
+package com.peter.jvm.example;
 
-public class MainClassTest {
+public class MainClassTest1 {
 
     static {
         System.out.println("11");
@@ -294,22 +294,237 @@ JavaMain(void * _args)
      ...
 */
     mainClass = LoadMainClass(env, mode, what);
-    CHECK_EXCEPTION_NULL_LEAVE(mainClass);
+..
+    mainID = (*env)->GetStaticMethodID(env, mainClass, "main",
+                                       "([Ljava/lang/String;)V");
+...
+    (*env)->CallStaticVoidMethod(env, mainClass, mainID, mainArgs);
 ```
 
 #### new或getstatic或putstatic或invokestatic
 
 遇到 new、getstatic、putstatic 或 invokestatic 这4条字节码指令时，如果类没有进行过初始化，则需要先触发其初始化
 
-new：[JAVA字节码手册/new](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/new.md)
+##### new
 
-getstatic：[JAVA字节码手册/getstatic](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/getstatic.md)
+```java
+package com.peter.jvm.example;
 
-putsatic：[JAVA字节码手册/putstatic](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/putstatic.md)
+public class ByteCodeNewTest1 {
 
-invokestatic：[JAVA字节码手册/invokestatic](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/invokestatic.md)
+    public static void main(String[] args) {
+        ByteCodeNewTest1 t = new ByteCodeNewTest1();
+    }
+}
+
+class ByteCodeNewTest12 {
+
+    static {
+        System.out.println("11");
+    }
+
+    ByteCodeNewTest12() {
+        System.out.println(a);
+        a = "22";
+        System.out.println(a);
+    }
+
+    static String a = "33";
+
+    static {
+        System.out.println(a);
+        a = "44";
+        System.out.println(a);
+    }
+}
+```
+
+输出结果
+```
+11
+33
+44
+44
+22
+```
+
+字节码
+```
+0 new #2 <com/peter/jvm/example/ByteCodeNewTest12>
+3 dup
+4 invokespecial #3 <com/peter/jvm/example/ByteCodeNewTest12.<init>>
+7 astore_1
+8 return
+```
+
+解释
+
+ByteCodeNewTest12 t = new ByteCodeNewTest12(); 对应 new ByteCodeNewTest12，ByteCodeNewTest12，输出11、a、a，第一个a是33，第二个a是44，然后调用构造函数，invokespecial ByteCodeNewTest12.init，输出a、a，第一个a是44，第二个a是22
 
 注意：newarray，anewarray不会触发类加载
+
+##### getstatic
+
+```java
+package com.peter.jvm.example;
+
+public class ByteCodeGetStaticTest1 {
+    
+    public static void main(String[] args) {
+        String a = ByteCodeGetStaticTest11.a;
+        String b = ByteCodeGetStaticTest11.a;
+    }
+}
+
+class ByteCodeGetStaticTest11 {
+
+    static {
+        System.out.println("11");
+    }
+
+    public static String a = "22";
+
+    static {
+        System.out.println("33");
+    }
+}
+```
+
+输出结果
+```
+11
+33
+```
+
+字节码
+```
+0 getstatic #2 <com/peter/jvm/example/ByteCodeGetStaticTest11.a>
+3 astore_1
+4 getstatic #2 <com/peter/jvm/example/ByteCodeGetStaticTest11.a>
+7 astore_2
+8 return
+```
+
+解释
+
+String a = ByteCodeGetStaticTest11.a; 对应 getstatic ByteCodeGetStaticTest11.a，会触发ByteCodeGetStaticTest11的类加载，输出11、33
+
+String b = ByteCodeGetStaticTest11.a; 对应 getstatic ByteCodeGetStaticTest11.a，会尝试ByteCodeGetStaticTest11的类加载，发现加载过了，就不加载了
+
+##### putsatic
+
+```java
+package com.peter.jvm.example;
+
+public class ByteCodePutStaticTest1 {
+
+    public static void main(String[] args) {
+        ByteCodePutStaticTest11.a = "44";
+        String a = ByteCodePutStaticTest11.a;
+        System.out.println(a);
+    }
+}
+
+class ByteCodePutStaticTest11 {
+
+    static {
+        System.out.println("11");
+        //System.out.print(a); // 编译不过
+    }
+
+    public static String a = "22";
+
+    static {
+        System.out.println("33");
+        System.out.println(a);
+    }
+}
+```
+
+输出结果
+```
+11
+33
+22
+44
+```
+
+字节码
+```
+ 0 ldc #2 <44>
+ 2 putstatic #3 <com/peter/jvm/example/ByteCodePutStaticTest11.a>
+ 5 getstatic #3 <com/peter/jvm/example/ByteCodePutStaticTest11.a>
+ 8 astore_1
+ 9 getstatic #4 <java/lang/System.out>
+12 aload_1
+13 invokevirtual #5 <java/io/PrintStream.println>
+16 return
+```
+
+解释
+
+ByteCodePutStaticTest1.a = "44"; 对应 putstatic ByteCodePutStaticTest1.a，会触发对ByteCodePutStaticTest1类加载，输出11、33、a，此时a还是22
+
+String a = ByteCodePutStaticTest1.a; 对应 getstatic ByteCodePutStaticTest1.a，会尝试对ByteCodePutStaticTest1类加载，由于已经加载过了，不加载，a变为44
+
+System.out.println(a); 输出44
+
+##### invokestatic
+
+```java
+package com.peter.jvm.example;
+
+public class ByteCodeInvokeStaticTest1 {
+
+    public static void main(String[] args) {
+        ByteCodeInvokeStaticTest11.aa();
+    }
+}
+
+class ByteCodeInvokeStaticTest11 {
+
+    {
+        System.out.println("33");
+    }
+
+    static {
+        System.out.println("44");
+    }
+
+    static void aa() {
+        System.out.println(a);
+    }
+
+    static {
+        System.out.println("66");
+    }
+
+    public static String a = new String("11");
+
+    public String b = new String("22");
+
+    void bb() {
+        System.out.println("55");
+    }
+}
+```
+
+输出结果
+```
+44
+66
+11
+```
+
+字节码
+```
+0 invokestatic #2 <com/peter/jvm/example/ByteCodeInvokeStaticTest11.aa>
+3 return
+```
+
+解释
+
+ByteCodeInvokeStaticTest11.aa(); 对应着 invokestatic ByteCodeInvokeStaticTest11.aa，会先触发对ByteCodeInvokeStaticTest11类加载，输出44、66，再invoke aa，输出11
 
 #### 优先加载父类
 
