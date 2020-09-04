@@ -5,17 +5,17 @@
 ### code1
 
 ```java
-package com.luban.ziya.statictest;
+package com.peter.jvm.example;
 
-public class GetStaticTest1 {
-
+public class ByteCodeGetStaticTest1 {
+    
     public static void main(String[] args) {
-        String a = Test3.a;
-        String b = Test3.a;
+        String a = ByteCodeGetStaticTest11.a;
+        String b = ByteCodeGetStaticTest11.a;
     }
 }
 
-class Test3 {
+class ByteCodeGetStaticTest11 {
 
     static {
         System.out.println("11");
@@ -37,15 +37,15 @@ class Test3 {
 
 字节码
 ```
-0 getstatic #2 <com/luban/ziya/statictest/Test3.a>
+0 getstatic #2 <com/peter/jvm/example/ByteCodeGetStaticTest11.a>
 3 astore_1
-4 getstatic #2 <com/luban/ziya/statictest/Test3.a>
+4 getstatic #2 <com/peter/jvm/example/ByteCodeGetStaticTest11.a>
 7 astore_2
 8 return
 ```
 
 解释
 
-String a = Test3.a; 对应 getstatic Test3.a，会触发Test3的类加载，输出11、33
+String a = ByteCodeGetStaticTest11.a; 对应 getstatic ByteCodeGetStaticTest11.a，会触发ByteCodeGetStaticTest11的类加载，输出11、33
 
-String b = Test3.a; 对应 getstatic Test3.a，会尝试Test3的类加载，发现加载过了，就不加载了
+String b = ByteCodeGetStaticTest11.a; 对应 getstatic ByteCodeGetStaticTest11.a，会尝试ByteCodeGetStaticTest11的类加载，发现加载过了，就不加载了
