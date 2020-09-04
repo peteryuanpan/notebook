@@ -107,5 +107,3 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 #### 第5章：垃圾收集算法与垃圾收集器
 
 #### 第6章：JVM调优工具与实战
-
-先写那么多，从第一部分开始写点总结，不断修改...
