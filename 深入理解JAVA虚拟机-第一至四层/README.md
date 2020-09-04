@@ -22,7 +22,7 @@ JAVA虚拟机是一种能够运行JAVA字节码程序的虚拟机器
 
 ### JAVA语言的水深
 
-JAVA这潭大湖，从上往下，一共有7层（人为定义的）。参考 [JAVA学习蓝图，从基础、集合、并发、JVM原理，到应用框架](https://github.com/peteryuanpan/notebook/issues/51)
+JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 - JAVA语言
 - JAVA字节码
