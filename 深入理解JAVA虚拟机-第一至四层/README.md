@@ -139,7 +139,7 @@ InstanceKlass是类的元信息数据
 
 InstanceMirrorKlass是类的Class对象
 
-参考：[鲁班学院 第三期第一节 带你探索JVM底层之类加载](https://github.com/peteryuanpan/notebook/issues/43)
+下面是这几个Klass的继承关系图
 
 ![image](https://user-images.githubusercontent.com/10209135/89729486-ced8f380-da68-11ea-81d4-e4b19825a4a0.png)
 
