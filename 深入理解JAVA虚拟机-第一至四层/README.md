@@ -126,8 +126,6 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 - 除了InstanceKlass和InstanceMirrorKlass，还有InstanceRefKlass、ArrayKlass、TypeArrayKlass、ObjArrayKlass，它们分别是写到内存区域中哪一块？
 - 写入方法区和堆区有代码例子证明吗？
 
-参考：[jvm运行时环境全景图](https://github.com/peteryuanpan/notebook/blob/master/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JAVA%E8%99%9A%E6%8B%9F%E6%9C%BA-%E7%AC%AC%E4%B8%80%E8%87%B3%E5%9B%9B%E5%B1%82/README.md#jvm%E8%BF%90%E8%A1%8C%E6%97%B6%E7%8E%AF%E5%A2%83%E5%85%A8%E6%99%AF%E5%9B%BE)
-
 ![image](http://tswork.peterpy.cn/java_runtime.png)
 
 ### InstanceKlass和InstanceMirrorKlass是什么
@@ -259,7 +257,7 @@ class InstanceMirrorKlass: public InstanceKlass {
 
 第五种情况可以忽略不讨论
 
-前四种情况可以分别举一下例子吗？
+前四种情况分别举一下例子
 
 #### 加载mainClass
 
@@ -530,24 +528,158 @@ ByteCodeInvokeStaticTest11.aa(); 对应着 invokestatic ByteCodeInvokeStaticTest
 
 当初始化一个类的时候，如果发现其父类还没有进行过初始化，则需要先触发其父类的初始化
 
-invokestatic一个类时，会先去加载它的父类，参考：[JAVA字节码手册/invokestatic#code2](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/invokestatic.md#code2)
+下面以invokestatic举例子（new、getstatic、putstatic同理）
 
-invokestatic一个类时，不会去加载它的子类，参考：[JAVA字节码手册/invokestatic#code3](https://github.com/peteryuanpan/notebook/blob/master/JAVA%E5%AD%97%E8%8A%82%E7%A0%81%E6%89%8B%E5%86%8C/invokestatic.md#code3)
+#### 加载一个类时，会先去加载它的父类
 
-同理，getstatic、putstatic、new一个类时，会先去加载它的父类，不会加载它的子类
+```java
+public class ByteCodeInvokeStaticSuperClassTest1 {
+
+    public static void main(String[] args) {
+        ByteCodeInvokeStaticSuperClassTest11.aa();
+    }
+}
+
+class ByteCodeInvokeStaticSuperClassTest11 extends ByteCodeInvokeStaticSuperClassTest12 {
+
+    static {
+        System.out.println("11");
+    }
+
+    ByteCodeInvokeStaticSuperClassTest11() {
+        System.out.println("22");
+    }
+
+    static void aa() {
+        System.out.println("33");
+    }
+
+    static {
+        System.out.println("44");
+    }
+}
+
+class ByteCodeInvokeStaticSuperClassTest12 {
+
+    static {
+        System.out.println("55");
+    }
+
+    ByteCodeInvokeStaticSuperClassTest12() {
+        System.out.println("66");
+    }
+
+    static void aa() {
+        System.out.println("77");
+    }
+
+    static {
+        System.out.println("88");
+    }
+
+}
+```
+
+输出结果
+```
+55
+88
+11
+44
+33
+```
+
+字节码
+```
+0 invokestatic #2 <com/peter/jvm/example/ByteCodeInvokeStaticSuperClassTest11.aa>
+3 return
+```
+
+解释
+
+ByteCodeInvokeStaticSuperClassTest11.aa(); 对应着 invokestatic ByteCodeInvokeStaticSuperClassTest11.aa，会先对父类ByteCodeInvokeStaticSuperClassTest11加载，输出55、88，然后对子类ByteCodeInvokeStaticSuperClassTest11加载，输出11、44，最后invokestatic ByteCodeInvokeStaticSuperClassTest11.aa，输出33
+
+#### 加载一个类时，不会去加载它的子类
+
+```java
+package com.peter.jvm.example;
+
+public class ByteCodeInvokeStaticSubClassTest1 {
+
+    public static void main(String[] args) {
+        ByteCodeInvokeStaticSubClassTest12.aa();
+    }
+}
+
+class ByteCodeInvokeStaticSubClassTest11 extends ByteCodeInvokeStaticSubClassTest12 {
+
+    static {
+        System.out.println("11");
+    }
+
+    ByteCodeInvokeStaticSubClassTest11() {
+        System.out.println("22");
+    }
+
+    static void aa() {
+        System.out.println("33");
+    }
+
+    static {
+        System.out.println("44");
+    }
+}
+
+class ByteCodeInvokeStaticSubClassTest12 {
+
+    static {
+        System.out.println("55");
+    }
+
+    ByteCodeInvokeStaticSubClassTest12() {
+        System.out.println("66");
+    }
+
+    static void aa() {
+        System.out.println("77");
+    }
+
+    static {
+        System.out.println("88");
+    }
+
+}
+```
+
+输出结果
+```
+55
+88
+77
+```
+
+字节码
+```
+0 invokestatic #2 <com/peter/jvm/example/ByteCodeInvokeStaticSubClassTest12.aa>
+3 return
+```
+
+解释
+
+ByteCodeInvokeStaticSubClassTest12.aa(); 对应着 invokestatic ByteCodeInvokeStaticSubClassTest12.aa，会触发对类ByteCodeInvokeStaticSubClassTest12加载，输出55、88，然后invokestatic ByteCodeInvokeStaticSubClassTest12.aa，输出77。由于ByteCodeInvokeStaticSubClassTest11是子类，对父类加载不会触发对子类加载
 
 #### 反射
 
 使用 java.lang.reflect 包的方法对类进行反射调用的时候，如果类没有进行过初始化，则需要先触发其初始化
 
 ```java
-package com.luban.ziya.classload;
+package com.peter.jvm.example;
 
-public class ReflectClassTest {
+public class ReflectClassTest1 {
 
     public static void main(String[] args) {
         try {
-            Class c = TestReflect1.class;
+            Class c = ReflectClassTest11.class;
             c.getMethod("b").invoke(new Object());
         } catch (Exception e) {
             e.printStackTrace();
@@ -555,7 +687,7 @@ public class ReflectClassTest {
     }
 }
 
-class TestReflect1 {
+class ReflectClassTest11 {
 
     static {
         System.out.println("11");
@@ -584,19 +716,88 @@ class TestReflect1 {
 
 通过反射，调用函数b，会先进行类加载
 
-如果try代码块中改成 Class c = Class.forName("com.luban.ziya.classload.TestReflect1");，也会进行类加载
+如果try代码块中改成 Class c = Class.forName("com.peter.jvm.example.ReflectClassTest11");，也会进行类加载
 
 #### 关于抽象类
+
 与普通类规则一样
 
 #### 关于接口（Interface）
-
-参考：[JAVA中Interface的理解：Interface与类加载](https://github.com/peteryuanpan/notebook/issues/93#issuecomment-687094076)
 
 - 接口中可以定义域（field），即变量，但隐式的都是static和final的
 - 对接口进行类加载时，会对其成员变量（默认都是static的）进行初始化
 - 对接口进行类加载时，不会加载其父接口
 - 对实现一个接口的类进行类加载时，不会对接口进行类加载
+
+```java
+public class InterfaceClassLoaderTest1 implements InterfaceClassLoaderTest11 {
+
+    public static void main(String[] args) {
+        InterfaceClassLoaderTest1 t = new InterfaceClassLoaderTest1();
+        System.out.println("11");
+        InterfaceClassLoaderTest11.a.toString();
+    }
+}
+
+interface InterfaceClassLoaderTest11 extends InterfaceClassLoaderTest12 {
+    InterfaceClassLoaderTest13 a = new InterfaceClassLoaderTest13();
+    InterfaceClassLoaderTest15 b = new InterfaceClassLoaderTest15();
+}
+
+interface InterfaceClassLoaderTest12 {
+    InterfaceClassLoaderTest14 a = new InterfaceClassLoaderTest14();
+}
+
+class InterfaceClassLoaderTest13 {
+    static {
+        System.out.println("33");
+    }
+}
+
+class InterfaceClassLoaderTest14 {
+    static {
+        System.out.println("44");
+    }
+}
+
+class InterfaceClassLoaderTest15 {
+    static {
+        System.out.println("55");
+    }
+}
+```
+
+输出结果
+```
+11
+33
+55
+```
+
+字节码
+```
+ 0 new #2 <com/peter/jvm/example/InterfaceClassLoaderTest1>
+ 3 dup
+ 4 invokespecial #3 <com/peter/jvm/example/InterfaceClassLoaderTest1.<init>>
+ 7 astore_1
+ 8 getstatic #4 <java/lang/System.out>
+11 ldc #5 <11>
+13 invokevirtual #6 <java/io/PrintStream.println>
+16 getstatic #7 <com/peter/jvm/example/InterfaceClassLoaderTest11.a>
+19 invokevirtual #8 <java/lang/Object.toString>
+22 pop
+23 return
+```
+
+解释
+
+InterfaceClassLoaderTest1 t = new InterfaceClassLoaderTest1 (); 对应 new InterfaceClassLoaderTest1 ，会对类InterfaceClassLoaderTest1 进行类加载，但不会对接口InterfaceClassLoaderTest11 进行类加载，因此无输出
+
+System.out.println("11");，输出11
+
+InterfaceClassLoaderTest11.a.toString(); 对应 getstatic InterfaceClassLoaderTest11.a，会对InterfaceClassLoaderTest11进行类加载，InterfaceClassLoaderTest13 a和InterfaceClassLoaderTest15 b都是static的，它们都执行了new，都会加载这两个类，因此输出33和55
+
+对接口进行类加载时，不会加载其父接口
 
 ### 运行期动态类加载
 
