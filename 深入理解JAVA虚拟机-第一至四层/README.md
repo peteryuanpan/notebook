@@ -127,6 +127,8 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 - 除了InstanceKlass和InstanceMirrorKlass，还有InstanceRefKlass、ArrayKlass、TypeArrayKlass、ObjArrayKlass，它们分别是写到内存区域中哪一块？
 - 写入方法区和堆区有代码例子证明吗？
 
+下面是JAVA运行时环境图解
+
 ![image](http://tswork.peterpy.cn/java_runtime.png)
 
 ### InstanceKlass和InstanceMirrorKlass是什么
@@ -242,6 +244,8 @@ class InstanceMirrorKlass: public InstanceKlass {
 > 对于InstanceMirrorKlass的理解，首先需要理解什么是java.lang.Class，我们来看一下这个类的注释吧：Instances of the class Class represent classes and interfaces in a running Java application. 翻译过来说，就是类或接口在Java运行时环境中的一个表达方式，再看看java.lang.Class的方法就知道，getConstructors()、getMethods()、getFields()、getDeclaredFields()，这些都是类的内部属性，且对于任何类来说，都可以用形如A.class的方法来获取java.lang.Class，即每个Java类都有一个java.lang.Class，那么在JVM中以C++代码表示，每个类的java.lang.Class就是InstanceMirrorKlass。java.lang.Class也是一个类，InstanceMirrorKlass是InstanceKlass的子类。
 
 小补充下，关于InstanceRefKlass、ArrayKlass、TypeArrayKlass、ObjArrayKlass，可以参考：[关于JVM中InstanceKlass及ArrayKlass的理解](https://github.com/peteryuanpan/notebook/issues/49)
+
+TODO：待明确了上面2个TODO后，将这几个Klass的理解写到文章内容中来，去掉参考
 
 ### 类加载什么时候会进行
 
