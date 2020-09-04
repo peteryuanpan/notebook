@@ -56,4 +56,4 @@ class Test1 {
 
 解释
 
-Test1 t = new Test1(); 对应 new Test1，会触发对Test1类加载，输出11、a、a，第一个a是33，第二个a是44，然后调用构造函数，invoke init，输出a、a，第一个a是44，第二个a是22
+Test1 t = new Test1(); 对应 new Test1，会触发对Test1类加载，输出11、a、a，第一个a是33，第二个a是44，然后调用构造函数，invokespecial Test1.init，输出a、a，第一个a是44，第二个a是22
