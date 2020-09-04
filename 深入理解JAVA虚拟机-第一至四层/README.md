@@ -8,7 +8,7 @@
 
 ### 声明
 
-转载请注明出处：https://github.com/peteryuanpan/notebook/master/深入理解JAVA虚拟机-第一至四层/README.md
+转载请注明出处：https://github.com/peteryuanpan/notebook/blob/master/深入理解JAVA虚拟机-第一至四层/README.md
 
 作者：潘缘，来自电子科技大学，2017届
 
