@@ -530,7 +530,7 @@ ByteCodeInvokeStaticTest11.aa(); 对应着 invokestatic ByteCodeInvokeStaticTest
 
 下面以invokestatic举例子（new、getstatic、putstatic同理）
 
-#### 加载一个类时，会先去加载它的父类
+##### 加载一个类时，会先去加载它的父类
 
 ```java
 public class ByteCodeInvokeStaticSuperClassTest1 {
@@ -599,7 +599,7 @@ class ByteCodeInvokeStaticSuperClassTest12 {
 
 ByteCodeInvokeStaticSuperClassTest11.aa(); 对应着 invokestatic ByteCodeInvokeStaticSuperClassTest11.aa，会先对父类ByteCodeInvokeStaticSuperClassTest11加载，输出55、88，然后对子类ByteCodeInvokeStaticSuperClassTest11加载，输出11、44，最后invokestatic ByteCodeInvokeStaticSuperClassTest11.aa，输出33
 
-#### 加载一个类时，不会去加载它的子类
+##### 加载一个类时，不会去加载它的子类
 
 ```java
 package com.peter.jvm.example;
