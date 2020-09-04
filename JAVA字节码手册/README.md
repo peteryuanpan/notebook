@@ -5,10 +5,10 @@
 |--|--|--|
 |0x12|ldc|将int型常量值从常量池中推送至栈顶|
 |0x3a|astore|将栈顶引用型数值存入指定本地变量|
-|0xb6|invokevirtual|TODO|
+|0xb6|invokevirtual|调用实例方法|
 |0xb7|invokespecial|调用超类构造方法，实例初始化方法，私有方法|
-|0xb8|invokestatic|TODO|
-|0xb9|invokeinterface|TODO|
+|0xb8|invokestatic|	调用静态方法|
+|0xb9|invokeinterface|调用接口方法|
 |0xbc|newarray|创建一个指定原始类型（如int, float, char…）的数组，并将其引用值压入栈顶|
 |0xbd|anewarray|创建一个引用型（如类，接口，数组）的数组，并将其引用值压入栈顶|
 
