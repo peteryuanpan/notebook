@@ -12,7 +12,9 @@
 
 作者：潘缘，来自电子科技大学，2017届
 
-本文章很多内容来自鲁班学院的课程，感谢子牙老师和同学们对我的帮助，还有部分内容来自《深入理解JAVA虚拟机》这本书
+本文部分内容来自鲁班学院的课程，感谢子牙老师和同学们对我的帮助
+
+还有部分内容来自《深入理解JAVA虚拟机》第二版，虽然这本书是基于JDK7的，但是本文内容是基于JDK8的，我会去对比第二版与第三版的差异点，如果有关于JDK7的，会特别指出来
 
 ### JAVA虚拟机的定义
 
@@ -73,6 +75,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 #### 第1章：类加载机制与类加载器
 - [类加载机制](#类加载机制)
   - [类加载的定义](#类加载的定义)
+  - [JAVA运行时环境逻辑图](#JAVA运行时环境逻辑图)
   - [类加载的输入和输出结果](#类加载的输入和输出结果)
   - [InstanceKlass和InstanceMirrorKlass是什么](#instanceklass和instancemirrorklass是什么)
   - [类加载什么时候会进行](#类加载什么时候会进行)
@@ -85,6 +88,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
   - [类加载之加载](#类加载之加载)
     - [广义的类文件是二进制字节流](#广义的类文件是二进制字节流)
     - [运行期动态类加载是特性](#运行期动态类加载是特性)
+    - [数组类的加载过程](#数组类的加载过程)
   - [类加载之验证](#类加载之验证)
   - [类加载之准备](#类加载之准备)
   - [类加载之解析](#类加载之解析)
@@ -131,11 +135,13 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
 
 输出是许多数据写入内存区域，比如InstanceKlass到方法区，InstanceMirrorKlass到堆区
 
-#### TODO
-- 除了InstanceKlass和InstanceMirrorKlass，还有InstanceRefKlass、ArrayKlass、TypeArrayKlass、ObjArrayKlass，它们分别是写到内存区域中哪一块？
-- 写入方法区和堆区有代码例子证明吗？
+> 在第二版（7.3.1节）中，InstanceMirrorKlass（即java.lang.Class对象）是写在方法区中的，这是JDK7的逻辑；而在第三版（7.3.1节）中，InstanceMirrorKlass是写在堆内存中的，这是JDK8的逻辑
 
-下面是JAVA运行时环境图解
+> 除了InstanceKlass和InstanceMirrorKlass，还有InstanceRefKlass、ArrayKlass、TypeArrayKlass、ObjArrayKlass，它们分别是写到内存区域中哪一块？
+
+> 写入方法区和堆区有代码例子证明吗？
+
+### JAVA运行时环境逻辑图
 
 ![image](http://tswork.peterpy.cn/java_runtime.png)
 
@@ -251,9 +257,68 @@ class InstanceMirrorKlass: public InstanceKlass {
 
 > 对于InstanceMirrorKlass的理解，首先需要理解什么是java.lang.Class，我们来看一下这个类的注释吧：Instances of the class Class represent classes and interfaces in a running Java application. 翻译过来说，就是类或接口在Java运行时环境中的一个表达方式，再看看java.lang.Class的方法就知道，getConstructors()、getMethods()、getFields()、getDeclaredFields()，这些都是类的内部属性，且对于任何类来说，都可以用形如A.class的方法来获取java.lang.Class，即每个Java类都有一个java.lang.Class，那么在JVM中以C++代码表示，每个类的java.lang.Class就是InstanceMirrorKlass。java.lang.Class也是一个类，InstanceMirrorKlass是InstanceKlass的子类。
 
-小补充下，关于InstanceRefKlass、ArrayKlass、TypeArrayKlass、ObjArrayKlass，可以参考：[关于JVM中InstanceKlass及ArrayKlass的理解](https://github.com/peteryuanpan/notebook/issues/49)
+#### ArrayKlass、TypeArrayKlass、ObjArrayKlass的理解
 
-TODO：待明确了上面2个TODO后，将这几个Klass的理解写到文章内容中来，去掉参考
+在理解了InstanceKlass后，这三个类就很好理解了
+
+- ArrayKlass表示的是数组类型（ArrayKlass is the abstract baseclass for all array classes）
+- TypeArrayKlass表示基本数组类型（A TypeArrayKlass is the klass of a typeArray, It contains the type and size of the elements），type是八大基本类型
+- ObjArrayKlass表示引用数组类型（ObjArrayKlass is the klass for objArrays），type是Reference
+
+下面的源码部分
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/arrayKlass.hpp
+```cpp
+// ArrayKlass is the abstract baseclass for all array classes
+
+class ArrayKlass: public Klass {
+  friend class VMStructs;
+ private:
+  int      _dimension;         // This is n'th-dimensional array.
+  Klass* volatile _higher_dimension;  // Refers the (n+1)'th-dimensional array (if present).
+  Klass* volatile _lower_dimension;   // Refers the (n-1)'th-dimensional array (if present).
+  int      _vtable_len;        // size of vtable for this klass
+  oop      _component_mirror;  // component type, as a java/lang/Cl
+```
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/typeArrayKlass.hpp
+```cpp
+// A TypeArrayKlass is the klass of a typeArray
+// It contains the type and size of the elements
+
+class TypeArrayKlass : public ArrayKlass {
+  friend class VMStructs;
+ private:
+  jint _max_length;            // maximum number of elements allowed in an array
+
+  // Constructor
+  TypeArrayKlass(BasicType type, Symbol* name);
+  static TypeArrayKlass* allocate(ClassLoaderData* loader_data, BasicType type, Symbol* name, TRAPS);
+ public:
+  TypeArrayKlass() {} // For dummy objects.
+```
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/objArrayKlass.hpp
+```cpp
+// ObjArrayKlass is the klass for objArrays
+
+class ObjArrayKlass : public ArrayKlass {
+  friend class VMStructs;
+ private:
+  Klass* _element_klass;            // The klass of the elements of this array type
+  Klass* _bottom_klass;             // The one-dimensional type (InstanceKlass or TypeArrayKlass)
+
+  // Constructor
+  ObjArrayKlass(int n, KlassHandle element_klass, Symbol* name);
+  static ObjArrayKlass* allocate(ClassLoaderData* loader_data, int n, KlassHandle klass_handle, Symbol* name, TRAPS);
+ public:
+  // For dummy objects
+  ObjArrayKlass() {}
+```
+
+#### InstanceRefKlass 的理解
+
+描述java.lang.ref.Reference的子类，这部分的概念与强软弱虚引用、垃圾回收有关系，见第5章
 
 ### 类加载什么时候会进行
 
@@ -857,6 +922,19 @@ TODO
 Java里天生可以动态拓展的语言特性就是依赖运行期动态加载和动态链接这个特点实现的。
 
 例如，如果编写一个面向接口的应用程序，可以等到运行时再指定其实际的实现类；用户可以通过Java预定义的和自定义加载器，让一个本地的应用程序可以在运行时从网络其他地方加载一个二进制流作为程序代码的一部分，这种组装应用程序的方式目前已广泛应用于Java程序中。
+
+#### 数组类的加载过程
+
+对于数组类而言，数组类本身不通过类加载器创建，它是由Java虚拟机直接创建的。但数组类与类加载器仍然有很密切的关系，因为数组类的元素类型（ElementType，指的是数组去掉所有维度的类型）最终是要靠类加载器去创建
+
+创建过程遵循以下规则
+
+- 如果数组的组件类型（Component Type，指的是数组去掉一个维度的类型）是引用类型，那就递归采用 自定义类加载器 => 应用程序类加载器 => 拓展类加载器 => 启动类加载器 的加载过程
+- 如果数组的组件类型是基本类型（比如 int[]数组），就标记为与引导类加载器关联
+
+> 引导类加载器我理解为启动类加载器
+
+> 上面的数组类类加载过程能在JVM源码中找到位置吗？
 
 ### 类加载之验证
 
