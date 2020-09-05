@@ -1075,4 +1075,13 @@ InterfaceClassLoaderTest11.a.toString(); 对应 getstatic InterfaceClassLoaderTe
 - 规则六：clinit方法执行顺序与代码书写顺序保持一致
 - 规则七：当遇到new、getstatic、putstatic或invokestatic这4条字节码指令时，会插入结算新的类加载，再执行指令，再继续旧的类加载
 
+下面举一个例子来充实上面的规则
+
+```java
+```
+
+解释
+- 1
+- 2
+
 你能举出反例吗？若举得出来，欢迎告诉我，有赏哦
