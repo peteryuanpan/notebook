@@ -14,7 +14,7 @@
 
 本文部分内容来自鲁班学院的课程，感谢子牙老师和同学们对我的帮助
 
-还有部分内容来自《深入理解JAVA虚拟机》第二版，虽然这本书是基于JDK7的，但是本文内容是基于JDK8的（Hotspot实现），我会去对比第二版与第三版的差异点，并记录在文中
+还有部分内容来自《深入理解JAVA虚拟机》第二版以及第三版，第二版是基于JDK7的，第三版是基于JDK8及以后的，本文内容是基于JDK8的（Hotspot实现），我会去对比第二版与第三版的差异点，并记录在文中
 
 ### JAVA虚拟机的定义
 
@@ -94,6 +94,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
     - [static+final修饰的变量](#static+final修饰的变量)
   - [类加载之解析](#类加载之解析)
     - [解析的规范定义](#解析的规范定义)
+    - [符号引用替换为直接引用](#符号引用替换为直接引用)
   - [类加载之初始化](#类加载之初始化)
     - [初始化的规范定义](#初始化的规范定义)
     - [clinit方法的理解](#clinit方法的理解)
@@ -498,6 +499,24 @@ public static final int v2 = 123;
 ### 类加载之解析
 
 #### 解析的规范定义
+
+解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程
+
+解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行，分别对应于CONSTANT_Class_info、CONSTANT_Field_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、CONSTANT_MethodHandle_info和CONSTANT_InvokeDynamic_info
+
+解析动作具体来看，有
+- 类或接口的解析。对于类D，把一个从未解析过的符号引用N解析为一个类或接口C的直接引用，分C是或不是数组类型来处理
+- 字段解析。需要对字段表内的class_index项中索引的CONSTANT_Class_info符号引用（字段所属的类或接口的符号引用）进行解析
+- 类方法解析。需要对方法表的class_index项中索引的CONSTANT_Methodref_info符号引用（方法所属的类或接口的符号引用）进行解析
+- 接口方法解析。需要对接口方法表的class_index项中索引的CONSTANT_InterfaceMethodref_info符号引用（方法所属的类或接口的符号引用）进行解析
+
+> 解析阶段的部分关键词是：常量池、符号引用、直接引用、指针、字段表、方法表等，理解这个阶段，需要对运行时常量池、Class文件中的常量池有一定的理解
+
+> 不要认为常量池只是与字符串常量、基本类型数据常量有关系而已，它还与类方法、接口方法等有关系
+
+#### 符号引用替换为直接引用
+
+
 
 ### 类加载之初始化
 
