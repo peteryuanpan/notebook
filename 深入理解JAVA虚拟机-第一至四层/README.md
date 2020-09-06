@@ -1178,15 +1178,18 @@ InterfaceClassLoaderTest11.a.toString(); 对应 getstatic InterfaceClassLoaderTe
 
 通过上面例子，我们见到了一些关于类加载触发时机、父子类类加载关系的题目，基本上题型都一样，给一段简单的代码，请问代码的输出结果是什么，有的是问答题，有的是选择题，这类题目在Java基础笔试题中占一定比重
 
-经过总结，统一解法满足以下八条规则
-- 规则一：main函数所在类最先进行加载，结束后调用main方法
+经过总结，统一解法满足以下九条规则
+- 规则一：main函数所在类最先进行加载，结束后执行main方法
 - 规则二：加载一个类之前，会先加载该类的父类，但不会加载该类实现的接口
 - 规则三：加载一个接口，不会加载其父接口
 - 规则四：默认情况下，同一个类加载器，已经加载过的类不会加载（非默认情况是指自定义类加载器）
 - 规则五：类加载会在“初始化”阶段，调用clinit方法，执行静态代码块，对静态变量赋初值
 - 规则六：clinit方法执行顺序与代码书写顺序保持一致
 - 规则七：当遇到 反射调用 或者new、getstatic、putstatic、invokestatic这4条字节码指令时，会插入结算新的类加载，再执行指令，再继续旧的类加载
-- 规则八：
+- 规则八：每次实例化一个类时，都会先实例化父类
+- 规则九：每次实例化一个类时，都会先执行完所有构造代码块，再执行构造函数
+
+> 上面规则八和规则九实际上不在本章内容中，实例化应该放到第2章字节码引擎中，但由于实例化也是一个很重要的考点，与类加载密切相关，这里就一起放进来了
 
 下面举一个例子来充实上面的规则
 
@@ -1205,7 +1208,7 @@ public class ClassLoaderAllTest {
         System.out.println("ClassLoaderAllTest clinit 2");
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("ClassLoaderAllTest main 1");
         ClassLoaderAllTest6 test6 = ClassLoaderAllTest4.test6;
         System.out.println("ClassLoaderAllTest main 2");
@@ -1222,12 +1225,24 @@ class ClassLoaderAllTest1 extends ClassLoaderAllTest2 implements ClassLoaderAllT
     ClassLoaderAllTest1() {
         System.out.println("ClassLoaderAllTest1 init");
     }
+    {
+        System.out.println("ClassLoaderAllTest1 init without function");
+    }
 }
 
 class ClassLoaderAllTest2 {
+    {
+        System.out.println("ClassLoaderAllTest2 init without function 1");
+    }
     static {
         System.out.println("ClassLoaderAllTest2 clinit");
         System.out.println(ClassLoaderAllTest3.test3_2);
+    }
+    ClassLoaderAllTest2() {
+        System.out.println("ClassLoaderAllTest2 init");
+    }
+    {
+        System.out.println("ClassLoaderAllTest2 init without function 2");
     }
 }
 
@@ -1278,6 +1293,10 @@ ClassLoaderAllTest2 clinit
 ClassLoaderAllTest3 test3_2
 ClassLoaderAllTest1 clinit
 ClassLoaderAllTest3 test3_1
+ClassLoaderAllTest2 init without function 1
+ClassLoaderAllTest2 init without function 2
+ClassLoaderAllTest2 init
+ClassLoaderAllTest1 init without function
 ClassLoaderAllTest1 init
 ClassLoaderAllTest clinit 2
 ClassLoaderAllTest main 1
@@ -1322,9 +1341,23 @@ ClassLoaderAllTest5 test5
 ##### 加载ClassLoaderAllTest3类完毕
 ##### 加载ClassLoaderAllTest1类完毕
 - 加载完ClassLoaderAllTest1类，回来，执行new #9 <com/peter/jvm/example/ClassLoaderAllTest1>，实例化ClassLoaderAllTest1类
+##### 实例化ClassLoaderAllTest1类开始
+- class ClassLoaderAllTest1 extends ClassLoaderAllTest2，即ClassLoaderAllTest2是ClassLoaderAllTest1的父类
+- 由于规则八，因此先实例化ClassLoaderAllTest2类
+##### 实例化ClassLoaderAllTest2类开始
+- 由于规则九，因此先执行所有构造代码块，再执行构造函数
+- 由于执行了System.out.println("ClassLoaderAllTest2 init without function 1"); 因此输出ClassLoaderAllTest2 init without function 1
+- 由于执行了System.out.println("ClassLoaderAllTest2 init without function 2"); 因此输出ClassLoaderAllTest2 init without function 2
+- 由于执行了System.out.println("ClassLoaderAllTest2 init"); 因此输出ClassLoaderAllTest2 init
+##### 实例化ClassLoaderAllTest2类结束
+- 由于规则九，因此先执行所有构造代码块，再执行构造函数
+- 由于执行了System.out.println("ClassLoaderAllTest1 init without function"); 因此输出ClassLoaderAllTest1 init without function
 - 由于执行了System.out.println("ClassLoaderAllTest1 init"); 因此输出ClassLoaderAllTest1 init
-- 继续，由于执行了System.out.println("ClassLoaderAllTest clinit 2"); 因此输出ClassLoaderAllTest clinit 2
+##### 实例化ClassLoaderAllTest1类结束
+- 实例化完ClassLoaderAllTest1类，回来，执行System.out.println("ClassLoaderAllTest clinit 2");
+- 由于执行了System.out.println("ClassLoaderAllTest clinit 2"); 因此输出ClassLoaderAllTest clinit 2
 ##### 加载ClassLoaderAllTest类完毕
+- 由于规则一，加载完ClassLoaderAllTest类，执行main方法
 ##### 执行ClassLoaderAllTest的main方法开始
 - 由于执行了System.out.println("ClassLoaderAllTest main 1"); 因此输出ClassLoaderAllTest main 1
 - 再执行ClassLoaderAllTest6 test6 = ClassLoaderAllTest4.test6;
