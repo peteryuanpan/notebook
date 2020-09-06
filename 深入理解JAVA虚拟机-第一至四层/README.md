@@ -558,7 +558,7 @@ Constant Type = JVM_CONSTANT_Class 时，Constant Value = public class com.peter
 
 #### 初始化的规范定义
 
-初始化阶段是执行类构造器<clinit>()方法的过程
+初始化阶段是执行类构造器clinit方法的过程
   
 clinit方法是由编译器自动收集类中所有静态变量的赋值动作和静态代码块中的语句合并产生的，编辑器收集的顺序是由语句在源文件中出现的顺序所决定的
 
