@@ -505,7 +505,9 @@ public static final int v2 = 123;
 解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行，分别对应于CONSTANT_Class_info、CONSTANT_Field_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、CONSTANT_MethodHandle_info和CONSTANT_InvokeDynamic_info
 
 解析动作具体来看，有
-- 类或接口的解析。对于类D，把一个从未解析过的符号引用N解析为一个类或接口C的直接引用，分C是或不是数组类型来处理
+- 类或接口的解析。假设有一个类D，要把一个从未解析过的符号引用N解析为一个类或接口C的直接引用，分C是或不是数组类型来处理
+  - 如果C不是一个数组类型，那么虚拟机会把代表N的全限定名传递给D的类加载器，去加载这个类C（第1点）
+  - 如果C是一个数组类型，并且数组的元素类型为对象，也就是N的描述符会是类似“【Ljava/lang/Integer”的形式，那么将会按照（第1点）的规则加载数组元素类型，接着虚拟机会生成一个代表此数组维度和元素的数组对象
 - 字段解析。需要对字段表内的class_index项中索引的CONSTANT_Class_info符号引用（字段所属的类或接口的符号引用）进行解析
 - 类方法解析。需要对方法表的class_index项中索引的CONSTANT_Methodref_info符号引用（方法所属的类或接口的符号引用）进行解析
 - 接口方法解析。需要对接口方法表的class_index项中索引的CONSTANT_InterfaceMethodref_info符号引用（方法所属的类或接口的符号引用）进行解析
@@ -516,7 +518,39 @@ public static final int v2 = 123;
 
 #### 符号引用替换为直接引用
 
+符号引用（Symbolic References）：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可
 
+直接引用（Direct References）：直接引用可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄
+
+> 其实上面的说法，个人认为是比较讳莫如深的，下面我们举一个代码例子来理解
+
+```java
+package com.peter.jvm.example;
+
+public class SymbolicReferencesToDirectReferencesTest {
+
+    public static void main(String[] args) {
+        SymbolicReferencesToDirectReferencesTest test = new SymbolicReferencesToDirectReferencesTest();
+        //while(true);
+    }
+}
+```
+
+这段代码，查看字节码中的常量池（Constant Pool）部分
+
+Constant_Class_info内容为Class name: cp_info_#20 <com/peter/jvm/example/SymbolicReferencesToDirectReferencesTest>
+
+此时是符号引用
+
+![image](https://user-images.githubusercontent.com/10209135/92321733-f074cd00-f05e-11ea-8d0f-5bd7c74c90b2.png)
+
+再用HSDB分析一下
+
+Constant Type = JVM_CONSTANT_Class 时，Constant Value = public class com.peter.jvm.example.SymbolicReferencesToDirectReferencesTest @0x00000007c0060828
+
+此时已经是直接引用了（转换为了内存地址）
+
+![image](https://user-images.githubusercontent.com/10209135/92321723-d9ce7600-f05e-11ea-8ba7-6ab97c1b1991.png)
 
 ### 类加载之初始化
 
