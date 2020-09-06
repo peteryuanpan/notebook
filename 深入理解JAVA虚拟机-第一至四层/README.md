@@ -104,12 +104,12 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
     - [优先加载父类](#优先加载父类)
     - [反射](#反射)
   - [类加载笔试题统一解法](#类加载笔试题统一解法)
-- [类加载器]
-  - 三种系统类加载器
-    - 启动类加载器
-    - 拓展类加载器
-    - 应用类加载器
+- [类加载器](类加载器)
+  - [类加载器的定义](#类加载器的定义)
   - 双亲委派模型
+  - 启动类加载器
+  - 拓展类加载器
+  - 应用类加载器
   - 破坏双亲委派模型
     - 自定义类加载器
     - 线程上下文类加载器与SPI机制
@@ -1366,3 +1366,9 @@ ClassLoaderAllTest5 test5
 - 由于执行了System.out.println("ClassLoaderAllTest5 clinit"); 因此输出ClassLoaderAllTest5 test5
 ##### 执行ClassLoaderAllTest的main方法结束
 ##### 程序结束
+
+# 类加载器
+
+### 类加载器的定义
+
+TODO
