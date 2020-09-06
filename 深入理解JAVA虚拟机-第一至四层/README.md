@@ -1191,6 +1191,8 @@ InterfaceClassLoaderTest11.a.toString(); 对应 getstatic InterfaceClassLoaderTe
 
 > 上面规则八和规则九实际上不在本章内容中，实例化应该放到第2章字节码引擎中，但由于实例化也是一个很重要的考点，与类加载密切相关，这里就一起放进来了
 
+> 从字节码可以看出来，构造代码块和构造函数都在init方法中
+
 下面举一个例子来充实上面的规则
 
 ```java
