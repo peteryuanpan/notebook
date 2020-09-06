@@ -1152,6 +1152,22 @@ class ClassLoaderAllTest8 {
 }
 ```
 
+输出结果
+```
+ClassLoaderAllTest static 1
+ClassLoaderAllTest2
+ClassLoaderAllTest3 test3_2
+ClassLoaderAllTest1
+ClassLoaderAllTest3 test3_1
+ClassLoaderAllTest static 2
+ClassLoaderAllTest main 1
+ClassLoaderAllTest7
+ClassLoaderAllTest6
+ClassLoaderAllTest main 2
+ClassLoaderAllTest8
+ClassLoaderAllTest5
+```
+
 解释
 - 1
 - 2
