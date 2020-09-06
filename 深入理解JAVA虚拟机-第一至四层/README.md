@@ -1076,6 +1076,80 @@ InterfaceClassLoaderTest11.a.toString(); 对应 getstatic InterfaceClassLoaderTe
 下面举一个例子来充实上面的规则
 
 ```java
+package com.peter.jvm.example;
+
+public class ClassLoaderAllTest {
+
+    static {
+        System.out.println("ClassLoaderAllTest static 1");
+    }
+
+    static ClassLoaderAllTest1 test1 = new ClassLoaderAllTest1();
+
+    static {
+        System.out.println("ClassLoaderAllTest static 2");
+    }
+
+    public static void main(String[] args) {
+        System.out.println("ClassLoaderAllTest main 1");
+        ClassLoaderAllTest6 test6 = ClassLoaderAllTest4.test6;
+        System.out.println("ClassLoaderAllTest main 2");
+        ClassLoaderAllTest5.test5();
+    }
+}
+
+class ClassLoaderAllTest1 extends ClassLoaderAllTest2 implements ClassLoaderAllTest4, ClassLoaderAllTest5 {
+    static {
+        System.out.println("ClassLoaderAllTest1");
+        ClassLoaderAllTest3.test3_1 = "ClassLoaderAllTest3 test3_1 Test1";
+    }
+}
+
+class ClassLoaderAllTest2 {
+    static {
+        System.out.println("ClassLoaderAllTest2");
+        System.out.println(ClassLoaderAllTest3.test3_2);
+    }
+}
+
+class ClassLoaderAllTest3 {
+    static String test3_1 = "ClassLoaderAllTest3 test3_1";
+    static final String test3_2 = "ClassLoaderAllTest3 test3_2";
+    static {
+        System.out.println(test3_1);
+    }
+}
+
+interface ClassLoaderAllTest4 extends ClassLoaderAllTest5 {
+    ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7();
+    ClassLoaderAllTest6 test6 = new ClassLoaderAllTest6();
+}
+
+interface ClassLoaderAllTest5 {
+    ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7();
+    ClassLoaderAllTest8 test8 = new ClassLoaderAllTest8();
+    static void test5() {
+        System.out.println("ClassLoaderAllTest5");
+    }
+}
+
+class ClassLoaderAllTest6 {
+    static {
+        System.out.println("ClassLoaderAllTest6");
+    }
+}
+
+class ClassLoaderAllTest7 {
+    static {
+        System.out.println("ClassLoaderAllTest7");
+    }
+}
+
+class ClassLoaderAllTest8 {
+    static {
+        System.out.println("ClassLoaderAllTest8");
+    }
+}
 ```
 
 解释
