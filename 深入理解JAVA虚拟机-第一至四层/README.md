@@ -114,7 +114,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
     - 自定义类加载器
     - 线程上下文类加载器与SPI机制
 
-#### 第2章：JVM运行时数据区域与对象的创建使用
+#### 第2章：JVM运行时数据区域与字节码执行引擎
 
 #### 第3章：Class类文件结构与字节码手册
 
