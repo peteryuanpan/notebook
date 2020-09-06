@@ -97,7 +97,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
     - [符号引用替换为直接引用](#符号引用替换为直接引用)
   - [类加载之初始化](#类加载之初始化)
     - [初始化的规范定义](#初始化的规范定义)
-    - [clinit方法的理解](#clinit方法的理解)
+    - [clinit方法的深入理解](#clinit方法的深入理解)
   - [类加载什么时候会进行](#类加载什么时候会进行)
     - [加载mainClass](#加载mainClass)
     - [new或getstatic或putstatic或invokestatic](#new或getstatic或putstatic或invokestatic)
@@ -524,6 +524,8 @@ public static final int v2 = 123;
 
 > 其实上面的说法，个人认为是比较讳莫如深的，下面我们举一个代码例子来理解
 
+代码例子
+
 ```java
 package com.peter.jvm.example;
 
@@ -556,7 +558,13 @@ Constant Type = JVM_CONSTANT_Class 时，Constant Value = public class com.peter
 
 #### 初始化的规范定义
 
-#### clinit方法的理解
+初始化阶段是执行类构造器<clinit>()方法的过程
+  
+clinit方法是由编译器自动收集类中所有静态变量的赋值动作和静态代码块中的语句合并产生的，编辑器收集的顺序是由语句在源文件中出现的顺序所决定的
+
+#### clinit方法的深入理解
+
+TODO
 
 ### 类加载什么时候会进行
 
