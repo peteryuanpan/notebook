@@ -1178,14 +1178,15 @@ InterfaceClassLoaderTest11.a.toString(); 对应 getstatic InterfaceClassLoaderTe
 
 通过上面例子，我们见到了一些关于类加载触发时机、父子类类加载关系的题目，基本上题型都一样，给一段简单的代码，请问代码的输出结果是什么，有的是问答题，有的是选择题，这类题目在Java基础笔试题中占一定比重
 
-经过总结，统一解法满足以下七条规则
+经过总结，统一解法满足以下八条规则
 - 规则一：main函数所在类最先进行加载，结束后调用main方法
 - 规则二：加载一个类之前，会先加载该类的父类，但不会加载该类实现的接口
 - 规则三：加载一个接口，不会加载其父接口
 - 规则四：默认情况下，同一个类加载器，已经加载过的类不会加载（非默认情况是指自定义类加载器）
 - 规则五：类加载会在“初始化”阶段，调用clinit方法，执行静态代码块，对静态变量赋初值
 - 规则六：clinit方法执行顺序与代码书写顺序保持一致
-- 规则七：当遇到new、getstatic、putstatic或invokestatic这4条字节码指令时，会插入结算新的类加载，再执行指令，再继续旧的类加载
+- 规则七：当遇到 反射调用 或者new、getstatic、putstatic、invokestatic这4条字节码指令时，会插入结算新的类加载，再执行指令，再继续旧的类加载
+- 规则八：
 
 下面举一个例子来充实上面的规则
 
@@ -1208,7 +1209,8 @@ public class ClassLoaderAllTest {
         System.out.println("ClassLoaderAllTest main 1");
         ClassLoaderAllTest6 test6 = ClassLoaderAllTest4.test6;
         System.out.println("ClassLoaderAllTest main 2");
-        ClassLoaderAllTest5.test5();
+        Class classTest5 = Class.forName("com.peter.jvm.example.ClassLoaderAllTest5");
+        classTest5.getMethod("test5").invoke(0);
     }
 }
 
@@ -1348,9 +1350,9 @@ ClassLoaderAllTest5 test5
 ##### 加载ClassLoaderAllTest4接口结束
 - 回到main方法
 - 由于执行了System.out.println("ClassLoaderAllTest main 2"); 因此输出ClassLoaderAllTest main 2
-- 继续，执行ClassLoaderAllTest5.test5();
-- ClassLoaderAllTest5.test5();对应着invokestatic #7 <com/peter/jvm/example/ClassLoaderAllTest5.test5>
-- 由于规则七，因此先加载ClassLoaderAllTest5类，再invokestatic
+- 继续，执行Class classTest5 = Class.forName("com.peter.jvm.example.ClassLoaderAllTest5");
+- Class classTest5 = Class.forName("com.peter.jvm.example.ClassLoaderAllTest5");对应着ldc #7 <com.peter.jvm.example.ClassLoaderAllTest5> 以及 invokestatic #8 <java/lang/Class.forName>
+- 由于规则七，因此先加载ClassLoaderAllTest5类
 ##### 加载ClassLoaderAllTest5类开始
 - 由于规则五、六，执行ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7(); 再ClassLoaderAllTest8 test8 = new ClassLoaderAllTest8();
 - ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7();对应字节码是new #4 <com/peter/jvm/example/ClassLoaderAllTest7>
@@ -1362,8 +1364,10 @@ ClassLoaderAllTest5 test5
 - 由于规则五、六，执行System.out.println("ClassLoaderAllTest8 clinit");
 - 由于执行了System.out.println("ClassLoaderAllTest8 clinit"); 因此输出ClassLoaderAllTest8 clinit
 ##### 加载ClassLoaderAllTest8类结束
-- 执行invokestatic #7 <com/peter/jvm/example/ClassLoaderAllTest5.test5>
-- 由于执行了System.out.println("ClassLoaderAllTest5 clinit"); 因此输出ClassLoaderAllTest5 test5
+##### 加载ClassLoaderAllTest5类结束
+- 继续，执行classTest5.getMethod("test5").invoke(0);
+- classTest5.getMethod("test5").invoke(0);对应字节码是invokevirtual #14 <java/lang/reflect/Method.invoke>，会调用ClassLoaderAllTest5的test5方法
+- 由于执行了System.out.println("ClassLoaderAllTest5 test5"); 因此输出ClassLoaderAllTest5 test5
 ##### 执行ClassLoaderAllTest的main方法结束
 ##### 程序结束
 
