@@ -482,7 +482,7 @@ Java里天生可以动态拓展的语言特性就是依赖运行期动态加载�
 
 static、final同时修饰的变量，不会赋零值，而会赋初值
 
-在javac编译时会为变量生成ConstantValue属性，在准备阶段虚拟机会根据ConstantValue赋值给变量
+在javac编译时会为变量生成ConstantValue属性，在准备阶段虚拟机会初始化为ConstantValue属性所指定的值
 
 比如
 ```java
@@ -1081,13 +1081,13 @@ package com.peter.jvm.example;
 public class ClassLoaderAllTest {
 
     static {
-        System.out.println("ClassLoaderAllTest static 1");
+        System.out.println("ClassLoaderAllTest clinit 1");
     }
 
     static ClassLoaderAllTest1 test1 = new ClassLoaderAllTest1();
 
     static {
-        System.out.println("ClassLoaderAllTest static 2");
+        System.out.println("ClassLoaderAllTest clinit 2");
     }
 
     public static void main(String[] args) {
@@ -1100,14 +1100,17 @@ public class ClassLoaderAllTest {
 
 class ClassLoaderAllTest1 extends ClassLoaderAllTest2 implements ClassLoaderAllTest4, ClassLoaderAllTest5 {
     static {
-        System.out.println("ClassLoaderAllTest1");
+        System.out.println("ClassLoaderAllTest1 clinit");
         ClassLoaderAllTest3.test3_1 = "ClassLoaderAllTest3 test3_1 Test1";
+    }
+    ClassLoaderAllTest1() {
+        System.out.println("ClassLoaderAllTest1 init");
     }
 }
 
 class ClassLoaderAllTest2 {
     static {
-        System.out.println("ClassLoaderAllTest2");
+        System.out.println("ClassLoaderAllTest2 clinit");
         System.out.println(ClassLoaderAllTest3.test3_2);
     }
 }
@@ -1129,45 +1132,123 @@ interface ClassLoaderAllTest5 {
     ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7();
     ClassLoaderAllTest8 test8 = new ClassLoaderAllTest8();
     static void test5() {
-        System.out.println("ClassLoaderAllTest5");
+        System.out.println("ClassLoaderAllTest5 test5");
     }
 }
 
 class ClassLoaderAllTest6 {
     static {
-        System.out.println("ClassLoaderAllTest6");
+        System.out.println("ClassLoaderAllTest6 clinit");
     }
 }
 
 class ClassLoaderAllTest7 {
     static {
-        System.out.println("ClassLoaderAllTest7");
+        System.out.println("ClassLoaderAllTest7 clinit");
     }
 }
 
 class ClassLoaderAllTest8 {
     static {
-        System.out.println("ClassLoaderAllTest8");
+        System.out.println("ClassLoaderAllTest8 clinit");
     }
 }
 ```
 
 输出结果
 ```
-ClassLoaderAllTest static 1
-ClassLoaderAllTest2
+ClassLoaderAllTest clinit 1
+ClassLoaderAllTest2 clinit
 ClassLoaderAllTest3 test3_2
-ClassLoaderAllTest1
+ClassLoaderAllTest1 clinit
 ClassLoaderAllTest3 test3_1
-ClassLoaderAllTest static 2
+ClassLoaderAllTest1 init
+ClassLoaderAllTest clinit 2
 ClassLoaderAllTest main 1
-ClassLoaderAllTest7
-ClassLoaderAllTest6
+ClassLoaderAllTest7 clinit
+ClassLoaderAllTest6 clinit
 ClassLoaderAllTest main 2
-ClassLoaderAllTest8
-ClassLoaderAllTest5
+ClassLoaderAllTest8 clinit
+ClassLoaderAllTest5 test5
 ```
 
-解释
-- 1
-- 2
+#### 解释
+##### 程序开始
+##### 加载ClassLoaderAllTest类开始
+- 由于规则一，因此最先加载ClassLoaderAllTest类
+- 由于规则五、六，因此执行System.out.println("ClassLoaderAllTest clinit 1"); 再执行static ClassLoaderAllTest1 test1 = new ClassLoaderAllTest1(); 再执行System.out.println("ClassLoaderAllTest static 2");
+- 由于执行了System.out.println("ClassLoaderAllTest clinit 1"); 因此输出ClassLoaderAllTest clinit 1
+- 再执行static ClassLoaderAllTest1 test1 = new ClassLoaderAllTest1()
+- static ClassLoaderAllTest1 test1 = new ClassLoaderAllTest1();对应的字节码是new #9 <com/peter/jvm/example/ClassLoaderAllTest1>
+- 由于规则七，因此先加载ClassLoaderAllTest1类，再new
+##### 加载ClassLoaderAllTest1类开始（尚未开始）
+- class ClassLoaderAllTest1 extends ClassLoaderAllTest2，即ClassLoaderAllTest2是ClassLoaderAllTest1的父类
+- 由于规则二，因此先加载ClassLoaderAllTest2类
+- class ClassLoaderAllTest1 implements ClassLoaderAllTest4, ClassLoaderAllTest5，即ClassLoaderAllTest1实现了ClassLoaderAllTest4、ClassLoaderAllTest5接口
+- 由于规则三，因此不会加载ClassLoaderAllTest4、ClassLoaderAllTest5接口
+##### 加载ClassLoaderAllTest2类开始
+- 由于规则五、六，因此执行System.out.println("ClassLoaderAllTest2 clinit"); 再执行System.out.println(ClassLoaderAllTest3.test3_2);
+- 由于执行了System.out.println("ClassLoaderAllTest2 clinit"); 因此输出ClassLoaderAllTest2 clinit
+- 再执行System.out.println(ClassLoaderAllTest3.test3_2); 因此输出ClassLoaderAllTest3 test3_2
+- System.out.println(ClassLoaderAllTest3.test3_2);对应字节码是getstatic #2 <java/lang/System.out>、ldc #6 <ClassLoaderAllTest3 test3_2>、invokevirtual #4 <java/io/PrintStream.println>，这里没有getstatic ClassLoaderAllTest3.test3_2，因此不会去加载ClassLoaderAllTest3
+- 没有getstatic ClassLoaderAllTest3.test3_2的原因是test3_2是final修饰的，编译器会对它做处理，在准备阶段就会初始化为一个ConstantValue属性所指定的值
+##### 加载ClassLoaderAllTest2类完毕
+- 加载完ClassLoaderAllTest2类，回来，加载ClassLoaderAllTest1类
+##### 加载ClassLoaderAllTest1类开始（正式开始）
+- 由于规则五、六，执行System.out.println("ClassLoaderAllTest1 clinit"); 再执行ClassLoaderAllTest3.test3_1 = "ClassLoaderAllTest3 test3_1 Test1";
+- 由于执行了System.out.println("ClassLoaderAllTest1 clinit");，因此输出ClassLoaderAllTest1 clinit
+- 再执行ClassLoaderAllTest3.test3_1 = "ClassLoaderAllTest3 test3_1 Test1";
+- ClassLoaderAllTest3.test3_1 = "ClassLoaderAllTest3 test3_1 Test1";对应字节码是putstatic #6 <com/peter/jvm/example/ClassLoaderAllTest3.test3_1>
+- 由于规则七，因此先加载ClassLoaderAllTest3类，再putstatic
+##### 加载ClassLoaderAllTest3类开始
+- 由于规则五、六，因此执行static String test3_1 = "ClassLoaderAllTest3 test3_1"; 再执行System.out.println(test3_1); 再执行ClassLoaderAllTest3.test3_1 = "ClassLoaderAllTest3 test3_1 Test1";
+- 由于执行了System.out.println(test3_1); 因此输出ClassLoaderAllTest3 test3_1，而不是输出ClassLoaderAllTest3 test3_1 Test1
+##### 加载ClassLoaderAllTest3类完毕
+##### 加载ClassLoaderAllTest1类完毕
+- 加载完ClassLoaderAllTest1类，回来，执行new #9 <com/peter/jvm/example/ClassLoaderAllTest1>，实例化ClassLoaderAllTest1类
+- 由于执行了System.out.println("ClassLoaderAllTest1 init"); 因此输出ClassLoaderAllTest1 init
+- 继续，由于执行了System.out.println("ClassLoaderAllTest clinit 2"); 因此输出ClassLoaderAllTest clinit 2
+##### 加载ClassLoaderAllTest类完毕
+##### 执行ClassLoaderAllTest的main方法开始
+- 由于执行了System.out.println("ClassLoaderAllTest main 1"); 因此输出ClassLoaderAllTest main 1
+- 再执行ClassLoaderAllTest6 test6 = ClassLoaderAllTest4.test6;
+- ClassLoaderAllTest6 test6 = ClassLoaderAllTest4.test6;对应的字节码是getstatic #5 <com/peter/jvm/example/ClassLoaderAllTest4.test6>
+- 由于规则七，因此先加载ClassLoaderAllTest4接口，再getstatic
+- interface ClassLoaderAllTest4 extends ClassLoaderAllTest5，即ClassLoaderAllTest5是ClassLoaderAllTest4的父接口
+- 由于规则三，因此不会加载ClassLoaderAllTest5接口
+##### 加载ClassLoaderAllTest4接口开始
+- 接口中的变量都是默认static、final修饰的
+- 由于规则五、六，执行ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7(); 再执行ClassLoaderAllTest6 test6 = new ClassLoaderAllTest6();
+- ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7();对应的字节码是new #1 <com/peter/jvm/example/ClassLoaderAllTest7>
+- 由于规则七，因此先加载ClassLoaderAllTest7类，再new
+##### 加载ClassLoaderAllTest7类开始
+- 由于规则五、六，执行System.out.println("ClassLoaderAllTest7 clinit");
+- 由于执行了System.out.println("ClassLoaderAllTest7 clinit"); 因此输出ClassLoaderAllTest7 clinit
+##### 加载ClassLoaderAllTest7类结束
+- ClassLoaderAllTest6 test6 = new ClassLoaderAllTest6();对应字节码是new #4 <com/peter/jvm/example/ClassLoaderAllTest6>
+- 由于规则七，因此先加载ClassLoaderAllTest6类，再new
+##### 加载ClassLoaderAllTest6类开始
+- 由于规则五、六，执行System.out.println("ClassLoaderAllTest6 clinit");
+- 由于执行了System.out.println("ClassLoaderAllTest6 clinit"); 因此输出ClassLoaderAllTest6 clinit
+##### 加载ClassLoaderAllTest6类结束
+##### 加载ClassLoaderAllTest4接口结束
+- 回到main方法
+- 由于执行了System.out.println("ClassLoaderAllTest main 2"); 因此输出ClassLoaderAllTest main 2
+- 继续，执行ClassLoaderAllTest5.test5();
+- ClassLoaderAllTest5.test5();对应着invokestatic #7 <com/peter/jvm/example/ClassLoaderAllTest5.test5>
+- 由于规则七，因此先加载ClassLoaderAllTest5类，再invokestatic
+##### 加载ClassLoaderAllTest5类开始
+- 由于规则五、六，执行ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7(); 再ClassLoaderAllTest8 test8 = new ClassLoaderAllTest8();
+- ClassLoaderAllTest7 test7 = new ClassLoaderAllTest7();对应字节码是new #4 <com/peter/jvm/example/ClassLoaderAllTest7>
+- 由于规则七，因此先加载ClassLoaderAllTest7类，再new
+- 由于规则四，已经加载过的类不会加载
+- ClassLoaderAllTest8 test8 = new ClassLoaderAllTest8();对应字节码是new #7 <com/peter/jvm/example/ClassLoaderAllTest8>
+- 由于规则七，因此先加载ClassLoaderAllTest8类，再new
+##### 加载ClassLoaderAllTest8类开始
+- 由于规则五、六，执行System.out.println("ClassLoaderAllTest8 clinit");
+- 由于执行了System.out.println("ClassLoaderAllTest8 clinit"); 因此输出ClassLoaderAllTest8 clinit
+##### 加载ClassLoaderAllTest8类结束
+- 执行invokestatic #7 <com/peter/jvm/example/ClassLoaderAllTest5.test5>
+- 由于执行了System.out.println("ClassLoaderAllTest5 clinit"); 因此输出ClassLoaderAllTest5 test5
+##### 执行ClassLoaderAllTest的main方法结束
+##### 程序结束
