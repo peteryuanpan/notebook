@@ -111,8 +111,8 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
   - 拓展类加载器
   - 应用类加载器
   - 破坏双亲委派模型
-    - 自定义类加载器
     - 线程上下文类加载器与SPI机制
+    - 自定义类加载器
 
 #### 第2章：JVM运行时数据区域与字节码执行引擎
 
