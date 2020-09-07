@@ -114,7 +114,7 @@ push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-co
     - [应用类加载器的定义](#应用类加载器的定义)
     - [应用类加载器的管辖范围](#应用类加载器的管辖范围)
   - [双亲委派模型的实现源码](#双亲委派模型的实现源码)
-    - [ClassLoader.LoadClass方法](#ClassLoader.LoadClass方法)
+    - [ClassLoader实现源码](#ClassLoader实现源码)
     - [双亲委派模型之JVM源码](#双亲委派模型之JVM源码)
     - [沙箱安全机制](#沙箱安全机制)
   - [破坏双亲委派模型](#破坏双亲委派模型)
@@ -1418,4 +1418,71 @@ ClassLoaderAllTest5 test5
 
 ### 类加载器的定义
 
-TODO
+类加载阶段中，“通过一个类的全限定名来获取描述此类的二进制字节流”这个动作称为加载，实现这个动作的代码模块称为“类加载器”
+
+类加载器一共可分为几种：启动类加载器（Bootstrap ClassLoader）、拓展类加载器（Extension ClassLoader）、应用程序类加载器（Application ClassLoader）、线程上下文类加载器（Thread Context ClassLoader）、自定义类加载器
+
+### 类加载的唯一性
+
+两个类相等，当且仅当，这两个类来源于同一个Class文件 且 被同一个类加载器加载
+
+下面的代码示例演示了关于instanceof判定不同类加载器加载同一个类的字节流的结果
+
+```java
+package com.peter.jvm.example;
+
+import java.io.InputStream;
+
+public class ClassLoaderDefineClassTest1 {
+
+    public static void main(String[] arg) throws Exception {
+        ClassLoader myLoader = new ClassLoader() {
+            @Override
+            public Class<?> loadClass(String name) throws ClassNotFoundException {
+                try {
+                    String fileName = name.substring(name.lastIndexOf(".") + 1) + ".class";
+                    InputStream is = getClass().getResourceAsStream(fileName);
+                    System.out.println(name + (is == null ? " is null" : " is NOT null"));
+                    if (is == null) {
+                        return super.loadClass(name);
+                    }
+                    byte[] b = new byte[is.available()];
+                    is.read(b);
+                    return defineClass(name, b, 0, b.length);
+                } catch (Exception e) {
+                    throw new ClassNotFoundException(name);
+                }
+            }
+        };
+        Object obj = myLoader.loadClass("com.peter.jvm.example.ClassLoaderDefineClassTest1").newInstance();
+        System.out.println(obj.getClass());
+        System.out.println(obj instanceof com.peter.jvm.example.ClassLoaderDefineClassTest1);
+    }
+}
+```
+
+输出结果
+```
+com.peter.jvm.example.ClassLoaderDefineClassTest1 is NOT null
+java.lang.Object is null
+java.lang.ClassLoader is null
+com.peter.jvm.example.ClassLoaderDefineClassTest1$1 is NOT null
+class com.peter.jvm.example.ClassLoaderDefineClassTest1
+false
+```
+
+解释
+
+myLoader.loadClass("com.peter.jvm.example.ClassLoaderDefineClassTest1").newInstance();
+
+调用自定义类加载器 读取类（com.peter.jvm.example.ClassLoaderDefineClassTest1）的字节流，并实例化
+
+defineClass用于读取字节流，最终是一个native方法
+
+Object obj是通过myLoader实例化的对象，它的class确实是com.peter.jvm.example.ClassLoaderDefineClassTest1
+
+但是，由于类加载器不一致，因此myLoader与启动类加载器加载的类不相等，instance结果也为false
+
+### 双亲委派模型的定义
+
+
