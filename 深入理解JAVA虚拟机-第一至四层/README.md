@@ -1485,4 +1485,56 @@ Object obj是通过myLoader实例化的对象，它的class确实是com.peter.jv
 
 ### 双亲委派模型的定义
 
+双亲委派模型是类加载器之间的逻辑父子层级关系
+
+双亲委派模型的工作过程是
+- 如果一个类加载收到了来加载请求，先检查是否已经被加载过，加载过则返回
+- 若没有加载则调用父类加载器的locadClass()方法
+- 若父类加载为空则默认使用启动类加载器作为父加载器
+- 若父类加载器加载失败，抛出ClassNotFoundException异常后，再调用自己的findClass()方法进行加载
+
+使用ClassLoader中的loadClass方法可以更直观的看明白这个过程
+```java
+    protected Class<?> loadClass(String name, boolean resolve)
+        throws ClassNotFoundException
+    {
+        synchronized (getClassLoadingLock(name)) {
+            // First, check if the class has already been loaded
+            Class<?> c = findLoadedClass(name);
+            if (c == null) {
+                long t0 = System.nanoTime();
+                try {
+                    if (parent != null) {
+                        c = parent.loadClass(name, false);
+                    } else {
+                        c = findBootstrapClassOrNull(name);
+                    }
+                } catch (ClassNotFoundException e) {
+                    // ClassNotFoundException thrown if class not found
+                    // from the non-null parent class loader
+                }
+
+                if (c == null) {
+                    // If still not found, then invoke findClass in order
+                    // to find the class.
+                    long t1 = System.nanoTime();
+                    c = findClass(name);
+
+                    // this is the defining class loader; record the stats
+                    sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
+                    sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
+                    sun.misc.PerfCounter.getFindClasses().increment();
+                }
+            }
+            if (resolve) {
+                resolveClass(c);
+            }
+            return c;
+        }
+    }
+```
+
+#### 双亲委派模型的时序图
+
+![image](https://camo.githubusercontent.com/66b56028009831b2d3c4b87bf7530fadf8277606/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f79757175652f302f323032302f706e672f323137393831352f313539363138303137353132392d31303161373435312d363462382d346436612d386165392d3439663931356636646633342e706e67)
 
