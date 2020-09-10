@@ -155,6 +155,7 @@ JVM内存模型中还有虚拟机栈、本地方法栈两个概念，它们描�
     - [ServiceLoader类加载源码](类加载器.md#ServiceLoader类加载源码)
     - [SPI机制例子之JDBCMysql](类加载器.md#SPI机制例子之JDBCMysql)
     - [DriverManager类加载源码](类加载器.md#DriverManager类加载源码)
+    - [线程上下文类加载器](类加载器.md#线程上下文类加载器)
 
 #### 第2章：JVM内存之运行时数据区域
 
