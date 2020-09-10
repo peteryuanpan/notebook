@@ -5,13 +5,13 @@
   
 # JVM面试问题总结之类加载
 
-### 讲述SPI机制
+## 讲述SPI机制
 
-#### 口述版
+### 口述版
 
 TODO
 
-#### 文字版
+### 文字版
 
 SPI机制是指，比如，java.sql.Driver类是启动类加载器加载的，而它的具体实现类 com.mysql.cj.jdbc.Driver 是应用程序类加载器加载的，不符合双亲委派模型，需要一个SPI服务机制，通过ServiceLoader.load(packageName.ClassName.class)方式来实现类加载
 
@@ -33,13 +33,13 @@ private S nextService() {
 
 通过上面方法实现了类加载
 
-### 讲述线程上下文类加载器
+## 讲述线程上下文类加载器
 
-#### 口述版
+### 口述版
 
 TODO
 
-#### 文字版
+### 文字版
 
 Thread类内部有一个私有成员变量ClassLoader contextClassLoader，这就是线程上下文类加载器
 
