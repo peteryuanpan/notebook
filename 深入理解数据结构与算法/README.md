@@ -61,6 +61,7 @@ TODO
 |015|求a到b中有多少个翻转对称数|[problem248](Leetcode/problem248_求a到b中有多少个翻转对称数)|leetcode|动态规划|数列统计类|
 |016|最佳碰头地点|[problem296](Leetcode/problem296_最佳碰头地点)|leetcode|动态规划|公式推导|
 |017|多条环路公交车线两点间最少上车次数|[problem815](Leetcode/problem815_多条环路公交车线两点间最少上车次数)|leetcode|搜索|广度优先搜索|
+|018|计算三次最小生成树|[weekly-contest-205_problem4](Leetcode/weekly-contest-205_problem4_计算三次最小生成树)|leetcode|图论|最小生成树|
  
 ### 标签
 ```
