@@ -1,17 +1,32 @@
 
 - [JVM面试之类加载](#JVM面试之类加载)
+  - [讲述类加载机制](#讲述类加载机制)：类加载的定义、类加载的时机、类加载的目的
   - [讲述SPI机制](#讲述SPI机制)
   - [讲述线程上下文类加载器](#讲述线程上下文类加载器)
   
 # JVM面试之类加载
 
-## 讲述SPI机制
+## 讲述类加载机制
 
-### 口述版
+- 类加载的定义
+- 类加载的时机
+- 类加载的目的
+
+类加载是Java虚拟机将class数据二进制字节流读入类加载器，解析出类的元信息（InstanceKlass）并写入方法区，解析出类的Class对象（InstanceMirrorKlass）并写入堆区等过程
+
+[补充]class数据二进制字节流无关乎来源，可以是操作系统文件（单个文件 或 jar包中），可以是网络流数据，可以是数据库数据等
+
+[补充]javac编译器会将.java文件编译成.class文件，用于java虚拟机类加载
+
+类加载会在4种情况下执行，一是java虚拟机启动时，加载mainClass（main方法所在的类）；二是字节码引擎执行遇到new、putstatic、getstatic、invokestatic时，若对应类未被加载，会进行类加载；三是加载一个类时，若父类未被加载，会优先加载父类，再加载子类；四是利用反射机制（Class.forname(packageName.ClassName)）加载一个类时，会进行类加载
+
+类加载的目的是将class数据解析成类的元信息、类的Class对象等数据存入运行时数据区域，为后续的对象实例化、静态变量的取值及赋值、静态方法的调用等过程提供数据准备
+
+## 讲述SPI机制
 
 TODO
 
-### 文字版
+文字补充
 
 SPI机制是指，比如，java.sql.Driver类是启动类加载器加载的，而它的具体实现类 com.mysql.cj.jdbc.Driver 是应用程序类加载器加载的，不符合双亲委派模型，需要一个SPI服务机制，通过ServiceLoader.load(packageName.ClassName.class)方式来实现类加载
 
@@ -35,11 +50,9 @@ private S nextService() {
 
 ## 讲述线程上下文类加载器
 
-### 口述版
-
 TODO
 
-### 文字版
+文字补充
 
 Thread类内部有一个私有成员变量ClassLoader contextClassLoader，这就是线程上下文类加载器
 
