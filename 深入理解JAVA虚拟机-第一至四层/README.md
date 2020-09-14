@@ -154,9 +154,7 @@ JVM内存模型中还有虚拟机栈、本地方法栈两个概念，它们描�
   - [SPI机制与线程上下文类加载器](类加载器.md#SPI机制与线程上下文类加载器)
     - [SPI机制的定义](类加载器.md#SPI机制的定义)
     - [SPI机制例子之ServiceLoader](类加载器.md#SPI机制例子之ServiceLoader)
-    - [ServiceLoader类加载源码](类加载器.md#ServiceLoader类加载源码)
     - [SPI机制例子之JDBCMysql](类加载器.md#SPI机制例子之JDBCMysql)
-    - [DriverManager类加载源码](类加载器.md#DriverManager类加载源码)
     - [线程上下文类加载器](类加载器.md#线程上下文类加载器)
 - [类加载与Tomcat]
 - [类加载与Spring]
