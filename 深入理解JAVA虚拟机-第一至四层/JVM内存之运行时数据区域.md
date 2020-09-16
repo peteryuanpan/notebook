@@ -182,43 +182,6 @@ public class JavaVMStackOOMTest {
         }
     }
 }
-package com.peter.jvm.example2.overflow;
-
-public class JavaVMStackOOMTest {
-
-    private void test() {
-        System.out.println(Thread.currentThread().getName());
-        String a[] = new String[1000];
-        for (int i = 0; i < 1000; i ++) a[i] = new String("11");
-        try {
-            Thread.sleep(1000000000000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(Thread.currentThread().getName() + " finished.");
-    }
-
-    public void stackLeakByThread() {
-        while (true) {
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    test();
-                }
-            });
-            thread.start();
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            JavaVMStackOOMTest test = new JavaVMStackOOMTest();
-            test.stackLeakByThread();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-}
 ```
 
 输出结果
