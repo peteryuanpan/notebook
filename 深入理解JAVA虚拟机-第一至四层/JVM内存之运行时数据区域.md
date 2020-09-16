@@ -94,7 +94,7 @@ Java虚拟机在执行Java程序的过程中会把它所管理的内存划分为
 ##### 例子1：单线程调用方法过多导致栈深度溢出
 
 ```java
-//VM Args: -Xss1M
+//VM Args: -Xss160K
 package com.peter.jvm.example2.overflow;
 
 public class JavaVMStackOverflowTest {
@@ -120,7 +120,7 @@ public class JavaVMStackOverflowTest {
 
 输出结果
 ```
-stack length: 17964
+stack length: 773
 java.lang.StackOverflowError
 	at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
 	at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
@@ -129,11 +129,18 @@ java.lang.StackOverflowError
 
 解释
 
-本例子用一个线程循环调用方法，直到栈深度溢出为止，设置了虚拟机参数-Xss1M，Xss设置Java线程堆栈大小为1MB，最终一共调用了17964次，大概可以算出一个栈帧大小为 58.37B
+本例子用一个线程循环调用方法，直到栈深度溢出为止，设置了虚拟机参数-Xss1M，Xss设置Java线程堆栈大小为160KB，最终一共调用了773次，大概可以算出一个栈帧大小为 58.37B（1 * 160 * 1024 / 773）
 
-##### 例子2：多线程调用方法过多导致OutOfMemory
+注意如果设置-Xss100K，即小于160KB，会有如下报错
+```
+The stack size specified is too small, Specify at least 160k
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
+```
 
+> 留一个思考，当设置-Xss分别为500K、1000K、1500K、2000K、2500K、3000K时，栈深度分别是7383、17975、28405、80136、47551、61670，算出来的栈帧大小分别是69.34B、56.96B、54.07B、25.55B、53.83KB、49.81KB。会发现当-Xss为2000时，明显栈深度有一个突增，多次调试发现，栈深度会变化，从27000 ~ 100000不等。这是为什么呢？
 
+##### 例子2：过多线程调用方法导致OutOfMemory
 
 ```java
 package com.peter.jvm.example2.overflow;
@@ -228,4 +235,8 @@ java.lang.OutOfMemoryError: unable to create new native thread
 ```
 
 解释
+
+本例子没有对一个方法进行循环调用，而是采用了创建多个线程，每个线程调用一次方法，方法中阻塞、长时间不执行完成，单个线程的栈深度是不会超的（否则会报StackOverFlow错误），而是内存超了，java.lang.OutOfMemoryError: unable to create new native thread
+
+> 无法调用 java.lang.Thread.start0(Native Method)，这是本地方法栈超限了吗？有办法调大这个值不？根据《深入理解JAVA虚拟机》第二版2.4.2节，对于HotSpot来说，-Xoss是设置本地方法栈大小的参数，但实际上无效。总之，我尝试过-Xoss、-Xss（等价于 -XX:ThreadStackSize）、-Xmx等，都执行结果都是创建了2028个线程后报错，没有找到办法调限
 
