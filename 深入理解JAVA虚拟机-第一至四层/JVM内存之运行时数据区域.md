@@ -242,3 +242,15 @@ java.lang.OutOfMemoryError: unable to create new native thread
 
 > 无法调用 java.lang.Thread.start0(Native Method)，这是本地方法栈超限了吗？有办法调大这个值不？根据《深入理解JAVA虚拟机》第二版2.4.2节，对于HotSpot来说，-Xoss是设置本地方法栈大小的参数，但实际上无效。总之，我尝试过-Xoss、-Xss（等价于 -XX:ThreadStackSize）、-Xmx等，都执行结果都是创建了2028个线程后报错，没有找到办法调限
 
+### 方法区
+
+#### 方法区的定义
+
+#### 永久代及元空间
+
+#### 方法区存储的数据
+
+#### 运行时常量池
+
+#### 方法区溢出
+
