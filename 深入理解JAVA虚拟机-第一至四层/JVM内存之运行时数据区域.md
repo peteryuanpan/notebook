@@ -83,3 +83,149 @@ Java虚拟机在执行Java程序的过程中会把它所管理的内存划分为
 
 #### 虚拟机栈与本地方法栈溢出
 
+在JAVA虚拟机规范中描述了两种异常
+- 如果线程请求的栈深度大于虚拟机所允许的最大深度，将抛出StackOverflowError异常
+- 如果虚拟机在扩展栈时无法申请到足够的内存空间，则抛出OutOfMemoryError异常
+
+当栈空间无法继续分配时，到底是内存溢出，还是栈深度溢出，其本质上只是对同一件事情的两种描述而已
+
+> 栈溢出时，内存溢出==栈深度溢出，可以想象一个栈，大小为10节火车轨道，每次放入一节，当放到第11节时，不够放了，这时候既是内存溢出，也是栈深度溢出
+
+##### 例子1：单线程调用方法过多导致栈深度溢出
+
+```java
+//VM Args: -Xss1M
+package com.peter.jvm.example2.overflow;
+
+public class JavaVMStackOverflowTest {
+
+    private int stackLength = 1;
+
+    public void stackLeak() {
+        stackLength ++;
+        stackLeak();
+    }
+
+    public static void main(String[] args) {
+        JavaVMStackOverflowTest test = new JavaVMStackOverflowTest();
+        try {
+            test.stackLeak();
+        } catch (Throwable e) {
+            System.out.println("stack length: " + test.stackLength);
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+输出结果
+```
+stack length: 17964
+java.lang.StackOverflowError
+	at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
+	at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
+  ...
+```
+
+解释
+
+本例子用一个线程循环调用方法，直到栈深度溢出为止，设置了虚拟机参数-Xss1M，Xss设置Java线程堆栈大小为1MB，最终一共调用了17964次，大概可以算出一个栈帧大小为 58.37B
+
+##### 例子2：多线程调用方法过多导致OutOfMemory
+
+
+
+```java
+package com.peter.jvm.example2.overflow;
+
+public class JavaVMStackOOMTest {
+
+    private void test() {
+        System.out.println(Thread.currentThread().getName());
+        String a[] = new String[1000];
+        for (int i = 0; i < 1000; i ++) a[i] = new String("11");
+        try {
+            Thread.sleep(1000000000000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName() + " finished.");
+    }
+
+    public void stackLeakByThread() {
+        while (true) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    test();
+                }
+            });
+            thread.start();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            JavaVMStackOOMTest test = new JavaVMStackOOMTest();
+            test.stackLeakByThread();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+}
+package com.peter.jvm.example2.overflow;
+
+public class JavaVMStackOOMTest {
+
+    private void test() {
+        System.out.println(Thread.currentThread().getName());
+        String a[] = new String[1000];
+        for (int i = 0; i < 1000; i ++) a[i] = new String("11");
+        try {
+            Thread.sleep(1000000000000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName() + " finished.");
+    }
+
+    public void stackLeakByThread() {
+        while (true) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    test();
+                }
+            });
+            thread.start();
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            JavaVMStackOOMTest test = new JavaVMStackOOMTest();
+            test.stackLeakByThread();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+输出结果
+```
+...
+Thread-2026
+Thread-2027
+Thread-2028
+java.lang.OutOfMemoryError: unable to create new native thread
+	at java.lang.Thread.start0(Native Method)
+	at java.lang.Thread.start(Thread.java:717)
+	at com.peter.jvm.example2.overflow.JavaVMStackOOMTest.stackLeakByThread(JavaVMStackOOMTest.java:30)
+	at com.peter.jvm.example2.overflow.JavaVMStackOOMTest.main(JavaVMStackOOMTest.java:37)
+Error occurred during initialization of VM
+java.lang.OutOfMemoryError: unable to create new native thread
+```
+
+解释
+
