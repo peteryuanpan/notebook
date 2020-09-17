@@ -356,9 +356,12 @@ public class com.peter.jvm.example2.String.ConstantStringInfoTest {
 
 注意，上面的Constant pool是类文件里的常量池，不完全等于运行时常量池
 
-类加载时，类加载器会将类文件常量池中的数据封装成相应的CONSTANT_* 结构存入运行时常量池
+类加载时，类加载器会将类文件常量池中的数据封装成相应的CONSTANT_* 结构存入运行时常量池，这时运行时常量池中index=2及index=4的位置存放的是JVM_CONSTANT_UnresolvedString（而不是JVM_CONSTANT_String_info），它表示符号引用，还未解析成直接引用，还没有解析字符串字面量，而解析过程是在执行ldc命令时做的
 
-这时候常量池中index=2及index=4的位置存放的是JVM_CONSTANT_UnresolvedString（而不是JVM_CONSTANT_String_info）
+> 参考 [类加载机制#类加载之解析](../类加载机制.md#类加载之解析)
+> 解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程
+> 解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行，分别对应于CONSTANT_Class_info、CONSTANT_Field_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、CONSTANT_MethodHandle_info和CONSTANT_InvokeDynamic_info
+> 可以发现，没有CONSTANT_String_info，即字符串常量的符号引用在类加载之解析阶段不会被解析成直接引用
 
 执行引擎执行init方法中的字节码ldc时，会做以下步骤
 - 根据ldc后面的操作数，去运行时常量池中找对应的值
