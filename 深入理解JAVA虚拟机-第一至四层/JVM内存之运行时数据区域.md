@@ -96,7 +96,6 @@ Java虚拟机在执行Java程序的过程中会把它所管理的内存划分为
 ##### 例子1：单线程调用方法过多导致栈深度溢出
 
 ```java
-//VM Args: -Xss160K
 package com.peter.jvm.example2.overflow;
 
 public class JavaVMStackOverflowTest {
@@ -120,7 +119,7 @@ public class JavaVMStackOverflowTest {
 }
 ```
 
-输出结果
+输出结果（-Xss160K）
 ```
 stack length: 773
 java.lang.StackOverflowError
@@ -129,16 +128,18 @@ java.lang.StackOverflowError
   ...
 ```
 
-解释
-
-本例子用一个线程循环调用方法，直到栈深度溢出为止，设置了虚拟机参数-Xss1M，Xss设置Java线程堆栈大小为160KB，最终一共调用了773次，大概可以算出一个栈帧大小为 58.37B（1 * 160 * 1024 / 773）
-
-注意如果设置-Xss100K，即小于160KB，会有如下报错
+输出结果（-Xss100K）
 ```
 The stack size specified is too small, Specify at least 160k
 Error: Could not create the Java Virtual Machine.
 Error: A fatal exception has occurred. Program will exit.
 ```
+
+解释
+
+本例子用一个线程循环调用方法，直到栈深度溢出为止，设置了虚拟机参数-Xss1M，Xss设置Java线程堆栈大小为160KB，最终一共调用了773次，大概可以算出一个栈帧大小为 58.37B（1 * 160 * 1024 / 773）
+
+注意Java线程堆栈大小最小为160KB，设置100KB会报错 
 
 > 留一个思考，当设置-Xss分别为500K、1000K、1500K、2000K、2500K、3000K时，栈深度分别是7383、17975、28405、80136、47551、61670，算出来的栈帧大小分别是69.34B、56.96B、54.07B、25.55B、53.83KB、49.81KB。会发现当-Xss为2000时，明显栈深度有一个突增，多次调试发现，栈深度会变化，从27000 ~ 100000不等。这是为什么呢？
 
