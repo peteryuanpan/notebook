@@ -334,6 +334,7 @@ public class com.peter.jvm.example2.String.ConstantStringInfoTest {
 再看下jclasslib
 
 ![image](https://tswork.peterpy.cn/20200917/1.png?imageView2/2/w/480)
+
 ![image](https://tswork.peterpy.cn/20200917/2.png?imageView2/2/w/480)
 
 可以看到，Constant pool中2、4都是CONSTANT_String_info，它们分别指向了一个CONSTANT_Utf8_info，其中包含了字符串内容和长度
