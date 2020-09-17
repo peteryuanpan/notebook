@@ -210,11 +210,45 @@ java.lang.OutOfMemoryError: unable to create new native thread
 
 #### 方法区的定义
 
+方法区用于存放类的元信息，如类名、父类名、运行时常量池、字段描述、方法描述、访问修饰符等
+
+方法区是线程共享的内存区域
+
 #### 永久代及元空间
 
-#### 方法区存储的数据
+JDK6、JDK7、JDK8，Hotspot的 方法区的实现 发生了翻天覆地的变化
+
+方法区是规范，永久代（PermGen）和元空间（Metaspace）是具体实现
+
+在JDK6及以前，方法区的实现就只有永久代，永久代存储了类的元信息、静态变量、运行时常量池、字符串常量池、即时编译器编译后的代码等数据
+
+在JDK7，永久代中存储的部分数据已经开始转移到堆区（Java Heap）或本地内存（Native Memory）中了。比如，符号引用（Symbols）转移到了本地内存，字符串常量池（Interned Strings）转移到了堆区，类的静态变量（Class Statics）转移到了堆区
+
+在JDK8中，Hotspot取消了永久代，改用与JRockit、J9一样在本地内存中实现的元空间，永久代真的成了永久的记忆，永久代的参数 -XX:PermSize 和 -XX:MaxPermSize 也随之失效
+
+永久代实现的方法区，与堆区内存是连续的
+
+永久代的垃圾收集是和老年代捆绑在一起的，因此无论谁满了，都会触发永久代和老年代的垃圾收集
+
+![image](https://user-images.githubusercontent.com/10209135/93434392-aa3f2980-f8fa-11ea-8f41-4e82ee6f793e.png)
+
+元空间实现的方法区，与堆区内存不连续，而且是存在于本地内存
+
+本地内存（Native memory），也称为C-Heap，是供JVM自身进程使用的。当堆区（Java Heap）空间不足时会触发GC，但本地内存空间不够却不会触发GC
+
+![image](https://user-images.githubusercontent.com/10209135/93434461-c642cb00-f8fa-11ea-8a11-34cf5fee0246.png)
+
+> 参考：https://zhuanlan.zhihu.com/p/111809384
 
 #### 运行时常量池
+
+运行时常量池是方法区的一部分。Class文件中的常量池，用于存放编译器生成的各种字面量和符号引用，这部分内容在类加载后，进入方法区的运行时常量池中存放
+
+Class文件的常量池 => 方法区的运行时常量池 是类加载过程之一，但注意，运行期间也可能将新的常量放入常量池，比如String.intern()
+
+关于Class文件的常量池，在第2章有深入讲解
+
+> 运行时常量池与字符串常量池的区别？
 
 #### 方法区溢出
 
