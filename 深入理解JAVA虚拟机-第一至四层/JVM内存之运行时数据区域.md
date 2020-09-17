@@ -258,11 +258,85 @@ JDK6、JDK7、JDK8，Hotspot的 方法区的实现 发生了翻天覆地的变�
 
 运行时常量池是方法区的一部分。Class文件中的常量池，用于存放编译器生成的各种字面量和符号引用，这部分内容在类加载后，进入方法区的运行时常量池中存放
 
-Class文件的常量池 => 方法区的运行时常量池 是类加载过程之一，但注意，运行期间也可能将新的常量放入常量池，比如String.intern()
+Class文件的常量池 => 方法区的运行时常量池 是类加载过程之一
 
-关于Class文件的常量池，在第2章有深入讲解
+关于字符串常量，运行时常量池中存储的是字符串的值、长度
 
-> TODO
+比如下面这个例子
+```java
+package com.peter.jvm.example2.String;
+
+public class ConstantStringInfoTest {
+    String name = "aaa";
+    String name1 = "bbb";
+
+    public static void main(String[] args) {
+    }
+}
+```
+
+javap反编译部分结果（javap -c -v ConstantStringInfoTest.class）
+```
+Constant pool:
+   #1 = Methodref          #7.#24         // java/lang/Object."<init>":()V
+   #2 = String             #25            // aaa
+   #3 = Fieldref           #6.#26         // com/peter/jvm/example2/String/ConstantStringInfoTest.name:Ljava/lang/String;
+   #4 = String             #27            // bbb
+   #5 = Fieldref           #6.#28         // com/peter/jvm/example2/String/ConstantStringInfoTest.name1:Ljava/lang/String;
+   #6 = Class              #29            // com/peter/jvm/example2/String/ConstantStringInfoTest
+   #7 = Class              #30            // java/lang/Object
+   #8 = Utf8               name
+   #9 = Utf8               Ljava/lang/String;
+  #10 = Utf8               name1
+  #11 = Utf8               <init>
+  #12 = Utf8               ()V
+  #13 = Utf8               Code
+  #14 = Utf8               LineNumberTable
+  #15 = Utf8               LocalVariableTable
+  #16 = Utf8               this
+  #17 = Utf8               Lcom/peter/jvm/example2/String/ConstantStringInfoTest;
+  #18 = Utf8               main
+  #19 = Utf8               ([Ljava/lang/String;)V
+  #20 = Utf8               args
+  #21 = Utf8               [Ljava/lang/String;
+  #22 = Utf8               SourceFile
+  #23 = Utf8               ConstantStringInfoTest.java
+  #24 = NameAndType        #11:#12        // "<init>":()V
+  #25 = Utf8               aaa
+  #26 = NameAndType        #8:#9          // name:Ljava/lang/String;
+  #27 = Utf8               bbb
+  #28 = NameAndType        #10:#9         // name1:Ljava/lang/String;
+  #29 = Utf8               com/peter/jvm/example2/String/ConstantStringInfoTest
+  #30 = Utf8               java/lang/Object
+
+public class com.peter.jvm.example2.String.ConstantStringInfoTest {
+  java.lang.String name;
+
+  java.lang.String name1;
+
+  public com.peter.jvm.example2.String.ConstantStringInfoTest();
+    Code:
+       0: aload_0
+       1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: ldc           #2                  // String aaa
+       7: putfield      #3                  // Field name:Ljava/lang/String;
+      10: aload_0
+      11: ldc           #4                  // String bbb
+      13: putfield      #5                  // Field name1:Ljava/lang/String;
+      16: return
+
+  public static void main(java.lang.String[]);
+    Code:
+       0: return
+```
+
+再看下jclasslib
+
+![image](https://user-images.githubusercontent.com/10209135/93454279-5722a200-f90d-11ea-9b75-b6a7654b2690.png)
+![image](https://user-images.githubusercontent.com/10209135/93454426-94872f80-f90d-11ea-8a72-29e1ba0f0ecd.png)
+
+可以看到，Constant pool中2、4都是CONSTANT_String_info，它们分别指向了一个CONSTANT_Utf8_info，其中包含了字符串内容和长度
 
 #### 方法区溢出
 
