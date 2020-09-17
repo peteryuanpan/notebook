@@ -371,7 +371,7 @@ public class com.peter.jvm.example2.String.ConstantStringInfoTest {
 - 若找到，则返回引用
 - 若找不到，则在堆中创建一个String对象，并将引用存储在字符串常量池中，返回引用
 
-上面的例子，对类文件常量池、运行时常量池、字符串常量池进行了一定的解释，会在第5章再进行深入讲解
+上面的例子，解释了字符串常量在 类文件常量池、运行时常量池、字符串常量池 中的生成逻辑关系，会在第5章再进行深入讲解
 
 > 部分参考：[启明南：正确理解Java的常量池](https://mp.weixin.qq.com/s/QtisE3z-MXYpdKnknJvTkA)
 
