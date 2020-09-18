@@ -444,3 +444,30 @@ public class CGLibJavaMethodAreaOOM {
 }
 ```
 
+输出结果（JDK7，-XX:PermSize=10M -XX:MaxPermSize=10M）
+```
+Caused by: java.lang.OutOfMemoryError: PermGen space
+```
+
+输出结果（JDK8，-XX:MetaspaceSize=10M -XX:MaxMetaspaceSize=10M）
+```
+Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:348)
+	at net.sf.cglib.core.ReflectUtils.defineClass(ReflectUtils.java:386)
+	at net.sf.cglib.core.AbstractClassGenerator.create(AbstractClassGenerator.java:219)
+	at net.sf.cglib.proxy.Enhancer.createHelper(Enhancer.java:377)
+	at net.sf.cglib.proxy.Enhancer.create(Enhancer.java:285)
+	at com.peter.jvm.example2.constantPool.CGLibJavaMethodAreaOOM.main(CGLibJavaMethodAreaOOM.java:22)
+```
+
+解释
+
+使用CGLib动态代理技术，可以不断的创建新的类，包括类的元信息存储于方法区，类的Class对象存储于堆区
+
+类的元信息，在JDK7中是存储在永久代中的，因此使用PermSize参数来限制；在JDK8中是存储在元空间中的，因此使用MetaspaceSize来限制
+
+无论是JDK7还是JDK8，合理设置参数，都可以复现出java.lang.OutOfMemoryError错误
+
+> CGLib技术在很多应用型技术栈里都有体现，比如 ASM，Spring AOP等，这部分必须了解
+
