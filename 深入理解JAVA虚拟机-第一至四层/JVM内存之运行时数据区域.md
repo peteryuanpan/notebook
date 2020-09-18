@@ -6,12 +6,16 @@
     - [本地方法栈与虚拟机栈的区别](#本地方法栈与虚拟机栈的区别)
     - [栈帧的概念](#栈帧的概念)
     - [虚拟机栈与本地方法栈溢出](#虚拟机栈与本地方法栈溢出)
+      - [例子1：单线程调用方法过多导致栈深度溢出](#例子1：单线程调用方法过多导致栈深度溢出)
+      - [例子2：过多线程调用方法导致OutOfMemory](#例子2：过多线程调用方法导致OutOfMemory)
   - [方法区](#方法区)
     - [方法区的定义](#方法区的定义)
     - [永久代及元空间](#永久代及元空间)
     - [元空间取代永久代的理由](#元空间取代永久代的理由)
     - [运行时常量池](#运行时常量池)
     - [方法区溢出](#方法区溢出)
+      - [例子1：基于JDK6的字符串常量池溢出](#例子1：基于JDK6的字符串常量池溢出)
+      - [例子2：使用CGLib让方法区内存溢出](#例子2：使用CGLib让方法区内存溢出)
 
 # JVM内存之运行时数据区域
 
@@ -272,7 +276,8 @@ Class文件的常量池 => 方法区的运行时常量池 是类加载过程之�
 
 关于字符串常量，我们来具体讲解一下
 
-比如下面这个例子
+下面这个例子是基于JDK8的
+
 ```java
 package com.peter.jvm.example2.String;
 
@@ -376,4 +381,66 @@ public class com.peter.jvm.example2.String.ConstantStringInfoTest {
 > 部分参考：[启明南：正确理解Java的常量池](https://mp.weixin.qq.com/s/QtisE3z-MXYpdKnknJvTkA)
 
 #### 方法区溢出
+
+##### 例子1：基于JDK6的字符串常量池溢出
+
+```java
+package com.peter.jvm.example2.constantPool;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class StringConstantPoolOOM {
+
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<String>();
+        int i = 0;
+        while (true) {
+            list.add(String.valueOf(i++).intern());
+        }
+    }
+}
+```
+
+输出结果（JDK6，-XX:PermSize=10M -XX:MaxPermSize=10M）
+```
+Exception in thread "main" java.lang.OutOfMemoryError: PermGen space
+```
+
+解释
+
+PermGen space是Hotspot中永久代的名词，上面代码在JDK7及以后，不会报错，会很长时间一直循环进行下去
+
+##### 例子2：使用CGLib让方法区内存溢出
+
+```java
+package com.peter.jvm.example2.constantPool;
+
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
+
+import java.lang.reflect.Method;
+
+public class CGLibJavaMethodAreaOOM {
+
+    public static void main(String[] args) {
+        while (true) {
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(OOMObject.class);
+            enhancer.setUseCache(false);
+            enhancer.setCallback(new MethodInterceptor() {
+                @Override
+                public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+                    return methodProxy.invokeSuper(obj, args);
+                }
+            });
+            enhancer.create();
+        }
+    }
+
+    static class OOMObject {
+    }
+}
+```
 
