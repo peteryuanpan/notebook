@@ -471,3 +471,14 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 
 > CGLib技术在很多应用型技术栈里都有体现，比如 ASM，Spring AOP等，这部分必须了解
 
+### 堆区
+
+#### 堆区的定义
+
+#### 新生代与老年代与永久代
+
+#### 大对象进入老年代
+
+#### 堆区溢出
+
+### 直接内存
