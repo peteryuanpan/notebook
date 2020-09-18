@@ -226,9 +226,9 @@ java.lang.OutOfMemoryError: unable to create new native thread
 
 #### 永久代及元空间
 
-JDK6、JDK7、JDK8，Hotspot的 方法区的实现 发生了翻天覆地的变化
-
 方法区是规范，永久代（PermGen）和元空间（Metaspace）是具体实现
+
+JDK6、JDK7、JDK8，Hotspot的 方法区的实现 发生了翻天覆地的变化
 
 在JDK6及以前，方法区的实现就只有永久代，永久代存储了类的元信息、静态变量、运行时常量池、字符串常量池、即时编译器编译后的代码等数据
 
