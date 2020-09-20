@@ -477,7 +477,9 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 
 #### 新生代与老年代与永久代
 
-#### 大对象进入老年代
+#### Eden区与From区与To区
+
+#### 对象进入老年代
 
 #### 堆区溢出
 
