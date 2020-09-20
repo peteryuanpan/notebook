@@ -481,7 +481,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 
 记得讲下从新生代到老年代的四种情况，不举具体例子
 
-#### Eden区与From区与To区
+#### Eden区与两个Survivor区
 
 #### 字符串常量池
 
