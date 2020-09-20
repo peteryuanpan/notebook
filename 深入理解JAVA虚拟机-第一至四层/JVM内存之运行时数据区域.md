@@ -477,9 +477,13 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 
 #### 新生代与老年代与永久代
 
+记得引用下JAVA理论知识文档中的图
+
+记得讲下从新生代到老年代的四种情况，不举具体例子
+
 #### Eden区与From区与To区
 
-#### 对象进入老年代
+#### 字符串常量池
 
 #### 堆区溢出
 
