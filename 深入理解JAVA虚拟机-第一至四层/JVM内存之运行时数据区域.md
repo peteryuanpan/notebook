@@ -660,6 +660,63 @@ OutOfMemoryError: GC Overhead Limit Exceeded 当JVM花太多时间执行垃圾�
 
 ##### 例子1-使用Unsafe让直接内存溢出
 
+```java
+package com.peter.jvm.example2.oom;
+
+import sun.misc.Unsafe;
+import java.lang.reflect.Field;
+
+public class DirectMemoryOOM {
+
+    private static final int _1MB = 1024 * 1024;
+
+    public static void main(String[] args) throws Exception {
+        Field unsafeField = Unsafe.class.getDeclaredFields()[0];
+        unsafeField.setAccessible(true);
+        Unsafe unsafe = (Unsafe) unsafeField.get(null);
+        int i = 0;
+        while (true) {
+            i ++;
+            System.out.println(i);
+            unsafe.allocateMemory(_1MB);
+        }
+    }
+}
+```
+
+输出结果（-Xmx20M -XX:MaxDirectMemorySize=10M）
+```
+...
+11968
+11969
+11970
+Exception in thread "main" java.lang.OutOfMemoryError
+	at sun.misc.Unsafe.allocateMemory(Native Method)
+	at com.peter.jvm.example2.oom.DirectMemoryOOM.main(DirectMemoryOOM.java:18)
+```
+
+解释
+
+DirectMemory容量可以通过参数 -XX:MaxDirectMemorySize 指定，如果不指定，则默认与Java堆最大值（-Xmx指定）一样
+
+上面代码中越过了 DirectByteBuffer，直接通过反射获取 Unsafe 实例进行内存分配
+
+相比之下，使用 DirectByteBuffer 分配内存也会抛出内存溢出异常，但它并没有真正向操作系统申请分配内存，而是通过计算得知内存无法分配，于是手动抛出异常，真正申请分配内存的方法是 unsafe.allocateMemory()
+
+Unsafe类的getUnsafe()方法限制了只有启动类加载器才会返回实例，也就是设计者希望Unsafe类只能被Bootstrap ClassLoader加载
+
+```java
+    @CallerSensitive
+    public static Unsafe getUnsafe() {
+        Class var0 = Reflection.getCallerClass();
+        if (!VM.isSystemDomainLoader(var0.getClassLoader())) {
+            throw new SecurityException("Unsafe");
+        } else {
+            return theUnsafe;
+        }
+    }
+```
+
 ### 调优命令
 
 #### 查看各区域内存大小
