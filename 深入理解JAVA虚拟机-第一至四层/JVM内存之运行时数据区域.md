@@ -556,6 +556,14 @@ HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比
 
 #### 字符串常量池
 
+字符串常量池在JVM层面是一个StringTable，只存储对java.lang.String实例的引用，而不存储String对象的内容
+
+字符串常量池属于堆区，而运行时常量池属于方法区，二者容易混淆
+
+以下是String s1 = "11"; 在堆栈中的内存模型图，这部分概念将在第5章深入讲解
+
+![image](https://user-images.githubusercontent.com/10209135/93755082-4c317f80-fc35-11ea-81dc-109133dfc0a5.png)
+
 #### 堆区溢出
 
 ### 直接内存
