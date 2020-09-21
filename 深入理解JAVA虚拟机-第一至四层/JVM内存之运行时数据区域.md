@@ -475,17 +475,82 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 
 #### 堆区的定义
 
+堆区是存放对象实例的内存区域，是垃圾收集器管理的主要区域
+
+现在的收集器基本都采用分代收集算法，堆区还可以分为新生代和老年代，新生代还可以分为Eden区，From Survivor区，To Survivor区
+
+从内存分配角度来看，线程共享的JAVA堆中可能划分出多个线程私有的分配缓冲区（Thread Local Allocation Buffer, TLAB），不过无论如何划分，都与存放内容无关，无论哪个区域，存储的都仍然是对象实例
+
 #### 新生代与老年代与永久代
 
 说明定义、默认比例关系、调整比例关系方法
 
-记得引用下JAVA理论知识文档中的图
+在JDK7及之前，堆内存被通常被分为下面三部分
+
+1.新生代（Young Generation）
+2.老年代（Old Generation）
+3.永久代（Permanent Generation）
+
+![image](https://user-images.githubusercontent.com/10209135/93738526-95bfa180-fc18-11ea-90fc-795c992e0283.png)
+
+JDK8之后HotSpot的永久代被彻底移除了（JDK1.7 就已经开始了），取而代之是元空间，元空间使用的是直接内存
+
+在JDK8及以后，堆内存只有新生代和老年代
+
+![image](https://user-images.githubusercontent.com/10209135/93738570-b4be3380-fc18-11ea-9fb1-26627792e7e2.png)
+
+以下是查看和设置 堆区及新生代内存大小的命令
+
+环境版本是
+```
+java version "1.8.0_231"
+Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
+```
+
+查看堆区内存大小
+```
+java -XX:+PrintFlagsFinal -version | findStr "HeapSize"
+uintx InitialHeapSize := 268435456
+```
+
+查看新生代内存大小
+```
+java -XX:+PrintFlagsFinal -version | findStr "NewSize"
+uintx NewSize := 89128960
+```
+
+可以看出，HotSpot实现，JDK8版本中，新生代与老年代内存大小默认比例是1:2，新生代占堆区的1/3，老年代占堆区的2/3
+
+设置VM参数例子
+
+-Xms20M 设置堆区内存初始大小为20M
+
+-Xmx20M 设置堆区内存最大大小为20M
+
+-Xmn10M 设置新生代内存大小为10M
 
 #### Eden区与两个Survivor区
 
-说明定义、默认比例关系、调整比例关系方法
+Eden区、From Survivor区、To Survivor区是新生代的子区
 
-记得提一下几种垃圾回收算法，尤其是复制算法（Eden区到Survivor区也属于复制算法）
+对象优先在Eden区分配，当Eden区没有空间时，虚拟机将发起一次MinorGC
+
+> 新生代GC（MinorGC）：指发生在新生代的垃圾收集动作，因为JAVA对象大多都具备朝生夕灭的特性，所以MinorGC非常频繁，一般回收速度也比较快
+
+> 老年代GC（MajorGC / FullGC）：指发生在老年代的GC，出现了MajorGC，经常会伴随还少一次的MinorGC（但非绝对，在 Paraller Scavenge 收集器的收集策略里就有直接进行 MajorGC 的策略选择过程）。MajorGC的速度一般会比MinorGC慢10倍以上。尽量避免Major和FullGC是调优策略之一
+
+如果对象在Eden区出生并经过第一次MinorGC后仍然能存活，并且能被Survivor容纳的话，将被移动到Survivor区中，并且对象年龄设为1
+
+对象在Survivor区每“熬过”一次MinorGC，年龄就增加1，直到15岁后（默认），就会晋升到老年代中
+
+From Survivor区与To Survivor区是两个内存大小相等的区域（一定相等，不可修改），共同负责存储Eden区中还存活的对象
+
+垃圾回收时（复制算法），将Eden区和其中一个Survivor区还存活的对象一次性地复制到另一块Survivor区中
+
+HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比例是8:1:1，也就是新生代可用内存大小为整个新生代内存大小的90%（Eden区 + 1个Survivor区）
+
+可以通过VM参数 -XX:SurvivorRatio=A 来设置Eden区与两个Survivor区内存大小比例为A
 
 #### 浅谈新生代到老年代
 
@@ -496,3 +561,5 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 #### 堆区溢出
 
 ### 直接内存
+
+### 区域间的指向关系
