@@ -487,13 +487,13 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 
 在JDK7及之前，堆内存被通常被分为下面三部分
 
-1.新生代（Young Generation）
-2.老年代（Old Generation）
-3.永久代（Permanent Generation）
+- 新生代（Young Generation）
+- 老年代（Old Generation）
+- 永久代（Permanent Generation）
 
 ![image](https://user-images.githubusercontent.com/10209135/93738526-95bfa180-fc18-11ea-90fc-795c992e0283.png)
 
-JDK8之后HotSpot的永久代被彻底移除了（JDK1.7 就已经开始了），取而代之是元空间，元空间使用的是直接内存
+JDK8之后HotSpot的永久代被彻底移除了（JDK1.7就已经开始了），取而代之是元空间，元空间使用的是直接内存
 
 在JDK8及以后，堆内存只有新生代和老年代
 
@@ -550,7 +550,9 @@ From Survivor区与To Survivor区是两个内存大小相等的区域（一定�
 
 HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比例是8:1:1，也就是新生代可用内存大小为整个新生代内存大小的90%（Eden区 + 1个Survivor区）
 
-可以通过VM参数 -XX:SurvivorRatio=A 来设置Eden区与两个Survivor区内存大小比例为A
+设置VM参数例子
+
+-XX:SurvivorRatio=8 设置Eden区与两个Survivor区内存大小比为8
 
 #### 浅谈新生代到老年代
 
