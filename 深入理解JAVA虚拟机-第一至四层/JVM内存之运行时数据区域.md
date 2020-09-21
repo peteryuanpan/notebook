@@ -554,38 +554,6 @@ HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比
 
 -XX:SurvivorRatio=8 设置Eden区与两个Survivor区内存大小比为8
 
-#### 浅谈新生代到老年代
-
-浅谈一下新生代到老年代的四种情况，这里不举具体例子，会在第5章深入讲解
-
-##### 情况一-长期存活的对象将进入老年代
-
-如果对象在Eden区出生并经过第一次MinorGC后仍然能存活，并且能被Survivor容纳的话，将被移动到Survivor区中，并且对象年龄设为1
-
-对象在Survivor区每“熬过”一次MinorGC，年龄就增加1，直到15岁后（默认），就会晋升到老年代中
-
-可以通过参数 -XX:MaxTenuringThreshold=A 来设置晋升年龄为A，不设置则A默认是15
-
-HotSpot实现，JDK8版本中，由于分代年龄占4个bit，因此MaxTenuringThreshold只能设置为0到15，测试过JDK6和JDK7无此限制
-
-##### 情况二-大对象直接进入老年代
-
-大对象是指需要连续内存空间的Java对象，典型的是很长的字符串及数组，比如 byte[] a = new byte[VERY_LONG];
-
-可以通过参数 -XX:PretenureSizeThreshold 来设置，对象大小超过该值则直接在老年代分配
-
-注意：PretenureSizeThreshold参数只能设置字节，比如3145728，不能写形如3M这样的简写
-
-> 比遇到一个大对象更加坏的消息是，遇到一群朝生夕灭的短命大对象，写程序的时候应当避免
-
-> 据子牙老师说，默认情况下，对象大小超过50%Eden区内存大小，就会进入老年代，但我没测试出来
-
-> PretenureSizeThreshold参数只对Serial和ParNew两款收集器有效，Parallel Scavenge收集器不认识这个参数，也不需要设置，如果遇到必须要使用该参数的场合，可以考虑ParNew加CMS的收集器组合
-
-##### 情况三-空间分配担保
-
-##### 情况四-动态对象年龄判断
-
 #### 字符串常量池
 
 #### 堆区溢出
