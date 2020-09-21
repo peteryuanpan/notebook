@@ -147,8 +147,8 @@ public class JavaVMStackOverflowTest {
 ```
 stack length: 773
 java.lang.StackOverflowError
-	at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
-	at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
+  at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
+  at com.peter.jvm.example2.overflow.JavaVMStackOverflowTest.stackLeak(JavaVMStackOverflowTest.java:9)
   ...
 ```
 
@@ -216,10 +216,10 @@ Thread-2026
 Thread-2027
 Thread-2028
 java.lang.OutOfMemoryError: unable to create new native thread
-	at java.lang.Thread.start0(Native Method)
-	at java.lang.Thread.start(Thread.java:717)
-	at com.peter.jvm.example2.overflow.JavaVMStackOOMTest.stackLeakByThread(JavaVMStackOOMTest.java:30)
-	at com.peter.jvm.example2.overflow.JavaVMStackOOMTest.main(JavaVMStackOOMTest.java:37)
+  at java.lang.Thread.start0(Native Method)
+  at java.lang.Thread.start(Thread.java:717)
+  at com.peter.jvm.example2.overflow.JavaVMStackOOMTest.stackLeakByThread(JavaVMStackOOMTest.java:30)
+  at com.peter.jvm.example2.overflow.JavaVMStackOOMTest.main(JavaVMStackOOMTest.java:37)
 Error occurred during initialization of VM
 java.lang.OutOfMemoryError: unable to create new native thread
 ```
@@ -399,7 +399,7 @@ public class com.peter.jvm.example2.String.ConstantStringInfoTest {
 ##### 例子1-基于JDK6的字符串常量池溢出
 
 ```java
-package com.peter.jvm.example2.constantPool;
+package com.peter.jvm.example2.oom;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -428,7 +428,7 @@ PermGen space是Hotspot中永久代的名词，上面代码在JDK7及以后，�
 ##### 例子2-使用CGLib让方法区内存溢出
 
 ```java
-package com.peter.jvm.example2.constantPool;
+package com.peter.jvm.example2.oom;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -466,13 +466,13 @@ Caused by: java.lang.OutOfMemoryError: PermGen space
 输出结果（JDK8，-XX:MetaspaceSize=10M -XX:MaxMetaspaceSize=10M）
 ```
 Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
-	at java.lang.Class.forName0(Native Method)
-	at java.lang.Class.forName(Class.java:348)
-	at net.sf.cglib.core.ReflectUtils.defineClass(ReflectUtils.java:386)
-	at net.sf.cglib.core.AbstractClassGenerator.create(AbstractClassGenerator.java:219)
-	at net.sf.cglib.proxy.Enhancer.createHelper(Enhancer.java:377)
-	at net.sf.cglib.proxy.Enhancer.create(Enhancer.java:285)
-	at com.peter.jvm.example2.constantPool.CGLibJavaMethodAreaOOM.main(CGLibJavaMethodAreaOOM.java:22)
+  at java.lang.Class.forName0(Native Method)
+  at java.lang.Class.forName(Class.java:348)
+  at net.sf.cglib.core.ReflectUtils.defineClass(ReflectUtils.java:386)
+  at net.sf.cglib.core.AbstractClassGenerator.create(AbstractClassGenerator.java:219)
+  at net.sf.cglib.proxy.Enhancer.createHelper(Enhancer.java:377)
+  at net.sf.cglib.proxy.Enhancer.create(Enhancer.java:285)
+  at com.peter.jvm.example2.oom.CGLibJavaMethodAreaOOM.main(CGLibJavaMethodAreaOOM.java:22)
 ```
 
 解释
@@ -548,7 +548,7 @@ HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比
 ##### 例子1-创建过多对象导致堆区溢出
 
 ```java
-package com.peter.jvm.example2.constantPool;
+package com.peter.jvm.example2.oom;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -574,13 +574,13 @@ java.lang.OutOfMemoryError: Java heap space
 Dumping heap to java_pid21588.hprof ...
 Heap dump file created [28192067 bytes in 0.059 secs]
 Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
-	at java.util.Arrays.copyOf(Arrays.java:3210)
-	at java.util.Arrays.copyOf(Arrays.java:3181)
-	at java.util.ArrayList.grow(ArrayList.java:265)
-	at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:239)
-	at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:231)
-	at java.util.ArrayList.add(ArrayList.java:462)
-	at com.peter.jvm.example2.constantPool.HeapOOM.main(HeapOOM.java:11)
+  at java.util.Arrays.copyOf(Arrays.java:3210)
+  at java.util.Arrays.copyOf(Arrays.java:3181)
+  at java.util.ArrayList.grow(ArrayList.java:265)
+  at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:239)
+  at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:231)
+  at java.util.ArrayList.add(ArrayList.java:462)
+  at com.peter.jvm.example2.oom.HeapOOM.main(HeapOOM.java:11)
 ```
 
 解释
@@ -600,7 +600,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 在方法区溢出中，讲解了一段基于JDK6的字符串常量池的溢出例子，下面我们来看下在JDK8中的输出结果
 
 ```java
-package com.peter.jvm.example2.constantPool;
+package com.peter.jvm.example2.oom;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -623,9 +623,9 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 Dumping heap to java_pid22352.hprof ...
 Heap dump file created [25489659 bytes in 0.075 secs]
 Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
-	at java.lang.Integer.toString(Integer.java:401)
-	at java.lang.String.valueOf(String.java:3099)
-	at com.peter.jvm.example2.constantPool.StringConstantPoolOOM.main(StringConstantPoolOOM.java:12)
+  at java.lang.Integer.toString(Integer.java:401)
+  at java.lang.String.valueOf(String.java:3099)
+  at com.peter.jvm.example2.oom.StringConstantPoolOOM.main(StringConstantPoolOOM.java:12)
 ```
 
 解释
