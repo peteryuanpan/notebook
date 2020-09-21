@@ -499,37 +499,6 @@ JDK8之后HotSpot的永久代被彻底移除了（JDK1.7就已经开始了），
 
 ![image](https://user-images.githubusercontent.com/10209135/93738570-b4be3380-fc18-11ea-9fb1-26627792e7e2.png)
 
-以下是查看和设置 堆区及新生代内存大小的命令
-
-环境版本是
-```
-java version "1.8.0_231"
-Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
-Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
-```
-
-查看堆区内存大小
-```
-java -XX:+PrintFlagsFinal -version | findStr "HeapSize"
-uintx InitialHeapSize := 268435456
-```
-
-查看新生代内存大小
-```
-java -XX:+PrintFlagsFinal -version | findStr "NewSize"
-uintx NewSize := 89128960
-```
-
-可以看出，HotSpot实现，JDK8版本中，新生代与老年代内存大小默认比例是1:2，新生代占堆区的1/3，老年代占堆区的2/3
-
-设置VM参数例子
-
--Xms20M 设置堆区内存初始大小为20M
-
--Xmx20M 设置堆区内存最大大小为20M
-
--Xmn10M 设置新生代内存大小为10M
-
 #### Eden区与两个Survivor区
 
 Eden区、From Survivor区、To Survivor区是新生代的子区
@@ -550,9 +519,40 @@ From Survivor区与To Survivor区是两个内存大小相等的区域（一定�
 
 HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比例是8:1:1，也就是新生代可用内存大小为整个新生代内存大小的90%（Eden区 + 1个Survivor区）
 
+#### 查看和修改堆区内存命令
+
+环境版本是
+```
+java version "1.8.0_231"
+Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
+```
+
+查看堆区内存大小
+```
+java -XX:+PrintFlagsFinal -version | findStr "HeapSize"
+uintx InitialHeapSize := 268435456
+uintx MaxHeapSize := 4278190080
+```
+
+我的电脑是Windows10，物理内存是16GB
+
+可以看出，HotSpot实现，JDK8版本中，堆区初始大小默认是物理内存的1/64，最大大小默认是物理内存的1/4
+
+查看新生代内存大小
+```
+java -XX:+PrintFlagsFinal -version | findStr "NewSize"
+uintx NewSize := 89128960
+```
+
+可以看出，HotSpot实现，JDK8版本中，新生代与老年代内存大小默认比例是1:2，新生代占堆区的1/3，老年代占堆区的2/3
+
 设置VM参数例子
 
--XX:SurvivorRatio=8 设置Eden区与两个Survivor区内存大小比为8
+- -Xms20M 设置堆区内存初始大小为20M
+- -Xmx20M 设置堆区内存最大大小为20M
+- -Xmn10M 设置新生代内存大小为10M
+- -XX:SurvivorRatio=8 设置Eden区与两个Survivor区内存大小比为8
 
 #### 字符串常量池
 
@@ -565,6 +565,50 @@ HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比
 ![image](https://user-images.githubusercontent.com/10209135/93755082-4c317f80-fc35-11ea-81dc-109133dfc0a5.png)
 
 #### 堆区溢出
+
+##### 例子1-创建过多对象导致堆区溢出
+
+```java
+package com.peter.jvm.example2.constantPool;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class HeapOOM {
+
+    public static void main(String[] args) {
+        List<OOMObject> list = new ArrayList<OOMObject>();
+        while (true) {
+            list.add(new OOMObject());
+        }
+    }
+
+    static class OOMObject {
+
+    }
+}
+```
+
+输出结果（-Xms20M -Xmx20M -XX:+HeapDumpOnOutOfMemoryError）
+```
+java.lang.OutOfMemoryError: Java heap space
+Dumping heap to java_pid21588.hprof ...
+Heap dump file created [28192067 bytes in 0.059 secs]
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at java.util.Arrays.copyOf(Arrays.java:3210)
+	at java.util.Arrays.copyOf(Arrays.java:3181)
+	at java.util.ArrayList.grow(ArrayList.java:265)
+	at java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:239)
+	at java.util.ArrayList.ensureCapacityInternal(ArrayList.java:231)
+	at java.util.ArrayList.add(ArrayList.java:462)
+	at com.peter.jvm.example2.constantPool.HeapOOM.main(HeapOOM.java:11)
+```
+
+解释
+
+参数 -XX:+HeapDumpOnOutOfMemoryError 可以让虚拟机在出现内存溢出异常时，Dump出当前的内存堆转储快照，以便后事分析
+
+
 
 ### 直接内存
 
