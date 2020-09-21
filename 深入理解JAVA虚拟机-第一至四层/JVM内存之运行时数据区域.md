@@ -652,7 +652,8 @@ OutOfMemoryError: GC Overhead Limit Exceeded 当JVM花太多时间执行垃圾�
 
 以上是Java传统I/O的方式，可以发现经过了两次内存拷贝（内核 => 堆外内存 => 堆内内存），而NIO中只需要使用DirectByteBuffer，就不必将数据从堆外拷贝到堆内了，减少了一次内存拷贝，降低了内存的占用，减轻了gc的压力
 
-> 可以深入了解一下操作系统的用户态与内核态、NIO中DirectByteBuffer的实现原理等<br>
+> 可以深入了解一下操作系统的用户态与内核态、NIO中DirectByteBuffer的实现原理等
+
 > 部分参考：[Java直接内存是属于内核态还是用户态](https://www.zhihu.com/question/376317973)
 
 #### 直接内存溢出例子
