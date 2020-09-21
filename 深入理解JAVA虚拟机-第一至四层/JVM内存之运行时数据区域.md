@@ -493,7 +493,7 @@ Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 
 ![image](https://user-images.githubusercontent.com/10209135/93738526-95bfa180-fc18-11ea-90fc-795c992e0283.png)
 
-JDK8之后HotSpot的永久代被彻底移除了（JDK1.7就已经开始了），取而代之是元空间，元空间使用的是直接内存
+JDK8之后HotSpot的永久代被彻底移除了（JDK1.7就已经开始了），取而代之是元空间，元空间使用的是本地内存
 
 在JDK8及以后，堆内存只有新生代和老年代
 
