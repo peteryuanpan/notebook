@@ -2,8 +2,7 @@
   - [运行时数据区域的定义](#运行时数据区域的定义)
   - [程序计数器](#程序计数器)
   - [虚拟机栈与本地方法栈](#虚拟机栈与本地方法栈)
-    - [虚拟机栈的定义](#虚拟机栈的定义)
-    - [本地方法栈与虚拟机栈的区别](#本地方法栈与虚拟机栈的区别)
+    - [虚拟机栈与本地方法的定义](#虚拟机栈与本地方法的定义)
     - [栈帧的概念](#栈帧的概念)
     - [虚拟机栈与本地方法栈溢出](#虚拟机栈与本地方法栈溢出)
       - [例子1-单线程调用方法过深导致栈深度溢出](#例子1-单线程调用方法过深导致栈深度溢出)
@@ -16,6 +15,23 @@
     - [方法区溢出](#方法区溢出)
       - [例子1-基于JDK6的字符串常量池溢出](#例子1-基于JDK6的字符串常量池溢出)
       - [例子2-使用CGLib让方法区内存溢出](#例子2-使用CGLib让方法区内存溢出)
+  - [堆区](#堆区)
+    - [堆区的定义](#堆区的定义)
+    - [新生代与老年代与永久代](#新生代与老年代与永久代)
+    - [Eden区与两个Survivor区](#Eden区与两个Survivor区)
+    - [字符串常量池](#字符串常量池)
+    - [堆区溢出](#堆区溢出)
+      - [例子1-创建过多对象导致堆区溢出](#例子1-创建过多对象导致堆区溢出)
+      - [例子2-再看字符串常量池溢出](#例子2-再看字符串常量池溢出)
+  - [直接内存](#直接内存)
+    - [直接内存的定义](#直接内存的定义)
+    - [直接内存与元空间](#直接内存与元空间)
+    - [直接内存溢出例子](#直接内存溢出例子)
+      - [例子1-使用Unsafe让直接内存溢出](#例子1-使用Unsafe让直接内存溢出)
+  - [调优命令](#调优命令)
+    - [查看各区域内存大小](#查看各区域内存大小)
+    - [修改各区域内存大小](#修改各区域内存大小)
+  - [区域间的指向关系含义](#区域间的指向关系含义)
 
 # JVM内存之运行时数据区域
 
@@ -65,15 +81,13 @@ Java虚拟机在执行Java程序的过程中会把它所管理的内存划分为
 
 ### 虚拟机栈与本地方法栈
 
-#### 虚拟机栈的定义
+#### 虚拟机栈与本地方法栈的定义
 
-虚拟机栈描述的是Java方法调用与执行的内存模型
+虚拟机栈与本地方法栈描述的是Java方法调用与执行的内存模型
 
 虚拟机栈是线程私有的，每个线程都有一个虚拟机栈
 
-#### 本地方法栈与虚拟机栈的区别
-
-二者内部结构是一样的，本地方法栈为native方法服务，虚拟机栈为非native方法服务
+本地方法栈与虚拟机栈二者内部结构是一样的，本地方法栈为native方法服务（JNI），虚拟机栈为非native方法服务
 
 #### 栈帧的概念
 
@@ -89,7 +103,7 @@ Java虚拟机在执行Java程序的过程中会把它所管理的内存划分为
 
 操作数栈：用于实际存放方法调用执行中入栈和出栈数据的数据结构
 
-动态链接：在运行期间转化为直接引用的符号引用（还有一部分符号引用，在类加载的“解析”阶段转化为直接引用）
+动态链接：指向运行时常量池中该栈帧所属方法的引用，该引用在运行期间转化为直接引用，这部分称为动态链接（还有一部分符号引用，在类加载的“解析”阶段转化为直接引用，称为静态解析）
 
 返回地址：方法正常返回时，用于恢复上层方法执行状态的程序计数器的值（方法异常返回时，返回地址通过异常处理器表来确定，栈帧中不保存）
 
@@ -519,41 +533,6 @@ From Survivor区与To Survivor区是两个内存大小相等的区域（一定�
 
 HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比例是8:1:1，也就是新生代可用内存大小为整个新生代内存大小的90%（Eden区 + 1个Survivor区）
 
-#### 查看和修改堆区内存命令
-
-环境版本是
-```
-java version "1.8.0_231"
-Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
-Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
-```
-
-查看堆区内存大小
-```
-java -XX:+PrintFlagsFinal -version | findStr "HeapSize"
-uintx InitialHeapSize := 268435456
-uintx MaxHeapSize := 4278190080
-```
-
-我的电脑是Windows10，物理内存是16GB
-
-可以看出，HotSpot实现，JDK8版本中，堆区初始大小默认是物理内存的1/64，最大大小默认是物理内存的1/4
-
-查看新生代内存大小
-```
-java -XX:+PrintFlagsFinal -version | findStr "NewSize"
-uintx NewSize := 89128960
-```
-
-可以看出，HotSpot实现，JDK8版本中，新生代与老年代内存大小默认比例是1:2，新生代占堆区的1/3，老年代占堆区的2/3
-
-设置VM参数例子
-
-- -Xms20M 设置堆区内存初始大小为20M
-- -Xmx20M 设置堆区内存最大大小为20M
-- -Xmn10M 设置新生代内存大小为10M
-- -XX:SurvivorRatio=8 设置Eden区与两个Survivor区内存大小比为8
-
 #### 字符串常量池
 
 字符串常量池在JVM层面是一个StringTable，只存储对java.lang.String实例的引用，而不存储String对象的内容
@@ -608,8 +587,132 @@ Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 
 参数 -XX:+HeapDumpOnOutOfMemoryError 可以让虚拟机在出现内存溢出异常时，Dump出当前的内存堆转储快照，以便后事分析
 
+上面例子不断创建新的对象，以致堆区内存溢出
 
+> 下面的部分来自《深入理解JAVA虚拟机》第二版2.4.1，留个坑，以后深入<br>
+> 要解决这个区域的异常，一般的手段是先通过内存映像分析工具（如Eclipse Memory Analyzer，那IDEA的呢？）对Dump出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是先分清楚是出现了 内存泄漏（Memory Leak）还是内存溢出（Memory Overflow）<br>
+> 如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GC Roots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息以及GC Roots引用链的信息，就可以比较准确地定位出泄漏代码的位置<br>
+> 如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗<br>
+> 以上是处理Java堆内存问题的简单思路，具体工具使用方法见第7章
+
+##### 例子2-再看字符串常量池溢出
+
+在方法区溢出中，讲解了一段基于JDK6的字符串常量池的溢出例子，下面我们来看下在JDK8中的输出结果
+
+```java
+package com.peter.jvm.example2.constantPool;
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class StringConstantPoolOOM {
+
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<String>();
+        int i = 0;
+        while (true) {
+            list.add(String.valueOf(i++).intern());
+        }
+    }
+}
+```
+
+输出结果（-Xms20M -Xmx20M -XX:+HeapDumpOnOutOfMemoryError）
+```
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+Dumping heap to java_pid22352.hprof ...
+Heap dump file created [25489659 bytes in 0.075 secs]
+Exception in thread "main" java.lang.OutOfMemoryError: GC overhead limit exceeded
+	at java.lang.Integer.toString(Integer.java:401)
+	at java.lang.String.valueOf(String.java:3099)
+	at com.peter.jvm.example2.constantPool.StringConstantPoolOOM.main(StringConstantPoolOOM.java:12)
+```
+
+解释
+
+OutOfMemoryError: GC Overhead Limit Exceeded 当JVM花太多时间执行垃圾回收并且只能回收很少的堆空间时，就会发生此错误
 
 ### 直接内存
 
-### 区域间的指向关系
+#### 直接内存的定义
+
+#### 直接内存与元空间
+
+#### 直接内存溢出例子
+
+##### 例子1-使用Unsafe让直接内存溢出
+
+### 调优命令
+
+#### 查看各区域内存大小
+
+我的电脑是Windows10，物理内存是16GB
+
+JDK7版本
+```
+java version "1.7.0_80"
+Java(TM) SE Runtime Environment (build 1.7.0_80-b15)
+Java HotSpot(TM) 64-Bit Server VM (build 24.80-b11, mixed mode)
+```
+
+查看永久代
+```
+java -XX:+PrintFlagsFinal -version | find "PermSize"
+uintx PermSize = 21757952
+uintx MaxPermSize  = 85983232
+```
+
+JDK8版本
+```
+java version "1.8.0_231"
+Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
+```
+
+查看元空间
+```
+java -XX:+PrintFlagsFinal -version | findStr "Metaspace"
+uintx MetaspaceSize = 21807104
+uintx MaxMetaspaceSize = 4294901760
+```
+
+> 元空间使用的是本地内存，貌似最大值默认应该等于物理内存16GB吗，并非，而是物理内存的1/4。这里并不矛盾，元空间使用本地内存，不再与堆区的老年代内存连续，这是根本区别，但元空间也可以设置默认最大内存为物理内存的1/4，不一定需要等于物理内存
+
+查看堆区
+```
+java -XX:+PrintFlagsFinal -version | findStr "HeapSize"
+uintx InitialHeapSize := 268435456
+uintx MaxHeapSize := 4278190080
+```
+
+可以看出，HotSpot实现，JDK8版本中，堆区初始大小默认是物理内存的1/64，最大大小默认是物理内存的1/4
+
+查看新生代
+```
+java -XX:+PrintFlagsFinal -version | findStr "NewSize"
+uintx NewSize := 89128960
+```
+
+可以看出，HotSpot实现，JDK8版本中，新生代与老年代内存大小默认比例是1:2，新生代占堆区的1/3，老年代占堆区的2/3
+
+#### 修改各区域内存大小
+
+设置VM参数例子如下，比如可以通过java -Xms20M -Xmx20M来设置堆区大小为20M
+
+- -XX:PermSize=10M 设置永久代内存初始大小为10M
+- -XX:MaxPermSize=10M 设置永久代内存最大大小为10M
+- -XX:MetaspaceSize=10M 设置元空间内存初始大小为10M
+- -XX:MaxMetaspaceSize=10M 设置元空间内存最大大小为10M
+- -Xms20M 设置堆区内存初始大小为20M
+- -Xmx20M 设置堆区内存最大大小为20M
+- -Xmn10M 设置新生代内存大小为10M
+- -XX:SurvivorRatio=8 设置Eden区与两个Survivor区内存大小比为8
+
+### 区域间的指向关系含义
+
+- 虚拟机栈指向方法区：动态链接（指向运行时常量池中栈帧所属方法的引用，在运行期间转化为直接引用）
+- 虚拟机栈指向堆区：局部变量
+- 方法区指向堆区：引用类型的静态属性
+- 堆区指向方法区：klass pointer，指向该对象的InstanceKlass实例，表示类的元信息
+
+> 上面的指向关系含义需要好好琢磨理解，同时想一想有无多样性，一个指向关系是否代表多个含义
