@@ -1,9 +1,9 @@
-- [字节码手册](#字节码手册)
-  - [字节码表](#字节码表)
-
 # 字节码手册
 
-TODO 前言
+### 本文内容
+
+- 记录每个字节码的含义说明
+- 写一个简单的代码例子给每个字节码，用于理解
 
 ### 字节码表
 
@@ -23,6 +23,6 @@ TODO 前言
 |0xbc|newarray|创建一个指定原始类型（如int, float, char…）的数组，并将其引用值压入栈顶|
 |0xbd|[anewarray](anewarray.md)|创建一个引用型（如类，接口，数组）的数组，并将其引用值压入栈顶|
 
-参考
+### 参考
 - [JVM字节码指令手册](https://www.cnblogs.com/xpwi/p/11360692.html)
 - [维基百科JAVA字节码介绍列表](https://en.wikipedia.org/wiki/Java_bytecode_instruction_listings)
