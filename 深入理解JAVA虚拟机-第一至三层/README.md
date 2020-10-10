@@ -98,6 +98,7 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
     - [new或getstatic或putstatic或invokestatic](类加载机制.md#new或getstatic或putstatic或invokestatic)
     - [优先加载父类](类加载机制.md#优先加载父类)
     - [反射](类加载机制.md#反射)
+  - [类加载之数组类](#类加载之数组类)
   - [类加载笔试题统一解法](类加载机制.md#类加载笔试题统一解法)
 - [类加载器](类加载器.md)
   - [类加载器的定义](类加载器.md#类加载器的定义)
