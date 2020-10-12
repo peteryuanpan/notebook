@@ -23,10 +23,6 @@ P类问题、NP类问题、NPC问题
 
 TODO
 
-## NPC类问题有关算法探索
-
-TODO
-
 ## 各大OnlineJudge算法问题
 
 这是我的刷题笔记本，以Leetcode、lintcode为主，其他OnlineJudge为辅，记录下刷过的问题、源码、题解等
