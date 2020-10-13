@@ -539,7 +539,7 @@ HotSpot实现，JDK8版本中，Eden区与两个Survivor区内存大小默认比
 
 字符串常量池属于堆区，而运行时常量池属于方法区，二者容易混淆
 
-以下是String s1 = "11"; 在堆栈中的内存模型图，这部分概念将在第5章深入讲解
+以下是String s1 = "11"; 在堆栈中的内存模型图，这部分概念将在[字符串常量池](字符串常量池.md)中讲解
 
 ![image](https://user-images.githubusercontent.com/10209135/93755082-4c317f80-fc35-11ea-81dc-109133dfc0a5.png)
 
