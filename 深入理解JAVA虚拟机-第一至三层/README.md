@@ -69,6 +69,13 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 ### 文章目录
 
+#### 第0章：JVM基础概念
+- [JVM基础概念](#JVM基础概念)
+  - [JAVA运行时环境逻辑图](#JAVA运行时环境逻辑图)
+  - [InstanceKlass和InstanceMirrorKlass](#InstanceKlass和InstanceMirrorKlass)
+  - [ArrayKlass和TypeArrayKlass和ObjArrayKlass](#ArrayKlass和TypeArrayKlass和ObjArrayKlass)
+  - [InstanceRefKlass](#InstanceRefKlass)
+
 #### 第1章：类加载机制与类加载器
 - [类加载机制](类加载机制.md)
   - [类的定义](类加载机制.md#类的定义)
