@@ -405,3 +405,9 @@ class ObjArrayKlass : public ArrayKlass {
 ### InstanceRefKlass
 
 描述java.lang.ref.Reference的子类，这部分的概念与强软弱虚引用、垃圾回收有关系，见后续章节
+
+### JVM源码及调试
+
+我push了一份jvm源码到 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror
+
+鲁班学院的子牙老师，有提供Ubuntu虚拟机环境的镜像，在上面可以debug jvm源码，我做了个笔记，记录于：[Windows上用虚拟机运行Ubuntu环境并调试JVM](https://github.com/peteryuanpan/notebook/issues/89) ，这份笔记挺有用，但也只是个开始
