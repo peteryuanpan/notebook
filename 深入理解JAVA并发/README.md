@@ -6,7 +6,7 @@
 
 读者阅读它，能像读小说一样，从第一篇文章，读到最后一篇文章，尽量把讳莫如深难懂的内容写得简单易懂，当然这也需要读者具有一定的JAVA功底
 
-并发问题是比较抽象的，一个并发程序的执行结果可能会出乎程序员的预料，并发的不确定性让这篇文章集存在挑战性
+并发问题是比较抽象的，一个并发程序的执行结果可能会出乎程序员的预料，并发的不确定性让编程工作具有挑战性
 
 ### 声明
 
@@ -22,7 +22,9 @@
 
 无论讨论什么，我们先需要将定义讨论清楚，否则就会有无穷的争执
 
+并发性是指在一个系统中，拥有多个计算，这些计算有同时执行、潜在交互的特性，但不影响计算结果
 
+> In computer science, concurrency is the ability of different parts or units of a program, algorithm, or problem to be executed out-of-order or in partial order, without affecting the final outcome.
 
 ### JAVA语言的水深
 
