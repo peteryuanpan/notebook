@@ -1,8 +1,7 @@
 - [JVM基础概念](#JVM基础概念)
   - [JAVA运行时环境逻辑图](#JAVA运行时环境逻辑图)
   - [OOP-KLASS模型](#OOP-KLASS模型)
-  - [InstanceKlass](#InstanceKlass)
-  - [InstanceMirrorKlass](#InstanceMirrorKlass)
+  - [InstanceKlass和InstanceMirrorKlass](#InstanceKlass和InstanceMirrorKlass)
   - [ArrayKlass和TypeArrayKlass和ObjArrayKlass](#ArrayKlass和TypeArrayKlass和ObjArrayKlass)
   - [InstanceRefKlass](#InstanceRefKlass)
 
@@ -29,7 +28,9 @@ OOP-KLASS模型是JVM底层的数据结构，理解JVM的必要概念
 
 来看一下openjdk8源码
 
-### InstanceKlass
+### InstanceKlass和InstanceMirrorKlass
+
+**InstanceKlass**
 
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/instanceKlass.hpp#L138
 
@@ -247,7 +248,7 @@ _default_vtable_indices：默认构造方法在虚表中的索引
 _fields：类的成员属性
 ```
 
-### InstanceMirrorKlass
+**InstanceMirrorKlass**
 
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/instanceMirrorKlass.hpp#L41
 
