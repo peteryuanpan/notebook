@@ -1,6 +1,6 @@
 - [JVM基础概念](#JVM基础概念)
   - [JAVA运行时环境逻辑图](#JAVA运行时环境逻辑图)
-  - [OOP-KLASS模型](#OOP-KLASS模型)
+  - [oop-klass模型](#oop-klass模型)
   - [InstanceKlass和InstanceMirrorKlass](#InstanceKlass和InstanceMirrorKlass)
   - [ArrayKlass和TypeArrayKlass和ObjArrayKlass](#ArrayKlass和TypeArrayKlass和ObjArrayKlass)
   - [InstanceRefKlass](#InstanceRefKlass)
@@ -11,7 +11,7 @@
 
 ![image](http://tswork.peterpy.cn/java_runtime.png)
 
-### OOP-KLASS模型
+### oop-klass模型
 
 OOP-KLASS模型是JVM底层的数据结构，理解JVM的必要概念
 - Klass是Java类在JVM中的存在形式
