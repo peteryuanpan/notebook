@@ -60,6 +60,7 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [InstanceKlass和InstanceMirrorKlass](JVM基础概念.md#InstanceKlass和InstanceMirrorKlass)
   - [ArrayKlass和TypeArrayKlass和ObjArrayKlass](JVM基础概念.md#ArrayKlass和TypeArrayKlass和ObjArrayKlass)
   - [InstanceRefKlass](JVM基础概念.md#InstanceRefKlass)
+  - [JVM源码及调试](JVM基础概念.md#JVM源码及调试)
 
 #### 第1章：类加载机制与类加载器
 - [类加载机制](类加载机制.md)
