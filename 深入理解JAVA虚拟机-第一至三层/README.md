@@ -26,6 +26,8 @@ JAVA虚拟机是一种能够运行JAVA字节码程序的虚拟机器
 
 > A Java virtual machine (JVM) is a virtual machine that enables a computer to run Java programs as well as programs written in other languages that are also compiled to Java bytecode. From https://en.wikipedia.org/wiki/Java_virtual_machine.
 
+虚拟机是一个相对于物理机的概念，这两种机器都有代码执行能力，其区别是物理机的执行引擎是直接建立在处理器、缓存、指令集和操作系统层面上的，而虚拟机的执行引擎则是由软件自行实现的，因此可以不受物理条件制约地定制指令集与执行引擎的结构体系，能够执行那些不被硬件直接支持的指令集格式
+
 ### JAVA语言的水深
 
 JAVA这潭大湖，从上往下，一共有7层（人为定义的）
