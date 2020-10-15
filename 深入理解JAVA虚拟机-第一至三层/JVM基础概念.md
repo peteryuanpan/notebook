@@ -1,6 +1,8 @@
 - [JVM基础概念](#JVM基础概念)
   - [JAVA运行时环境逻辑图](#JAVA运行时环境逻辑图)
-  - [InstanceKlass和InstanceMirrorKlass](#InstanceKlass和InstanceMirrorKlass)
+  - [OOP-KLASS模型](#OOP-KLASS模型)
+  - [InstanceKlass](#InstanceKlass)
+  - [InstanceMirrorKlass](#InstanceMirrorKlass)
   - [ArrayKlass和TypeArrayKlass和ObjArrayKlass](#ArrayKlass和TypeArrayKlass和ObjArrayKlass)
   - [InstanceRefKlass](#InstanceRefKlass)
 
@@ -10,13 +12,16 @@
 
 ![image](http://tswork.peterpy.cn/java_runtime.png)
 
-### InstanceKlass和InstanceMirrorKlass
+### OOP-KLASS模型
 
-Klass是Java类在JVM中的存在形式（补充：OOP是JAVA对象在JVM中的存在形式）
-
-InstanceKlass是类的元信息数据
-
-InstanceMirrorKlass是类的Class对象
+OOP-KLASS模型是JVM底层的数据结构，理解JVM的必要概念
+- Klass是Java类在JVM中的存在形式
+- OOP是JAVA对象在JVM中的存在形式
+- InstanceKlass是类的元信息
+- InstanceMirrorKlass是类的Class对象
+- ArrayKlass表示的是数组类的元信息
+- TypeArrayKlass表示基本数组类的元信息
+- ObjArrayKlass表示引用数组类的元信息
 
 下面是这几个Klass的继承关系图
 
@@ -24,7 +29,7 @@ InstanceMirrorKlass是类的Class对象
 
 来看一下openjdk8源码
 
-**InstanceKlass**
+### InstanceKlass
 
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/instanceKlass.hpp#L138
 
@@ -242,7 +247,7 @@ _default_vtable_indices：默认构造方法在虚表中的索引
 _fields：类的成员属性
 ```
 
-**InstanceMirrorKlass**
+### InstanceMirrorKlass
 
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/instanceMirrorKlass.hpp#L41
 
@@ -341,9 +346,9 @@ instanceOop InstanceMirrorKlass::allocate_instance(KlassHandle k, TRAPS) {
 
 在理解了InstanceKlass后，这三个类就很好理解了
 
-- ArrayKlass表示的是数组类型（ArrayKlass is the abstract baseclass for all array classes）
-- TypeArrayKlass表示基本数组类型（A TypeArrayKlass is the klass of a typeArray, It contains the type and size of the elements），type是八大基本类型
-- ObjArrayKlass表示引用数组类型（ObjArrayKlass is the klass for objArrays），type是Reference
+- ArrayKlass表示的是数组类的元信息（ArrayKlass is the abstract baseclass for all array classes）
+- TypeArrayKlass表示基本数组类的元信息（A TypeArrayKlass is the klass of a typeArray, It contains the type and size of the elements）
+- ObjArrayKlass表示引用数组类的元信息（ObjArrayKlass is the klass for objArrays）
 
 下面的源码部分
 
