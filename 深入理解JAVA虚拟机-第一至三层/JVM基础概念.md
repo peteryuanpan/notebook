@@ -1,9 +1,17 @@
 - [JVM基础概念](#JVM基础概念)
   - [JAVA运行时环境逻辑图](#JAVA运行时环境逻辑图)
   - [oop-klass模型](#oop-klass模型)
-  - [InstanceKlass和InstanceMirrorKlass](#InstanceKlass和InstanceMirrorKlass)
-  - [ArrayKlass和TypeArrayKlass和ObjArrayKlass](#ArrayKlass和TypeArrayKlass和ObjArrayKlass)
-  - [InstanceRefKlass](#InstanceRefKlass)
+  - [InstanceKlass](#InstanceKlass)
+    - [InstanceMirrorKlass](#InstanceMirrorKlass)
+    - [InstanceRefKlass](#InstanceRefKlass)
+  - [ArrayKlass](#ArrayKlass)
+    - [TypeArrayKlass](#TypeArrayKlass)
+    - [ObjArrayKlass](#ObjArrayKlass)
+  - [oopDesc](#oopDesc)
+    - [instanceOopDesc](#instanceOopDesc)
+    - [arrayOopDesc](#arrayOopDesc)
+      - [typeArrayOopDesc](#typeArrayOopDesc)
+      - [objArrayOopDesc](#objArrayOopDesc)
   - [JVM源码及调试](#JVM源码及调试)
 
 # JVM基础概念
@@ -14,24 +22,31 @@
 
 ### oop-klass模型
 
-OOP-KLASS模型是JVM底层的数据结构，理解JVM的必要概念
-- Klass是Java类在JVM中的存在形式
-- OOP是JAVA对象在JVM中的存在形式
-- InstanceKlass是类的元信息
-- InstanceMirrorKlass是类的Class对象
-- ArrayKlass表示的是数组类的元信息
-- TypeArrayKlass表示基本数组类的元信息
-- ObjArrayKlass表示引用数组类的元信息
+oop-klass模型是JVM底层的数据结构，理解JVM的必要概念
+- Klass表示Java类在JVM中的存在形式
+  - InstanceKlass表示类的元信息
+    - InstanceMirrorKlass表示类的Class对象
+    - InstanceRefKlass表示?
+  - ArrayKlass表示数组类的元信息
+    - TypeArrayKlass表示基本数组类的元信息
+    - ObjArrayKlass表示引用数组类的元信息
+- oopDesc表示JAVA对象在JVM中的存在形式
+  - instanceOopDesc表示普通类对象（非数组类对象）
+  - arrayOopDesc表示数组类对象
+    - typeArrayOopDesc表示基本数组类对象
+    - objArrayOopDesc表示引用数组类对象
 
 下面是这几个Klass的继承关系图
 
 ![image](https://user-images.githubusercontent.com/10209135/89729486-ced8f380-da68-11ea-81d4-e4b19825a4a0.png)
 
+下面是这几个oop的继承关系图
+
+![image](https://cdn.nlark.com/yuque/0/2020/png/2179815/1597118140439-8f5e1e7d-072b-4b3b-a502-e093d90ff8d0.png)
+
 来看一下openjdk8源码
 
-### InstanceKlass和InstanceMirrorKlass
-
-**InstanceKlass**
+### InstanceKlass
 
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/instanceKlass.hpp#L138
 
@@ -249,7 +264,7 @@ _default_vtable_indices：默认构造方法在虚表中的索引
 _fields：类的成员属性
 ```
 
-**InstanceMirrorKlass**
+#### InstanceMirrorKlass
 
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/instanceMirrorKlass.hpp#L41
 
@@ -344,7 +359,11 @@ instanceOop InstanceMirrorKlass::allocate_instance(KlassHandle k, TRAPS) {
 
 总结一下，类加载器将.class文件载入JVM中，parse后生成的是instanceKlass对象，之后会生成这个Klass类对应的镜像类实例，并将Java类中的静态变量初始化后存储在镜像类实例中，这个镜像类就是Java代码中的Class对象
 
-### ArrayKlass和TypeArrayKlass和ObjArrayKlass
+#### InstanceRefKlass
+
+描述java.lang.ref.Reference的子类，这部分的概念与强软弱虚引用、垃圾回收有关系，见后续章节
+
+### ArrayKlass
 
 在理解了InstanceKlass后，这三个类就很好理解了
 
@@ -368,6 +387,8 @@ class ArrayKlass: public Klass {
   oop      _component_mirror;  // component type, as a java/lang/Cl
 ```
 
+#### TypeArrayKlass
+
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/typeArrayKlass.hpp
 ```cpp
 // A TypeArrayKlass is the klass of a typeArray
@@ -384,6 +405,8 @@ class TypeArrayKlass : public ArrayKlass {
  public:
   TypeArrayKlass() {} // For dummy objects.
 ```
+
+#### ObjArrayKlass
 
 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/objArrayKlass.hpp
 ```cpp
@@ -403,9 +426,220 @@ class ObjArrayKlass : public ArrayKlass {
   ObjArrayKlass() {}
 ```
 
-### InstanceRefKlass
+### oopDesc
 
-描述java.lang.ref.Reference的子类，这部分的概念与强软弱虚引用、垃圾回收有关系，见后续章节
+oopDesc表示JAVA对象在JVM中的存在形式
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/oop.hpp#L59
+
+```cpp
+class oopDesc {
+  friend class VMStructs;
+ private:
+  volatile markOop  _mark;
+  union _metadata {
+    Klass*      _klass;
+    narrowKlass _compressed_klass;
+  } _metadata;
+
+  // Fast access to barrier set.  Must be initialized.
+  static BarrierSet* _bs;
+
+ public:
+  markOop  mark() const         { return _mark; }
+  markOop* mark_addr() const    { return (markOop*) &_mark; }
+
+  void set_mark(volatile markOop m)      { _mark = m;   }
+
+  void    release_set_mark(markOop m);
+  markOop cas_set_mark(markOop new_mark, markOop old_mark);
+
+  // Used only to re-initialize the mark word (e.g., of promoted
+  // objects during a GC) -- requires a valid klass pointer
+  void init_mark();
+
+  Klass* klass() const;
+  Klass* klass_or_null() const volatile;
+  Klass** klass_addr();
+  narrowKlass* compressed_klass_addr();
+
+  void set_klass(Klass* k);
+
+  // For klass field compression
+  int klass_gap() const;
+  void set_klass_gap(int z);
+  // For when the klass pointer is being used as a linked list "next" field.
+  void set_klass_to_list_ptr(oop k);
+  oop list_ptr_from_klass();
+
+  // size of object header, aligned to platform wordSize
+  static int header_size()          { return sizeof(oopDesc)/HeapWordSize; }
+
+  // Returns whether this is an instance of k or an instance of a subclass of k
+  bool is_a(Klass* k)  const;
+
+  // Returns the actual oop size of the object
+  int size();
+
+  // Sometimes (for complicated concurrency-related reasons), it is useful
+  // to be able to figure out the size of an object knowing its klass.
+  int size_given_klass(Klass* klass);
+
+  // type test operations (inlined in oop.inline.h)
+  bool is_instance()            const;
+  bool is_instanceMirror()      const;
+  bool is_instanceClassLoader() const;
+  bool is_instanceRef()         const;
+  bool is_array()               const;
+  bool is_objArray()            const;
+  bool is_typeArray()           const;
+...
+```
+
+#### instanceOopDesc
+
+instanceOopDesc表示普通类对象（非数组类对象）
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/instanceOop.hpp#L33
+
+```cpp
+class instanceOopDesc : public oopDesc {
+ public:
+  // aligned header size.
+  static int header_size() { return sizeof(instanceOopDesc)/HeapWordSize; }
+
+  // If compressed, the offset of the fields of the instance may not be aligned.
+  static int base_offset_in_bytes() {
+    // offset computation code breaks if UseCompressedClassPointers
+    // only is true
+    return (UseCompressedOops && UseCompressedClassPointers) ?
+             klass_gap_offset_in_bytes() :
+             sizeof(instanceOopDesc);
+  }
+
+  static bool contains_field_offset(int offset, int nonstatic_field_size) {
+    int base_in_bytes = base_offset_in_bytes();
+    return (offset >= base_in_bytes &&
+            (offset-base_in_bytes) < nonstatic_field_size * heapOopSize);
+  }
+};
+```
+
+#### arrayOopDesc
+
+arrayOopDesc表示数组类对象
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/objArrayOop.hpp#L33
+
+```cpp
+class objArrayOopDesc : public arrayOopDesc {
+  friend class ObjArrayKlass;
+  friend class Runtime1;
+  friend class psPromotionManager;
+  friend class CSetMarkOopClosure;
+  friend class G1ParScanPartialArrayClosure;
+
+  template <class T> T* obj_at_addr(int index) const {
+    assert(is_within_bounds(index), "index out of bounds");
+    return &((T*)base())[index];
+  }
+
+private:
+  // Give size of objArrayOop in HeapWords minus the header
+  static int array_size(int length) {
+    const uint OopsPerHeapWord = HeapWordSize/heapOopSize;
+    assert(OopsPerHeapWord >= 1 && (HeapWordSize % heapOopSize == 0),
+           "Else the following (new) computation would be in error");
+    uint res = ((uint)length + OopsPerHeapWord - 1)/OopsPerHeapWord;
+#ifdef ASSERT
+    // The old code is left in for sanity-checking; it'll
+    // go away pretty soon. XXX
+    // Without UseCompressedOops, this is simply:
+    // oop->length() * HeapWordsPerOop;
+    // With narrowOops, HeapWordsPerOop is 1/2 or equal 0 as an integer.
+    // The oop elements are aligned up to wordSize
+    const uint HeapWordsPerOop = heapOopSize/HeapWordSize;
+    uint old_res;
+    if (HeapWordsPerOop > 0) {
+      old_res = length * HeapWordsPerOop;
+    } else {
+      old_res = align_size_up((uint)length, OopsPerHeapWord)/OopsPerHeapWord;
+    }
+    assert(res == old_res, "Inconsistency between old and new.");
+#endif  // ASSERT
+    return res;
+  }
+```
+
+##### typeArrayOopDesc
+
+typeArrayOopDesc表示基本数组类对象
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/typeArrayOop.hpp#L36
+
+```cpp
+class typeArrayOopDesc : public arrayOopDesc {
+ protected:
+  jchar*    char_base()   const { return (jchar*)   base(T_CHAR); }
+  jboolean* bool_base()   const { return (jboolean*)base(T_BOOLEAN); }
+  jbyte*    byte_base()   const { return (jbyte*)   base(T_BYTE); }
+  jint*     int_base()    const { return (jint*)    base(T_INT); }
+  jlong*    long_base()   const { return (jlong*)   base(T_LONG); }
+  jshort*   short_base()  const { return (jshort*)  base(T_SHORT); }
+  jfloat*   float_base()  const { return (jfloat*)  base(T_FLOAT); }
+  jdouble*  double_base() const { return (jdouble*) base(T_DOUBLE); }
+
+  friend class TypeArrayKlass;
+
+ public:
+  jbyte* byte_at_addr(int which) const {
+    assert(is_within_bounds(which), "index out of bounds");
+    return &byte_base()[which];
+  }
+
+  jboolean* bool_at_addr(int which) const {
+    assert(is_within_bounds(which), "index out of bounds");
+    return &bool_base()[which];
+  }
+```
+
+##### objArrayOopDesc
+
+objArrayOopDesc表示引用数组类对象
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/hotspot/src/share/vm/oops/arrayOop.hpp#L42
+
+```cpp
+class arrayOopDesc : public oopDesc {
+  friend class VMStructs;
+
+  // Interpreter/Compiler offsets
+
+  // Header size computation.
+  // The header is considered the oop part of this type plus the length.
+  // Returns the aligned header_size_in_bytes.  This is not equivalent to
+  // sizeof(arrayOopDesc) which should not appear in the code.
+  static int header_size_in_bytes() {
+    size_t hs = align_size_up(length_offset_in_bytes() + sizeof(int),
+                              HeapWordSize);
+#ifdef ASSERT
+    // make sure it isn't called before UseCompressedOops is initialized.
+    static size_t arrayoopdesc_hs = 0;
+    if (arrayoopdesc_hs == 0) arrayoopdesc_hs = hs;
+    assert(arrayoopdesc_hs == hs, "header size can't change");
+#endif // ASSERT
+    return (int)hs;
+  }
+
+ public:
+  // The _length field is not declared in C++.  It is allocated after the
+  // declared nonstatic fields in arrayOopDesc if not compressed, otherwise
+  // it occupies the second half of the _klass field in oopDesc.
+  static int length_offset_in_bytes() {
+    return UseCompressedClassPointers ? klass_gap_offset_in_bytes() :
+                               sizeof(arrayOopDesc);
+  }
+```
 
 ### JVM源码及调试
 
