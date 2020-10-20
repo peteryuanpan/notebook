@@ -10,7 +10,7 @@
 
 ### 声明
 
-转载请注明出处：https://github.com/peteryuanpan/notebook/blob/master/深入理解JAVA多线程高并发
+转载请注明出处：https://github.com/peteryuanpan/notebook/blob/master/深入理解JAVA并发与集合
 
 作者：潘缘，来自电子科技大学，2017届
 
