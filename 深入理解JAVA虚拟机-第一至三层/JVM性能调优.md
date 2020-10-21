@@ -19,7 +19,7 @@
 
 > 因此呢，我将文章核心放小一些：至少对JVM各种运维工具进行一次介绍，介绍它们的基本功能，能实战演练的就尝试一次
 
-> 会涉及到的工具有：jps、jstat、jinfo、jmap、jhat、jstack、HSDIS、JHSDB、JConsole、VisualVM
+> 会涉及到的工具有：jps、jstat、jinfo、jmap、jhat、jstack、JHSDB、JConsole、VisualVM、Arthas
 
 ### 基础故障处理工具
 
