@@ -18,7 +18,7 @@
 
 还有两本书作为参考，一是《深入理解JAVA虚拟机》（第二版及第三版皆有），二是《JAVA并发编程实战》（原文版及译文版皆有）
 
-除此外，也参考了网上的许多优秀博文，会在文章内容中引用说明
+除此外，参考了网上的许多优秀博文，会在文章内容中引用说明
 
 ### 并发的定义
 
@@ -59,20 +59,26 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 #### 第0章：并发基础概念
 - [并发基础概念](并发基础概念.md)
   - TODO
+  
+#### 第1章：volatile
 
-#### 第A章：java.util.HashMap
+#### 第2章：synchronized
+
+#### 后续章节：AQS&ReentrantLock、Semaphore&CyclicBarrier、ForkJoin、线程池
+
+#### 第A章：HashMap
 - [HashMap源码分析](HashMap源码分析.md)
   - TODO
 - [HashMap面试题](HashMap面试题.md)
   - TODO
   
-#### 第B章：java.util.concurrent.ConcurrentHashMap
+#### 第B章：ConcurrentHashMap
 - [ConcurrentHashMap源码分析](ConcurrentHashMap源码分析.md)
   - TODO
 - [ConcurrentHashMap面试题](ConcurrentHashMap面试题.md)
   - TODO
   
-#### 第C章：java.util.List
+#### 第C章：List
 - [ArrayList源码分析]
   - TODO
 - [LinkedList源码分析]
