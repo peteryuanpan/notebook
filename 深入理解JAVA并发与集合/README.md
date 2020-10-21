@@ -83,9 +83,10 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - TODO
   
 #### 第C章：java.util.List
-- [ArrayList源码分析]
-- [LinkedList源码分析]
-- [Vector源码分析]
-- [CopyOnWriteArrayList源码分析]
+- [List源码分析]
+  - [ArrayList]
+  - [LinkedList]
+  - [Vector]
+  - [CopyOnWriteArrayList]
 - [List面试题]
   - TODO
