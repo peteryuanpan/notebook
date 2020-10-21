@@ -64,9 +64,13 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 - [JAVA内存模型](JAVA内存模型.md)
   - TODO
 
-#### 第2章：JAVA线程生命周期
-- [JAVA线程生命周期](JAVA线程生命周期.md)
+#### 第2章：JAVA线程
+- [JAVA线程](JAVA线程.md)
   - TODO
+
+### 第3章：锁机制
+
+### 第4章：线程池
 
 #### 第A章：HashMap
 - [HashMap源码分析](HashMap源码分析.md)
