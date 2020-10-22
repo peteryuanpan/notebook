@@ -20,6 +20,6 @@
 + [第8章：jvm面试题](深入理解JAVA虚拟机-第一至三层#第8章jvm面试题)
 </details>
 
-### ISSUE是草稿本
+### 草稿本
 
-我会通过ISSUE方式，为笔记打草稿，见 https://github.com/peteryuanpan/notebook/issues
+我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
