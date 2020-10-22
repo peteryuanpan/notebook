@@ -4,7 +4,7 @@
 
 以下是我在学习过程中的笔记记录，主要包含JVM原理、JAVA并发与集合、数据结构与算法等
 
-#### 文章导读
+### 文章导读
 
 <details open>
     <summary>深入理解JAVA虚拟机-第一至三层</summary>
@@ -20,3 +20,6 @@
 + [第8章：jvm面试题](深入理解JAVA虚拟机-第一至三层#第8章jvm面试题)
 </details>
 
+### ISSUE是草稿本
+
+我会通过ISSUE方式，为笔记打草稿，见 https://github.com/peteryuanpan/notebook/issues
