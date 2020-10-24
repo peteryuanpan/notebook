@@ -4,7 +4,7 @@
 
 大学里搞过2年ACM，基本上在解决的都是一些经典问题（基本都属于P类问题），比如线段树、树状数组、动态规划、KMP、AC自动机、BFS、DFS、最小生成树、图论问题等
 
-ACM中的问题，对个人编程思维有很大帮助，对拿到面试offer也是一块不错的敲门砖，但是，它的实际应用价值不大，你很难在实际项目中找到一个问题，需要用到ACM当中的某个算法去解决的，而实际应用中最常见的不是P类问题，而是NP类问题或者NPC问题，P类问题与它们有美妙的关联，也有差距
+ACM中的问题，对个人编程思维有很大帮助，对拿到面试offer也是一块不错的敲门砖，但是，它的实际应用价值不大，你很难在实际项目中找到一个问题，需要用到ACM中的某个具体算法去解决的，而实际应用中最常见的也不是P类问题，而是NP类问题或者NPC问题，P类问题与它们有美妙的关联，也有差距
 
 P类问题、NP类问题、NPC问题
 > P类问题：所有可以在多项式时间内求解的判定问题构成P类问题。<br>
@@ -38,26 +38,26 @@ TODO
 
 ### 题目列表
 
-|序号|题目|链接|来源|大标签|小标签|
-|--|--|--|--|--|--|
-|001|任意升序排序数列A的子串能否变成B|[contest1187_problemD](Codeforces/contest1187_problemD_任意升序排序数列A的子串能否变成B)|codeforces|白题|排列|
-|002|求和为零的三元组的去重解|[problem15](Leetcode/problem15_求和为零的三元组的去重解)|leetcode|白题|二分|
-|003|Kruskal算法求连通图的自定义函数解|[problem1395](UVA/problem1395_Kruskal算法求连通图的自定义函数解)|uva|图论|最小生成树|
-|004|线段树单点加法区间求和|[problem838](UESTC/problem838_线段树单点加法区间求和)|uestc|数据结构|线段树|
-|005|线段树区间加法区间求和|[problem839](UESTC/problem839_线段树区间加法区间求和)|uestc|数据结构|线段树|
-|006|全排列能否被60整除|[contest1266_problemA](Codeforces/contest1266_problemA_全排列能否被60整除)|codeforces|白题|排列|
-|007|基于最大公约数的矩阵构造题|[contest1266_problemC](Codeforces/contest1266_problemC_基于最大公约数的矩阵构造题)|codeforces|白题|构造|
-|008|输出串是两个输入串的母序列且规则|[contest1272_problemF](Codeforces/contest1272_problemF_输出串是两个输入串的母序列且规则)|codeforces|动态规划||
-|009|商品打折券的最大化使用|[contest1282_problemB2](Codeforces/contest1282_problemB2_商品打折券的最大化使用)|codeforces|动态规划||
-|010|合并且排序K个指针表|[problem23](Leetcode/problem23_合并且排序K个指针表)|leetcode|白题|指针|
-|011|求解next_permutation|[problem31](Leetcode/problem31_求解next_permutation)|leetcode|白题|排列|
-|012|**两个正序数列求中位数**|[problem4](Leetcode/problem4_两个正序数列求中位数)|leetcode|白题|二分|
-|013|求1到X中数字1出现的次数|[problem233](Leetcode/problem233_求1到X中数字1出现的次数)|leetcode|动态规划|数列统计类|
-|014|求一个数是否是有效数|[problem65](Leetcode/problem65_求一个数是否是有效数)|leetcode|白题|条件判断|
-|015|求a到b中有多少个翻转对称数|[problem248](Leetcode/problem248_求a到b中有多少个翻转对称数)|leetcode|动态规划|数列统计类|
-|016|最佳碰头地点|[problem296](Leetcode/problem296_最佳碰头地点)|leetcode|动态规划|公式推导|
-|017|多条环路公交车线两点间最少上车次数|[problem815](Leetcode/problem815_多条环路公交车线两点间最少上车次数)|leetcode|搜索|广度优先搜索|
-|018|计算三次最小生成树|[weekly-contest-205_problem4](Leetcode/weekly-contest-205_problem4_计算三次最小生成树)|leetcode|图论|最小生成树|
+|序号|题目|链接|来源|大标签|小标签|题解|
+|--|--|--|--|--|--|--|
+|001|任意升序排序数列A的子串能否变成B|[contest1187_problemD](Codeforces/contest1187_problemD_任意升序排序数列A的子串能否变成B)|codeforces|白题|排列||
+|002|求和为零的三元组的去重解|[problem15](Leetcode/problem15_求和为零的三元组的去重解)|leetcode|白题|二分||
+|003|Kruskal算法求连通图的自定义函数解|[problem1395](UVA/problem1395_Kruskal算法求连通图的自定义函数解)|uva|图论|最小生成树||
+|004|线段树单点加法区间求和|[problem838](UESTC/problem838_线段树单点加法区间求和)|uestc|数据结构|线段树||
+|005|线段树区间加法区间求和|[problem839](UESTC/problem839_线段树区间加法区间求和)|uestc|数据结构|线段树||
+|006|全排列能否被60整除|[contest1266_problemA](Codeforces/contest1266_problemA_全排列能否被60整除)|codeforces|白题|排列||
+|007|基于最大公约数的矩阵构造题|[contest1266_problemC](Codeforces/contest1266_problemC_基于最大公约数的矩阵构造题)|codeforces|白题|构造||
+|008|输出串是两个输入串的母序列且规则|[contest1272_problemF](Codeforces/contest1272_problemF_输出串是两个输入串的母序列且规则)|codeforces|动态规划|||
+|009|商品打折券的最大化使用|[contest1282_problemB2](Codeforces/contest1282_problemB2_商品打折券的最大化使用)|codeforces|动态规划|||
+|010|合并且排序K个指针表|[problem23](Leetcode/problem23_合并且排序K个指针表)|leetcode|白题|指针||
+|011|求解next_permutation|[problem31](Leetcode/problem31_求解next_permutation)|leetcode|白题|排列||
+|012|**两个正序数列求中位数**|[problem4](Leetcode/problem4_两个正序数列求中位数)|leetcode|白题|二分||
+|013|求1到X中数字1出现的次数|[problem233](Leetcode/problem233_求1到X中数字1出现的次数)|leetcode|动态规划|数列统计类||
+|014|求一个数是否是有效数|[problem65](Leetcode/problem65_求一个数是否是有效数)|leetcode|白题|条件判断||
+|015|求a到b中有多少个翻转对称数|[problem248](Leetcode/problem248_求a到b中有多少个翻转对称数)|leetcode|动态规划|数列统计类||
+|016|最佳碰头地点|[problem296](Leetcode/problem296_最佳碰头地点)|leetcode|动态规划|公式推导||
+|017|多条环路公交车线两点间最少上车次数|[problem815](Leetcode/problem815_多条环路公交车线两点间最少上车次数)|leetcode|搜索|广度优先搜索||
+|018|计算三次最小生成树|[weekly-contest-205_problem4](Leetcode/weekly-contest-205_problem4_计算三次最小生成树)|leetcode|图论|最小生成树||
  
 标签
 ```
