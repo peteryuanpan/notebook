@@ -61,17 +61,21 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 - [并发基础概念](并发基础概念.md)
   - TODO
   
-#### 第1章：JAVA线程与锁机制
+#### 第1章：JAVA线程
 - [JAVA线程](JAVA线程.md)
   - TODO
-- [JAVA锁机制](JAVA锁机制.md)
-  - TODO
+  
+#### 第2章：JAVA锁机制
+- synchonized
+- ReentrantLock
 
 #### 第2章：JAVA内存模型
 - [JAVA内存模型](JAVA内存模型.md)
   - TODO
 
 #### 第3章：线程池应用
+- ThreadPoolExecutor
+- ForkJoinPool
 
 #### 第A章：HashMap
 - [HashMap源码分析](HashMap源码分析.md)
