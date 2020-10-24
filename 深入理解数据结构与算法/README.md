@@ -38,7 +38,7 @@ TODO
 
 ### 题目列表
 
-|序号|题目|链接|来源|大标签|小标签|题解|
+|序号|题意|题目|来源|大标签|小标签|题解|
 |--|--|--|--|--|--|--|
 |001|任意升序排序数列A的子串能否变成B|[contest1187_problemD](Codeforces/contest1187_problemD_任意升序排序数列A的子串能否变成B)|codeforces|白题|排列||
 |002|求和为零的三元组的去重解|[problem15](Leetcode/problem15_求和为零的三元组的去重解)|leetcode|白题|二分||
