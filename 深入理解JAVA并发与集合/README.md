@@ -16,9 +16,9 @@
 
 本文部分内容来自鲁班学院的课程，感谢老师们以及同学们对我的帮助，这里尤其感谢一下fox老师，您的课是讲得真好！
 
-还有两本书作为参考，一是《深入理解JAVA虚拟机》（第二版及第三版皆有），二是《JAVA并发编程实战》（原文版及译文版皆有）
+还有两本书作为参考，一是《深入理解JAVA虚拟机》，二是《JAVA并发编程实战》
 
-除此外，参考了网上的许多优秀博文，会在文章内容中引用说明，其中面试题部分是参考了[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)
+除此外，还参考了非常优秀的博文总结：[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)
 
 ### 并发的定义
 
@@ -57,26 +57,25 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 - 注意，一定要有应用，否则相当于白学，做出合格的应用才能真正的理解并发中的难题
 
 ### 文章目录
-
-#### 第0章：并发基础概念
-- [并发基础概念](并发基础概念.md)
-  - TODO
   
-#### 第1章：JAVA线程
+#### 第1章：JAVA线程基础
 - [JAVA线程](JAVA线程.md)
   - TODO
-  
-#### 第2章：JAVA锁机制
-- synchonized
-- ReentrantLock
 
 #### 第2章：JAVA内存模型
 - [JAVA内存模型](JAVA内存模型.md)
   - TODO
 
-#### 第3章：线程池应用
+#### 第3章：JAVA锁机制
+- synchonized
+- ReentrantLock
+
+#### 第4章：线程池应用
 - ThreadPoolExecutor
 - ForkJoinPool
+
+#### 第5章：并发面试题
+- [并发面试题](并发面试题.md)
 
 #### 第A章：HashMap
 - [HashMap源码分析](HashMap源码分析.md)
