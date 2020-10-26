@@ -68,7 +68,9 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 #### 第3章：JAVA锁机制
 - synchonized
+- CAS&AQS
 - ReentrantLock
+- TODO
 
 #### 第4章：线程池应用
 - ThreadPoolExecutor
