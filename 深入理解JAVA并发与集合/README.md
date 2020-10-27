@@ -16,9 +16,9 @@
 
 本文部分内容来自鲁班学院的课程，感谢老师们以及同学们对我的帮助，这里尤其感谢一下fox老师，您的课是讲得真好！
 
-还有两本书作为参考，一是《深入理解JAVA虚拟机》，二是《JAVA并发编程实战》
+参考的书籍：《深入理解JAVA虚拟机》、《JAVA并发编程之美》、《JAVA并发编程实战》
 
-除此外，还参考了非常优秀的博文总结：[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)
+参考的优秀博文：[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)
 
 ### 并发的定义
 
