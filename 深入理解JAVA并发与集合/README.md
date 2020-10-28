@@ -66,11 +66,11 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 - [JAVA内存模型](JAVA内存模型.md)
   - TODO
 
-#### 第3章：JAVA锁机制
-- synchonized
-- CAS&AQS
-- ReentrantLock
-- TODO
+#### 第3章：线程安全问题
+- synchonized锁升级
+- ThreadLocal源码分析
+- CAS与原子类
+- AQS...ReentrantLock...
 
 #### 第4章：线程池应用
 - ThreadPoolExecutor
