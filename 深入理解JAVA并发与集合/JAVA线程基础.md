@@ -11,6 +11,8 @@
   - [线程的生命周期](#线程的生命周期)
     - [Thread.State的6种状态](#Thread.State的6种状态)
     - [等待唤醒机制](#等待唤醒机制)
+      - [基于Object的monitor机制](#基于Object的monitor机制)
+      - [基于线程的LockSupport](#基于线程的LockSupport)
     - [线程中断机制](#线程中断机制)
   - [线程安全问题](#线程安全问题)
     - [synchonized](#synchonized)
@@ -720,17 +722,138 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 - JAVA线程实际属于内核线程，线程的生命周期（创建、运行、销毁）是由内核管理的，JVM不具备CPU调度的权限，操作系统才具备CPU调度的权限
 - new Thread(Runnable a).start() 最终会走到Thread中的 start0() 方法，在JVM内部会创建一个对象OSThread，JVM底层会调用操作系统的内核库os::create_thread方法来创建线程（比如linux的pthread库中的pthread_create方法）
 - start0方法建立了一种映射关系，即（1）new Thread(Runnable a).start() =>（2）JVM的OSThread对象 =>（3）内核库os::create_thread方法。其中（1）到（2）是用户态，（2）到（3）是内核态，这里就涉及到了用户态与内核态的切换
-- 使用操作系统内核库os::create_thread方法创建线程后，线程状态为新建状态（NEW），内部会调用sync->wait方法进入等待状态，只有当执行了的Thread#start0方法后，才会唤醒线程，进入就绪状态，就绪状态下还未获取到CPU资源，当线程被分配到CPU时间片后，线程就进入了真正的运行状态（RUNNABLE）了，然后会调用Thread#run方法运行任务
+- 使用操作系统内核库os::create_thread方法创建线程后，线程状态为NEW（新建）状态，内部会调用sync->wait方法进入WATING（等待）状态，只有当执行了的Thread#start0方法后，才会唤醒线程，进入 READY（就绪）状态，就绪状态下还未获取到CPU资源，当线程被分配到CPU时间片后，线程就进入了真正的 RUNNING（运行）了，然后会调用Thread#run方法运行任务
 
-上面的关键点可以引出一个面试题：为什么不能直接调用 run() 方法，而需要调用 start() 方法来启动线程
+上面的关键点可以引出一个**面试题：为什么不能直接执行 run() 方法，而需要执行 start() 方法来启动线程？**
 
-回答的关键词是：新建、等待、start0唤醒、就绪、时间片分配、运行
+**回答**：一个线程创建之后它将处于 NEW（新建）状态，在调用 start() 方法前处于 WATING（等待）状态，在调用 start() 方法后才开始运行，线程这时候处于 READY（就绪）状态，就绪状态的线程获得了 CPU 时间片（timeslice）后就处于 RUNNING（运行）状态，随后会调用 run() 方法执行任务，而直接调用 run() 方法是不会在JVM内部启动线程的
 
 ### 线程的生命周期
 
 #### Thread.State的6种状态
 
+在Thread类中，有一个枚举类enum State，它定义了6种线程状态，分别是NEW、RUNNABLE、BLOCKED、WAITING、TIMED_WAITING、TERMINATED
+
+```java
+    /**
+     * A thread state.  A thread can be in one of the following states:
+     * <ul>
+     * <li>{@link #NEW}<br>
+     *     A thread that has not yet started is in this state.
+     *     </li>
+     * <li>{@link #RUNNABLE}<br>
+     *     A thread executing in the Java virtual machine is in this state.
+     *     </li>
+     * <li>{@link #BLOCKED}<br>
+     *     A thread that is blocked waiting for a monitor lock
+     *     is in this state.
+     *     </li>
+     * <li>{@link #WAITING}<br>
+     *     A thread that is waiting indefinitely for another thread to
+     *     perform a particular action is in this state.
+     *     </li>
+     * <li>{@link #TIMED_WAITING}<br>
+     *     A thread that is waiting for another thread to perform an action
+     *     for up to a specified waiting time is in this state.
+     *     </li>
+     * <li>{@link #TERMINATED}<br>
+     *     A thread that has exited is in this state.
+     *     </li>
+     * </ul>
+     *
+     * <p>
+     * A thread can be in only one state at a given point in time.
+     * These states are virtual machine states which do not reflect
+     * any operating system thread states.
+     *
+     * @since   1.5
+     * @see #getState
+     */
+    public enum State {
+        /**
+         * Thread state for a thread which has not yet started.
+         */
+        NEW,
+
+        /**
+         * Thread state for a runnable thread.  A thread in the runnable
+         * state is executing in the Java virtual machine but it may
+         * be waiting for other resources from the operating system
+         * such as processor.
+         */
+        RUNNABLE,
+
+        /**
+         * Thread state for a thread blocked waiting for a monitor lock.
+         * A thread in the blocked state is waiting for a monitor lock
+         * to enter a synchronized block/method or
+         * reenter a synchronized block/method after calling
+         * {@link Object#wait() Object.wait}.
+         */
+        BLOCKED,
+
+        /**
+         * Thread state for a waiting thread.
+         * A thread is in the waiting state due to calling one of the
+         * following methods:
+         * <ul>
+         *   <li>{@link Object#wait() Object.wait} with no timeout</li>
+         *   <li>{@link #join() Thread.join} with no timeout</li>
+         *   <li>{@link LockSupport#park() LockSupport.park}</li>
+         * </ul>
+         *
+         * <p>A thread in the waiting state is waiting for another thread to
+         * perform a particular action.
+         *
+         * For example, a thread that has called <tt>Object.wait()</tt>
+         * on an object is waiting for another thread to call
+         * <tt>Object.notify()</tt> or <tt>Object.notifyAll()</tt> on
+         * that object. A thread that has called <tt>Thread.join()</tt>
+         * is waiting for a specified thread to terminate.
+         */
+        WAITING,
+
+        /**
+         * Thread state for a waiting thread with a specified waiting time.
+         * A thread is in the timed waiting state due to calling one of
+         * the following methods with a specified positive waiting time:
+         * <ul>
+         *   <li>{@link #sleep Thread.sleep}</li>
+         *   <li>{@link Object#wait(long) Object.wait} with timeout</li>
+         *   <li>{@link #join(long) Thread.join} with timeout</li>
+         *   <li>{@link LockSupport#parkNanos LockSupport.parkNanos}</li>
+         *   <li>{@link LockSupport#parkUntil LockSupport.parkUntil}</li>
+         * </ul>
+         */
+        TIMED_WAITING,
+
+        /**
+         * Thread state for a terminated thread.
+         * The thread has completed execution.
+         */
+        TERMINATED;
+    }
+```
+
+6种状态的转换关系图解
+
+![image](https://user-images.githubusercontent.com/10209135/97448112-3c5f3680-196b-11eb-8443-b45f25e63178.png)
+
+6种状态解析
+- NEW，初始状态，表示线程被初始化（new Thread()），但未执行start方法
+- RUNNABLE，运行状态，Java线程将操作系统中的就绪和运行两种状态笼统地称作“运行状态”
+  - READY，就绪状态，属于JVM底层的状态，不属于JAVA层面，表示线程正在运行但还未分配到CPU时间片
+  - RUNNING，运行状态，属于JVM底层的状态，不属于JAVA层面，表示线程获取到CPU时间片，正在运行
+- BLOCKED，阻塞状态，表示线程正在阻塞于monitor锁，等待进入synchronized方法或块
+- WAITING，等待状态，表示线程由于一些特定动作（Object#wait()、LockSupport.park()）进入等待状态，当其他线程执行对应特定动作（Object#notify、LockSupport.unpark(Thread)）后会唤醒该线程，然后该线程进入运行状态，或者表示正在等待线程运行结束（Thread.join()）
+- TIME_WAITING，超时等待状态，它与等待状态很类似，但可以设置指定超时时间，超时后会线程会自动退出等待状态
+- TERMINATED，终止状态，表示线程已经执行完毕
+
 #### 等待唤醒机制
+
+##### 基于Object的monitor机制
+
+##### 基于线程的LockSupport
 
 #### 线程中断机制
 
