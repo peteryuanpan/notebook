@@ -609,6 +609,7 @@ public interface RunnableFuture<V> extends Runnable, Future<V> {
 ```
 
 Future
+
 ![image](https://user-images.githubusercontent.com/10209135/97416553-8cc19e80-1941-11eb-88e0-6f7d3493c4e0.png)
 
 FutureTask实现了Runnable接口，表示它可以作为一个线程对象来执行
