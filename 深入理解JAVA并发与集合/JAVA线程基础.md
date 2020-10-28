@@ -722,11 +722,11 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 - JAVA线程实际属于内核线程，线程的生命周期（创建、运行、销毁）是由内核管理的，JVM不具备CPU调度的权限，操作系统才具备CPU调度的权限
 - new Thread(Runnable a).start() 最终会走到Thread中的 start0() 方法，在JVM内部会创建一个对象OSThread，JVM底层会调用操作系统的内核库os::create_thread方法来创建线程（比如linux的pthread库中的pthread_create方法）
 - start0方法建立了一种映射关系，即（1）new Thread(Runnable a).start() =>（2）JVM的OSThread对象 =>（3）内核库os::create_thread方法。其中（1）到（2）是用户态，（2）到（3）是内核态，这里就涉及到了用户态与内核态的切换
-- 使用操作系统内核库os::create_thread方法创建线程后，线程状态为NEW（新建）状态，内部会调用sync->wait方法进入WATING（等待）状态，只有当执行了的Thread#start0方法后，才会唤醒线程，进入 READY（就绪）状态，就绪状态下还未获取到CPU资源，当线程被分配到CPU时间片后，线程就进入了真正的 RUNNING（运行）了，然后会调用Thread#run方法运行任务
+- 使用操作系统内核库os::create_thread方法创建线程后，线程状态为 NEW（新建）状态，内部会调用sync->wait方法进入等待（个人认为不要理解为WAITING状态为好，只是JVM内部的等待），只有当执行了的Thread#start0方法后，才会唤醒线程，进入 READY（就绪）状态，就绪状态下还未获取到CPU资源，当线程被分配到CPU时间片后，线程就进入了真正的 RUNNING（运行）了，然后会调用Thread#run方法运行任务
 
 上面的关键点可以引出一个**面试题：为什么不能直接执行 run() 方法，而需要执行 start() 方法来启动线程？**
 
-**回答**：一个线程创建之后它将处于 NEW（新建）状态，在调用 start() 方法前处于 WATING（等待）状态，在调用 start() 方法后才开始运行，线程这时候处于 READY（就绪）状态，就绪状态的线程获得了 CPU 时间片（timeslice）后就处于 RUNNING（运行）状态，随后会调用 run() 方法执行任务，而直接调用 run() 方法是不会在JVM内部启动线程的
+**回答**：一个线程创建之后它将处于 NEW（新建）状态，在调用 start() 方法后才开始运行，线程这时候处于 READY（就绪）状态，就绪状态的线程获得了 CPU 时间片后就处于 RUNNING（运行）状态，随后会调用 run() 方法执行任务，而直接调用 run() 方法是不会在JVM内部启动线程的
 
 ### 线程的生命周期
 
