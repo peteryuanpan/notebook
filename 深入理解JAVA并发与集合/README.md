@@ -60,9 +60,17 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 #### 第0章：源码分析
 - [源码分析](源码分析)
-  - [并发]
+  - 并发部分
     - [ThreadLocal]
-  - [集合]
+    - [FutureTask]
+    - [ReentrantLock]
+    - [ReentrantReadWriteLock]
+    - [Semaphore]
+    - [CountDownLath]
+    - [CyclicBarrier]
+    - [ThreadPoolExecutor]
+    - [ForkJoinPool]
+  - 集合部分
     - [ArrayList]
     - [LinkedList]
     - [Vector]
@@ -80,19 +88,24 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 #### 第3章：线程安全问题
 - synchonized锁升级
-- CAS与原子类
-- AQS...ReentrantLock...
+  - TODO
+- CAS原理与应用
+  - TODO
+- AQS原理与应用
+  - TODO
 
-#### 第4章：线程池应用
-- ThreadPoolExecutor
-- ForkJoinPool
+#### 第4章：线程池原理与应用
+- 线程池原理与应用
+  - TODO
 
 #### 第5章：并发面试题
-- [并发面试题](并发面试题.md)
+- [并发基础面试题]
+  - TODO
+- [并发进阶面试题]
   - TODO
 
 #### 第6章：集合面试题
-- [List面试题]
+- [List面试题](List面试题.md)
   - TODO
 - [HashMap面试题](HashMap面试题.md)
   - TODO
