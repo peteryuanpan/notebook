@@ -9,7 +9,7 @@
       - [ExecutorService](#ExecutorService)
     - [JVM启动线程](#JVM启动线程)
   - [线程的生命周期](#线程的生命周期)
-    - [Thread.State的6种状态](#Thread.State的6种状态)
+    - [Thread-State的6种状态](#Thread-State的6种状态)
     - [等待唤醒机制](#等待唤醒机制)
       - [基于Object的monitor机制](#基于Object的monitor机制)
       - [基于线程的LockSupport](#基于线程的LockSupport)
@@ -730,7 +730,7 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 
 ### 线程的生命周期
 
-#### Thread.State的6种状态
+#### Thread-State的6种状态
 
 在Thread类中，有一个枚举类enum State，它定义了6种线程状态，分别是NEW、RUNNABLE、BLOCKED、WAITING、TIMED_WAITING、TERMINATED
 
@@ -848,6 +848,10 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 - WAITING，等待状态，表示线程由于一些特定动作（Object#wait()、LockSupport.park()）进入等待状态，当其他线程执行对应特定动作（Object#notify、LockSupport.unpark(Thread)）后会唤醒该线程，然后该线程进入运行状态，或者表示正在等待线程运行结束（Thread.join()）
 - TIME_WAITING，超时等待状态，它与等待状态很类似，但可以设置指定超时时间，超时后会线程会自动退出等待状态
 - TERMINATED，终止状态，表示线程已经执行完毕
+
+其中，有两个点需要注意
+- 理解RUNNABLE在JVM底层包含READY和RUNNING两种状态
+- 理解BLOCKED与WAITING状态的区别
 
 #### 等待唤醒机制
 
