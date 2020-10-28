@@ -450,9 +450,9 @@ hello
 
 解释：new Thread(futureTask).start();这句话表示本质上与前面2种方法一样，也是实现Runnable，new一个Thread(Runnable a)对象，执行start()方法，来完成创建、运行线程
 
-而不同的点是，FutureTask是实现了Runnable与Future接口，它是一个异步处理框架，通过get方法来异步获取线程执行结果
+而不同的点是，FutureTask是实现了Runnable与Future接口，它是一个异步处理框架，通过get方法来异步获取线程执行结果，关于Future源码分析，可见[FutureTask](源码分析/FutureTask.md)
 
-关于Future源码分析，可见[FutureTask](源码分析/FutureTask.md)
+相比于前2种方法，本方法好处是可以获得一个任务的返回值
 
 ##### ExecutorService
 
@@ -709,7 +709,20 @@ hello
 
 #### JVM启动线程
 
+上面介绍了JAVA语法层面启动线程的4种方法，而它们本质上都是同一种方式，即 implements Runnable + new Thread(Runnable a).start()
 
+现在来看一下，在JVM底层中，new Thread(Runnable a).start() 内部是如何实现的
+
+JVM底层启动线程详细图解（建议下载到本地打开查看更清晰）
+![image](https://user-images.githubusercontent.com/10209135/95410102-af215700-0955-11eb-8a91-9b25e3f18416.png)
+
+这里有几个关键点
+- JAVA线程实际属于内核线程，线程的生命周期（创建、运行、销毁）是由内核管理的，JVM不具备CPU调度的权限，操作系统才具备CPU调度的权限
+- new Thread(Runnable a).start() 最终会走到Thread中的 start0() 方法，在JVM内部会创建一个对象OSThread，JVM底层会调用操作系统的内核库os::create_thread方法来创建线程（比如linux的pthread库中的pthread_create方法）
+- start0方法建立了一种映射关系，即（1）new Thread(Runnable a).start() =>（2）JVM的OSThread对象 =>（3）内核库os::create_thread方法。其中（1）到（2）是用户态，（2）到（3）是内核态，这里就涉及到了用户态与内核态的切换
+- 使用操作系统内核库os::create_thread方法创建线程后，线程状态为新建状态（NEW），内部会调用sync->wait方法进入等待状态，只有当执行了的Thread#start0方法后，才会唤醒线程，进入就绪状态，就绪状态下还未获取到CPU资源，当线程被分配到CPU时间片后，线程就进入了真正的运行状态（RUNNABLE）了，然后会调用Thread#run方法运行任务
+
+上面的关键点可以引出一个面试题：为什么不能直接调用 run() 方法，而需要调用 start() 方法来启动线程。回答的关键词是：新建、等待、start0唤醒、就绪、时间片分配、运行
 
 ### 线程的生命周期
 
