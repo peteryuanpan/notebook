@@ -10,7 +10,7 @@
       - [ExecutorService](#ExecutorService)
     - [JVM启动线程](#JVM启动线程)
   - [线程的生命周期](#线程的生命周期)
-    - [Thread的6种State](#Thread的6种State)
+    - [Thread.State的6种状态](#Thread.State的6种状态)
     - [等待唤醒机制](#等待唤醒机制)
     - [线程中断机制](#线程中断机制)
   - [线程安全问题](#线程安全问题)
