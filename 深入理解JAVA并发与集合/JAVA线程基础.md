@@ -661,13 +661,18 @@ hello
 - ThreadPoolExecutor.Worker，实例化一个任务
 - this.thread = getThreadFactory().newThread(this); 到下一步
 ```java
+    private final class Worker
+        extends AbstractQueuedSynchronizer
+        implements Runnable
+    {
+...
         Worker(Runnable firstTask) {
             setState(-1); // inhibit interrupts until runWorker
             this.firstTask = firstTask;
             this.thread = getThreadFactory().newThread(this);
         }
 ```
-- DefaultThreadFactory.newThread新建一个线程
+- DefaultThreadFactory.newThread新建一个线程，从这里可以看出来，本质上还是通过new Thread(Runnable a)来创建线程
 ```java
     /**
      * The default thread factory
@@ -699,10 +704,20 @@ hello
         }
     }
  ```
+ 
+ 上面通过分析源码看出来ExecutorService本质上还是使用new Thread(Runnable a)来创建线程的，而运行线程的逻辑是如何的，这一块不妨放到线程池原理与应用中展开
 
 #### JVM启动线程
 
-...
+
+
+### 线程的生命周期
+
+#### Thread.State的6种状态
+
+#### 等待唤醒机制
+
+#### 线程中断机制
 
 ### 线程安全问题
 
