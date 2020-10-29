@@ -10,6 +10,7 @@
     - [JVM启动线程](#JVM启动线程)
   - [线程的生命周期](#线程的生命周期)
   - [等待唤醒机制](#等待唤醒机制)
+    - [虚假唤醒](#虚假唤醒)
     - [Object等待唤醒](#Object等待唤醒)
     - [Thread等待唤醒](#Thread等待唤醒)
     - [LockSupport等待唤醒](#LockSupport等待唤醒)
@@ -583,8 +584,8 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 
 在谈具体的等待唤醒方法时，先来看一个操作系统层面比较玄乎的问题，即 虚假唤醒
 
-> A spurious wakeup happens when a thread wakes up from waiting on a condition variable that's been signaled, only to discover that the condition it was waiting for isn't satisfied. It's called spurious because the thread has seemingly been awakened for no reason. But spurious wakeups don't happen for no reason, they usually happen because in between the time when the condition variable was signaled and when the waiting thread finally ran, another thread ran and changed the condition.
-> On many systems, especially multiprocessor systems, the problem of spurious wakeups is exacerbated because if there are several threads waiting on the condition variable when it's signaled, the system may decide to wake them all up, treating every signal() to wake one thread as a broadcast() to wake all of them, thus breaking any possibly expected 1:1 relationship between signals and wakeups. If there are ten threads waiting, only one will win and the other nine will experience spurious wakeups.
+> A spurious wakeup happens when a thread wakes up from waiting on a condition variable that's been signaled, only to discover that the condition it was waiting for isn't satisfied. It's called spurious because the thread has seemingly been awakened for no reason. But spurious wakeups don't happen for no reason, they usually happen because in between the time when the condition variable was signaled and when the waiting thread finally ran, another thread ran and changed the condition.<br>
+> On many systems, especially multiprocessor systems, the problem of spurious wakeups is exacerbated because if there are several threads waiting on the condition variable when it's signaled, the system may decide to wake them all up, treating every signal() to wake one thread as a broadcast() to wake all of them, thus breaking any possibly expected 1:1 relationship between signals and wakeups. If there are ten threads waiting, only one will win and the other nine will experience spurious wakeups.<br>
 > From https://en.wikipedia.org/wiki/Spurious_wakeup
 
 
