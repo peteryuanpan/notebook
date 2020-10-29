@@ -588,7 +588,59 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 > On many systems, especially multiprocessor systems, the problem of spurious wakeups is exacerbated because if there are several threads waiting on the condition variable when it's signaled, the system may decide to wake them all up, treating every signal() to wake one thread as a broadcast() to wake all of them, thus breaking any possibly expected 1:1 relationship between signals and wakeups. If there are ten threads waiting, only one will win and the other nine will experience spurious wakeups.<br>
 > From https://en.wikipedia.org/wiki/Spurious_wakeup
 
+虚假唤醒是操作系统与CPU底层工作时可能出现一种现象，即线程莫名其妙地、在没有被其他线程主动唤醒或者中断的情况下，也被唤醒了
 
+具体虚假唤醒的原因没有必要去刨根问底，重点是：在让线程进入等待状态前（主要是无限期等待，Object#wait()和LockSupport.park()），不要用 if 条件判断，而应该使用 while 循环判断
+
+虚假唤醒不仅仅是JAVA语言，在任何语言都有可能出现，是底层的原因，因此使用 while 而不使用 if 是良好的编程习惯
+
+我不想去复现虚假唤醒的例子，因为它很难复现，但不放看一下源码和注释
+
+java.util.concurrent.locks.Condition中await()方法的注释
+
+![image](https://user-images.githubusercontent.com/10209135/97564520-ac2ef900-1a1f-11eb-923e-0c303d9d3ad1.png)
+
+LockSupport中park方法的注释
+
+![image](https://user-images.githubusercontent.com/10209135/97564626-d08ad580-1a1f-11eb-8e18-d7745d624817.png)
+
+它们都说明了一点，线程在等待状态的过程中，除了会被其他线程唤醒或中断以外，还可能存在虚假唤醒的情况！不过很遗憾，Object中wait方法没有类似的注释
+
+AbstractQueuedSynchronizer 中的内部类 ConditionObject 的实现，可以看到 LockSupport.park(this); 是放在 while 循环中进行的，这是推荐的方式，如果采用了 if 判断，一旦出现虚假唤醒，程序会不符合预期的往下执行了！
+
+```java
+        /**
+         * Implements interruptible condition wait.
+         * <ol>
+         * <li> If current thread is interrupted, throw InterruptedException.
+         * <li> Save lock state returned by {@link #getState}.
+         * <li> Invoke {@link #release} with saved state as argument,
+         *      throwing IllegalMonitorStateException if it fails.
+         * <li> Block until signalled or interrupted.
+         * <li> Reacquire by invoking specialized version of
+         *      {@link #acquire} with saved state as argument.
+         * <li> If interrupted while blocked in step 4, throw InterruptedException.
+         * </ol>
+         */
+        public final void await() throws InterruptedException {
+            if (Thread.interrupted())
+                throw new InterruptedException();
+            Node node = addConditionWaiter();
+            int savedState = fullyRelease(node);
+            int interruptMode = 0;
+            while (!isOnSyncQueue(node)) {
+                LockSupport.park(this);
+                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
+                    break;
+            }
+            if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
+                interruptMode = REINTERRUPT;
+            if (node.nextWaiter != null) // clean up if cancelled
+                unlinkCancelledWaiters();
+            if (interruptMode != 0)
+                reportInterruptAfterWait(interruptMode);
+        }
+```
 
 #### Object等待唤醒
 
