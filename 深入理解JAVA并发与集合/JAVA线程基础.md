@@ -429,7 +429,7 @@ hello
     }
  ```
  
- 上面通过分析源码看出来ExecutorService本质上还是使用new Thread(Runnable a)来创建线程的，而运行线程的逻辑是如何的，这一块不妨放到线程池原理与应用中展开
+ 上面通过分析源码看出来ExecutorService本质上还是使用new Thread(Runnable a)来创建线程的，而运行线程的逻辑是如何的，这一块不妨放到线程池原理中展开
 
 #### JVM启动线程
 
@@ -567,8 +567,8 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
   - READY，就绪状态，属于JVM底层的状态，不属于JAVA层面，表示线程正在运行但还未分配到CPU时间片
   - RUNNING，运行状态，属于JVM底层的状态，不属于JAVA层面，表示线程获取到CPU时间片，正在运行
 - BLOCKED，阻塞状态，表示线程正在阻塞于monitor锁，等待进入synchronized方法或块
-- WAITING，等待状态，表示线程由于一些特定动作（Object#wait()、LockSupport.park()）进入等待状态，当其他线程执行对应特定动作（Object#notify、LockSupport.unpark(Thread)）后会唤醒该线程，然后该线程进入运行状态，或者表示正在等待线程运行结束（Thread.join()）
-- TIME_WAITING，超时等待状态，它与等待状态很类似，但可以设置指定超时时间，超时后会线程会自动退出等待状态
+- WAITING，等待状态，表示线程由于一些特定动作（Object#wait()、LockSupport.park()、Thread#join()）进入等待状态，当其他线程执行对应特定动作（Object#notify、LockSupport.unpark(Thread)、其他线程执行完毕）后会唤醒该线程，然后该线程进入运行状态
+- TIME_WAITING，超时等待状态，它与等待状态很类似，但可以设置指定超时时间，超时后线程会自动被唤醒，进入运行状态
 - TERMINATED，终止状态，表示线程已经执行完毕
 
 其中，有两个点需要注意
