@@ -17,6 +17,7 @@
   - [线程中断机制](#线程中断机制)
   - [并发基础概念](#并发基础概念)
     - [线程上下文切换](#线程上下文切换)
+    - [线程死锁](#线程死锁)
     - [多线程模型](#多线程模型)
     - [用户态与内核态](#用户态与内核态)
     - [轻量级线程之协程](#轻量级线程之协程)
@@ -565,11 +566,10 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 - TIMED_WAITING，超时等待状态，它与等待状态很类似，但可以设置指定超时时间，超时后线程会自动被唤醒，进入运行状态
 - TERMINATED，终止状态，表示线程已经执行完毕
 
-其中，有两个点需要注意
-- 理解RUNNABLE在JVM底层包含READY和RUNNING两种状态
-- 理解BLOCKED与WAITING状态的区别
-
-值得说明的一点是，平时我们口语所说的“阻塞”，往往包含了BLOCKED与WAITING两种状态，把Object#wait()、LockSupport.park()等动作进入的等待状态也称为了“阻塞”，这样说无妨，只要正确的理解JAVA线程生命周期中BLOCKED与WAITING状态的区别即可
+这里有几个点需要注意
+- RUNNABLE在JVM底层包含READY和RUNNING两种状态，它们的区别点是线程是否分配到了CPU时间片，在线程运行start方法或者被唤醒后，往往是先处于READY状态的，在获取了时间片后才处于RUNNING状态
+- Thread.yield()方法可以告诉线程调度器“主动放弃CPU时间片，不想用了”，线程调度器会从就绪队列中后去一个优先级最高的线程（也可能是刚才让出CPU时间片的线程）
+- 平时我们口语所说的“阻塞”，往往包含了BLOCKED与WAITING两种状态，把Object#wait()、LockSupport.park()等动作进入的等待状态也称为了“阻塞”，口语上这样说无妨，只要正确的理解JAVA线程生命周期中BLOCKED与WAITING状态的区别，在需要区分的时候不要弄混淆即可
 
 ### 等待唤醒机制
 
@@ -590,11 +590,9 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 
 虚假唤醒是操作系统与CPU底层工作时可能出现一种现象，即线程莫名其妙地、在没有被其他线程主动唤醒或者中断的情况下，也被唤醒了
 
-具体虚假唤醒的原因没有必要去刨根问底，重点是：在让线程进入等待状态前（主要是无限期等待，Object#wait()和LockSupport.park()），不要用 if 条件判断，而应该使用 while 循环判断
+具体虚假唤醒的原因没有必要去刨根问底，重点是：在让线程进入等待状态前（主要是无限期等待，Object#wait()和LockSupport.park()），若存在条件判断，不要用 if 条件判断，而应该使用 while 循环判断，这是良好的编程习惯！虚假唤醒不仅仅是JAVA语言，在任何语言都有可能出现
 
-虚假唤醒不仅仅是JAVA语言，在任何语言都有可能出现，是底层的原因，因此使用 while 而不使用 if 是良好的编程习惯
-
-我不想去复现虚假唤醒的例子，因为它很难复现，但不放看一下源码和注释
+我不想去复现虚假唤醒的例子，因为它很难复现，但不妨看一下源码和注释
 
 java.util.concurrent.locks.Condition中await()方法的注释
 
@@ -644,7 +642,335 @@ AbstractQueuedSynchronizer 中的内部类 ConditionObject 的实现，可以看
 
 #### Object等待唤醒
 
+基于Object的等待唤醒与synchonized是分不开的，synchonized中有一个概念叫monitor机制，简单来说即每一个JAVA Object在虚拟机底层都可视为一个Monitor Object，Monitor翻译过来是监视器的意思，而synchonzied锁也时常被称为监视器锁，关于monitor机制的细节，我计划放在线程安全原理中展开，目前只需要了解这个概念即可
+
+在Object类中，定义了几个实例方法：wait()、wait(long)、wait(long,int)、notify()、notifyAll()，它们是用于等待与唤醒线程的，但作用的是实例对象，
+
+总结下来，有这么几点
+- 1、wait方法和notify方法都需要在synchonized方法或块中被执行，更准确的说，是执行前必须先获得监视器锁
+- 2、wait方法执行后，会让出CPU时间片，同时释放对应实例的监视器锁，但不会释放其他实例的监视器锁，对应线程进入等待状态（WAITING）
+- 3、notify方法执行后，实例的线程被唤醒，但不会马上执行wait方法的下一行指令，而需要先与其他线程竞争到监视器锁后才会执行
+- 4、notify方法执行后，如果该实例存在多个线程在等待，唤醒哪个线程是随机的
+- 5、相比于notify方法，notifyAll方法会唤醒所有该实例正在等待的线程
+- 6、相比于wait()方法，wait(long)、wait(long,int)方法是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+
+关于1、2两点，来看一个例子
+
+```java
+package part1;
+
+public class WaitNotifyTest1 {
+
+    static Object obj = new Object();
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            synchronized (obj) {
+                try {
+                    System.out.println(Thread.currentThread().getName() + " willing to wait");
+                    obj.wait();
+                    System.out.println(Thread.currentThread().getName() + " end waiting");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "threadA");
+
+        a.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        synchronized (obj) {
+            obj.notify();
+        }
+        try {
+            a.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("mainThread end");
+    }
+}
+```
+
+输出结果
+```
+threadA willing to wait
+threadA end waiting
+mainThread end
+```
+
+解释：mainThread睡1s保证threadA正常执行到obj.wait，threadA进入等待状态，让出时间片、释放锁，mainThread中执行obj.notify唤醒threadA，threadA获取锁和时间片，进入运行状态
+
+将例子改一下
+```java
+        Thread a = new Thread(() -> {
+            //synchronized (obj) {
+                try {
+            //}
+...
+        //synchronized (obj) {
+            obj.notify();
+        //}
+```
+
+输出结果
+```
+threadA willing to wait
+Exception in thread "threadA" java.lang.IllegalMonitorStateException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Object.wait(Object.java:502)
+	at part1.WaitNotifyTest1.lambda$main$0(WaitNotifyTest1.java:12)
+	at java.lang.Thread.run(Thread.java:748)
+Exception in thread "main" java.lang.IllegalMonitorStateException
+	at java.lang.Object.notify(Native Method)
+	at part1.WaitNotifyTest1.main(WaitNotifyTest1.java:28)
+```
+
+解释：wait方法和notify方法都需要在synchonized方法或块中被执行，更准确的说，是执行前必须先获得监视器锁
+
+关于第3点，来看一个例子
+
+```java
+package part1;
+
+public class WaitNotifyTest2 {
+
+    static Object obj = new Object();
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            synchronized (obj) {
+                try {
+                    System.out.println(Thread.currentThread().getName() + " willing to wait");
+                    obj.wait();
+                    System.out.println(Thread.currentThread().getName() + " end waiting");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "threadA");
+
+        a.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        synchronized (obj) {
+            System.out.println(Thread.currentThread().getName() + " willing to notify");
+            obj.notify();
+            System.out.println(Thread.currentThread().getName() + " end notifing");
+            //while (true) {}
+        }
+        synchronized (obj) {
+            while (true) {}
+        }
+    }
+}
+```
+
+输出结果1
+```
+threadA willing to wait
+main willing to notify
+main end notifing
+threadA end waiting
+```
+
+输出结果2
+```
+threadA willing to wait
+main willing to notify
+main end notifing
+```
+
+解释：obj.notify();执行后，出synchronized (obj)代码块，释放obj的监视器锁，此时两个线程在竞争obj的监视器锁，一个是刚被唤醒的threadA，一个是主线程即将执行while死循环，输出结果1表示threadA优先竞争到了锁，输出结果2表示主线程优先竞争到了锁
+
+关于4、5两点，来看一个例子
+
+```java
+package part1;
+
+public class WaitNotifyTest3 {
+
+    static Object obj = new Object();
+
+    public static void test() {
+        Thread a = new Thread(() -> {
+            synchronized (obj) {
+                try {
+                    System.out.println(Thread.currentThread().getName() + " willing to wait");
+                    obj.wait();
+                    System.out.println(Thread.currentThread().getName() + " end waiting");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "threadA");
+
+        Thread b = new Thread(a);
+        b.setName("threadB");
+
+        a.start();
+        b.start();
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        synchronized (obj) {
+            obj.notify();
+        }
+    }
+
+    public static void main(String[] args) {
+        while (true) {
+            test();
+        }
+    }
+}
+```
+
+输出结果
+```
+threadA willing to wait
+threadB willing to wait
+threadA end waiting
+threadA willing to wait
+threadB willing to wait
+threadB end waiting
+threadB willing to wait
+threadA willing to wait
+threadA end waiting
+threadA willing to wait
+threadB willing to wait
+threadB end waiting
+threadA willing to wait
+threadB willing to wait
+threadB end waiting
+threadA willing to wait
+threadB willing to wait
+threadA end waiting
+...
+```
+
+解释：threadA获取监视器锁，执行obj.wait释放锁，进入等待集合，threadB获取监视器锁，执行obj.wait释放锁，进入等待集合，主线程睡3s使得threadA和threadB都顺利进入等待集合，然后执行obj.notify唤醒等待集合中的线程（随机地），可能唤醒A，可能唤醒B
+
+将例子改一下
+```java
+        synchronized (obj) {
+            obj.notifyAll();
+        }
+```
+
+输出结果
+```
+threadA willing to wait
+threadB willing to wait
+threadB end waiting
+threadA end waiting
+threadA willing to wait
+threadB willing to wait
+threadB end waiting
+threadA end waiting
+...
+```
+
+解释：notifyAll会唤醒该实例的当前等待集合中的所有线程
+
 #### Thread等待唤醒
+
+在Thread类中，也定义了一些方法，可以触发等待唤醒机制，实例方法有：join()、join(long)、join(long, int)，类方法有：sleep()
+
+总结一下，有那么几点
+- 1、Thread类中的方法，执行前不需要放到synchonized方法或块中，注意是不需要！
+- 2、join方法是实例方法，在threadA.join方法执行后，当前线程会进入等待状态（WAITING），让出CPU时间片，但不会释放监视器锁
+- 3、sleep方法是类方法，在sleep方法执行后，当前线程会进入有期限的等待状态（TIMED_WAITING），让出CPU时间片，但不会释放监视器锁
+- 4、相比于join()方法，join(long)、join(long, int)是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+
+关于1、2、3三点，来看一个例子
+
+```java
+package part1;
+
+public class ThreadJoinTest1 {
+
+    static Object obj = new Object();
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            System.out.println(Thread.currentThread().getName() + " begin");
+            int b = 0;
+            for (int i = 0; i < 100000; i ++) {
+                b ++;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (int i = 0; i < 100000; i ++) {
+                b ++;
+            }
+            System.out.println("b = " + b);
+        });
+
+        a.start();
+        try {
+            a.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(Thread.currentThread().getName() + " end");
+    }
+}
+```
+
+输出结果
+```
+Thread-0 begin
+b = 200000
+main end
+```
+
+代码改一下
+```java
+            try {
+                synchronized (obj) {
+                    Thread.sleep(1000);
+                }
+...
+        a.start();
+        try {
+            Thread.sleep(1000);
+            synchronized (obj) {
+                a.join();
+            }
+            synchronized (obj) {
+                System.out.println(Thread.currentThread().getName() + " print");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+```
+
+输出结果
+```
+Thread-0 begin
+b = 200000
+main print
+main end
+```
+
+解释：无论执行多少次，输出结果都一样，Thread.sleep会让出时间片，Thread#join会等待对应线程执行完毕，但二者都不会释放监视器锁，也不需要先获取监视器锁才能执行
 
 #### LockSupport等待唤醒
 
@@ -665,6 +991,8 @@ CPU处理的速度是非常快的（要有这个概念），相对于人来说�
 线程上下文切换的时机
 - 当前线程的CPU时间片使用完处于就绪状态
 - 当前线程被其他线程中断
+
+#### 线程死锁
 
 #### 多线程模型
 
