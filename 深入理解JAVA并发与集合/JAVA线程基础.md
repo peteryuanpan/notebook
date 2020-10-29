@@ -853,6 +853,8 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 - 理解RUNNABLE在JVM底层包含READY和RUNNING两种状态
 - 理解BLOCKED与WAITING状态的区别
 
+值得说明的一点是，平时我们口语所说的“阻塞”，往往包含了BLOCKED与WAITING两种状态，把Object#wait()、LockSupport.park()等动作进入的等待状态也称为了“阻塞”，这样说无妨，只要正确的理解JAVA线程生命周期中BLOCKED与WAITING状态的区别即可
+
 #### 等待唤醒机制
 
 ##### 基于Object的monitor机制
