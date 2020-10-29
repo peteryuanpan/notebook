@@ -61,7 +61,8 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 #### 第0章：源码分析
 - [源码分析](源码分析)
   - 并发部分
-    - [ThreadLocal]
+    - [Thread](源码分析/Thread.md)
+    - [ThreadLocal](源码分析/ThreadLocal.md)
     - [FutureTask](源码分析/FutureTask.md)
     - [ReentrantLock]
     - [ReentrantReadWriteLock]
@@ -86,16 +87,16 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 - [JAVA内存模型](JAVA内存模型.md)
   - TODO
 
-#### 第3章：线程安全问题
+#### 第3章：线程安全原理
 - synchonized锁升级
   - TODO
-- CAS原理与应用
+- CAS原理
   - TODO
-- AQS原理与应用
+- AQS原理
   - TODO
 
-#### 第4章：线程池原理与应用
-- 线程池原理与应用
+#### 第4章：线程池原理
+- 线程池原理
   - TODO
 
 #### 第5章：并发面试题
