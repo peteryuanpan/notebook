@@ -18,8 +18,8 @@
 + [第6章：垃圾收集机制](深入理解JAVA虚拟机-第一至三层#第6章垃圾收集机制)
 + [第7章：JVM性能调优](深入理解JAVA虚拟机-第一至三层#第7章jvm性能调优)
 + [第8章：JVM面试题](深入理解JAVA虚拟机-第一至三层#第8章jvm面试题)
-+ [项目成果：类文件结构解析](https://github.com/peteryuanpan/ParseClassFile)
-+ [项目成果：垃圾收集算法C++实现](https://github.com/peteryuanpan/garbage-collect-demo)
++ 项目成果：[类文件结构解析](https://github.com/peteryuanpan/ParseClassFile)
++ 项目成果：[垃圾收集算法C++实现](https://github.com/peteryuanpan/garbage-collect-demo)
 </details>
 
 <details open>
