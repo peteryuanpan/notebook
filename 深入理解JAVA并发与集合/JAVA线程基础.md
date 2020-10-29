@@ -887,15 +887,14 @@ threadA end waiting
 
 #### Thread等待唤醒
 
-在Thread类中，也定义了一些方法，可以触发等待唤醒机制，实例方法有：join()、join(long)、join(long, int)，类方法有：sleep()
+在Thread类中，也定义了一些方法，可以用于等待唤醒机制，实例方法有：join()、join(long)、join(long, int)，类方法有：sleep()
 
 总结一下，有那么几点
-- 1、Thread类中的方法，执行前不需要放到synchonized方法或块中，注意是不需要！
-- 2、join方法是实例方法，在threadA.join方法执行后，当前线程会进入等待状态（WAITING），让出CPU时间片，但不会释放监视器锁
-- 3、sleep方法是类方法，在sleep方法执行后，当前线程会进入有期限的等待状态（TIMED_WAITING），让出CPU时间片，但不会释放监视器锁
-- 4、相比于join()方法，join(long)、join(long, int)是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+- 1、join方法是实例方法，在threadA.join方法执行后，当前线程会进入等待状态（WAITING），等待threadA执行完毕，让出CPU时间片，不会释放监视器锁
+- 2、sleep方法是类方法，在sleep方法执行后，当前线程会进入有期限的等待状态（TIMED_WAITING），让出CPU时间片，不会释放监视器锁
+- 3、相比于join()方法，join(long)、join(long, int)是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
 
-关于1、2、3三点，来看一个例子
+关于1、2两点，来看一个例子
 
 ```java
 package part1;
@@ -974,6 +973,88 @@ main end
 
 #### LockSupport等待唤醒
 
+LockSupport中也定义了许多方法，可以用于等待唤醒机制，都是类方法，分别有：park()、park(Object)、parkNanos(long)、parkNanos(Object, long)、parkUntil(long)、parkUntil(Object, long)、unpark(Thread)
+
+总结下来，有这么几点
+- 1、park()方法执行后，会执行UNSAFE.park方法，线程会进入等待状态，让出CPU时间片，不会释放监视器锁
+- 2、unpark(Thread)方法执行后，会执行UNSAFE.unpark(Thread)方法，唤醒线程，线程会进入运行状态，获取CPU时间片
+- 3、相比于park方法，parkNanos、parkUntil是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+
+```java
+package part1;
+
+import java.util.concurrent.locks.LockSupport;
+
+public class LockSupportTest1 {
+
+    static int b = 0;
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            System.out.println(Thread.currentThread().getName() + " begin");
+            for (int i = 0; i < 10; i ++) {
+                b ++;
+            }
+            System.out.println(Thread.currentThread().getName() + " b = " + b);
+            while (b == 10) {
+                LockSupport.park();
+            }
+            System.out.println(Thread.currentThread().getName() + " end");
+        }, "threadA");
+
+        a.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < 10; i ++) {
+            b ++;
+        }
+        System.out.println(Thread.currentThread().getName() + " b = " + b);
+        LockSupport.unpark(a);
+        System.out.println(Thread.currentThread().getName() + " end");
+    }
+}
+```
+
+输出结果
+```
+threadA begin
+threadA b = 10
+main b = 20
+main end
+threadA end
+```
+
+改一下例子
+```java
+            while (b == 10) {
+                synchronized (obj) {
+                    LockSupport.park();
+                }
+            }
+...
+        a.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        synchronized (obj) {
+            System.out.println("111");
+        }
+```
+
+输出结果
+```
+threadA begin
+threadA b = 10
+（死锁）
+```
+
+解释：无论执行多少次，输出结果都一样，LockSupport.park()会让线程进入等待状态，让出时间片，不会释放监视器锁，也不需要先获取监视器锁才能执行，LockSupport.unpark(Thread)会唤醒线程，重新获取时间片
+
 ### 线程中断机制
 
 ### 并发基础概念
@@ -996,7 +1077,7 @@ CPU处理的速度是非常快的（要有这个概念），相对于人来说�
 
 #### 多线程模型
 
-用户线程、内核线程、一对一模型、多对一模型、多对多模型
+用户线程与内核线程、一对一模型、多对一模型、多对多模型
 
 《操作系统概念》、《深入理解JAVA虚拟机》
 
