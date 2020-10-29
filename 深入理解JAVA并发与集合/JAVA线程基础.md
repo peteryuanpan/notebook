@@ -9,16 +9,11 @@
       - [ExecutorService](#ExecutorService)
     - [JVM启动线程](#JVM启动线程)
   - [线程的生命周期](#线程的生命周期)
-    - [Thread-State的6种状态](#Thread-State的6种状态)
-    - [等待唤醒机制](#等待唤醒机制)
-      - [基于Object的monitor机制](#基于Object的monitor机制)
-      - [基于线程的LockSupport](#基于线程的LockSupport)
-    - [线程中断机制](#线程中断机制)
-  - [线程安全问题](#线程安全问题)
-    - [synchonized](#synchonized)
-    - [CAS与原子类](#CAS与原子类)
-    - [AQS与锁体系](#AQS与锁体系)
-    - [ThreadLocal](#ThreadLocal)
+  - [等待唤醒机制](#等待唤醒机制)
+    - [Object等待唤醒](#Object等待唤醒)
+    - [Thread等待唤醒](#Thread等待唤醒)
+    - [LockSupport等待唤醒](#LockSupport等待唤醒)
+  - [线程中断机制](#线程中断机制)
   - [并发基础概念](#并发基础概念)
     - [线程上下文切换](#线程上下文切换)
     - [多线程模型](#多线程模型)
@@ -452,8 +447,6 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 
 ### 线程的生命周期
 
-#### Thread-State的6种状态
-
 在Thread类中，有一个枚举类enum State，它定义了6种线程状态，分别是NEW、RUNNABLE、BLOCKED、WAITING、TIMED_WAITING、TERMINATED
 
 ```java
@@ -568,7 +561,7 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
   - RUNNING，运行状态，属于JVM底层的状态，不属于JAVA层面，表示线程获取到CPU时间片，正在运行
 - BLOCKED，阻塞状态，表示线程正在阻塞于monitor锁，等待进入synchronized方法或块
 - WAITING，等待状态，表示线程由于一些特定动作（Object#wait()、LockSupport.park()、Thread#join()）进入等待状态，当其他线程执行对应特定动作（Object#notify、LockSupport.unpark(Thread)、其他线程执行完毕）后会唤醒该线程，然后该线程进入运行状态
-- TIME_WAITING，超时等待状态，它与等待状态很类似，但可以设置指定超时时间，超时后线程会自动被唤醒，进入运行状态
+- TIMED_WAITING，超时等待状态，它与等待状态很类似，但可以设置指定超时时间，超时后线程会自动被唤醒，进入运行状态
 - TERMINATED，终止状态，表示线程已经执行完毕
 
 其中，有两个点需要注意
@@ -577,23 +570,22 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 
 值得说明的一点是，平时我们口语所说的“阻塞”，往往包含了BLOCKED与WAITING两种状态，把Object#wait()、LockSupport.park()等动作进入的等待状态也称为了“阻塞”，这样说无妨，只要正确的理解JAVA线程生命周期中BLOCKED与WAITING状态的区别即可
 
-#### 等待唤醒机制
+### 等待唤醒机制
 
-##### 基于Object的monitor机制
+一个线程由于一些特定动作进入等待状态，当其他线程执行特定动作后会唤醒该线程，然后该线程进入运行状态，这就是等待唤醒机制，也对应着生命周期状态中 WAITING <=> RUNNABLE 与 TIMED_WAITING <=> RUNNABLE 的转换
 
-##### 基于线程的LockSupport
+可以将等待唤醒机制分为三类
+- 基于Object类的等待唤醒
+- 基于Thread类的等待唤醒
+- 基于LockSupport类的等待唤醒
 
-#### 线程中断机制
+#### Object等待唤醒
 
-### 线程安全问题
+#### Thread等待唤醒
 
-#### synchonized
+#### LockSupport等待唤醒
 
-#### CAS与原子类
-
-#### AQS与锁体系
-
-#### ThreadLocal
+### 线程中断机制
 
 ### 并发基础概念
 
