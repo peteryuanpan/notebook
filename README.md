@@ -20,6 +20,18 @@
 + [第8章：jvm面试题](深入理解JAVA虚拟机-第一至三层#第8章jvm面试题)
 </details>
 
+<details open>
+    <summary>深入理解JAVA并发与集合</summary>
+
++ [第0章：源码分析](深入理解JAVA并发与集合#第0章源码分析)
++ [第1章：JAVA线程基础](深入理解JAVA并发与集合#第1章java线程基础)
++ [第2章：JAVA内存模型](深入理解JAVA并发与集合#第2章java内存模型)
++ [第3章：线程安全原理](深入理解JAVA并发与集合#第3章线程安全原理)
++ [第4章：线程池原理](深入理解JAVA并发与集合#第4章线程池原理)
++ [第5章：并发面试题](深入理解JAVA并发与集合#第5章并发面试题)
++ [第6章：集合面试题](深入理解JAVA并发与集合#第6章集合面试题)
+</details>
+
 ### 草稿本
 
 我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
