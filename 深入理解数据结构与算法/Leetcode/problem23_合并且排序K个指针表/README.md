@@ -40,4 +40,4 @@ K : 未知，可认为10^5范围
 
 ### 关联链接
 
-原题：https://leetcode.com/problems/merge-k-sorted-lists/
+原题：https://leetcode-cn.com/problems/merge-k-sorted-lists/
