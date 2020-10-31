@@ -59,6 +59,7 @@ TODO
 |016|最佳碰头地点|[problem296](Leetcode/problem296_最佳碰头地点)|leetcode|动态规划|公式推导||
 |017|多条环路公交车线两点间最少上车次数|[problem815](Leetcode/problem815_多条环路公交车线两点间最少上车次数)|leetcode|搜索|广度优先搜索||
 |018|计算三次最小生成树|[weekly-contest-205_problem4](Leetcode/weekly-contest-205_problem4_计算三次最小生成树)|leetcode|图论|最小生成树||
+|019|求数列中长度不小于2的等差子序列个数|[problem446](Leetcode/problem446_求数列中长度不小于2的等差子序列个数)|leetcode|动态规划|||
  
 标签
 ```
