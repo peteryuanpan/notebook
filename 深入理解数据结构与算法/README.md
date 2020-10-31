@@ -52,7 +52,7 @@ TODO
 |009|商品打折券的最大化使用|[contest1282_problemB2](Codeforces/contest1282_problemB2_商品打折券的最大化使用)|codeforces|动态规划|||
 |010|合并且排序K个指针表|[problem23](Leetcode/problem23_合并且排序K个指针表)|leetcode|白题|指针|[视频](https://www.bilibili.com/video/BV17T4y1F7Jy)|
 |011|求解next_permutation|[problem31](Leetcode/problem31_求解next_permutation)|leetcode|白题|排列||
-|012|**两个正序数列求中位数**|[problem4](Leetcode/problem4_两个正序数列求中位数)|leetcode|白题|二分||
+|012|求两个升序数列的中位数|[problem4](Leetcode/problem4_求两个升序数列的中位数)|leetcode|白题|二分||
 |013|求1到X中数字1出现的次数|[problem233](Leetcode/problem233_求1到X中数字1出现的次数)|leetcode|动态规划|数列统计类||
 |014|求一个数是否是有效数|[problem65](Leetcode/problem65_求一个数是否是有效数)|leetcode|白题|条件判断||
 |015|求a到b中有多少个翻转对称数|[problem248](Leetcode/problem248_求a到b中有多少个翻转对称数)|leetcode|动态规划|数列统计类||
