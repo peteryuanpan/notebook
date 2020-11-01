@@ -4,13 +4,6 @@ func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
     if n1 == 0 {
         return findMedianSortedArrays(nums2, nums1)
     }
-    if n2 == 0 {
-        if n1 % 2 == 1 {
-            return float64(nums1[n1/2])
-        } else {
-            return float64(nums1[n1/2-1] + nums1[n1/2]) / 2
-        }
-    }
     if (n1 + n2) % 2 == 1 {
         return cal(nums1, nums2, (n1 + n2) / 2  + 1)
     } else {
