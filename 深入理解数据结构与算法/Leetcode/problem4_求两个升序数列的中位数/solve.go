@@ -1,3 +1,24 @@
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+    n1 := len(nums1)
+    n2 := len(nums2)
+    if n1 == 0 {
+        return findMedianSortedArrays(nums2, nums1)
+    }
+    if n2 == 0 {
+        if n1 % 2 == 1 {
+            return float64(nums1[n1/2])
+        } else {
+            return float64(nums1[n1/2-1] + nums1[n1/2]) / 2
+        }
+    }
+    if (n1 + n2) % 2 == 1 {
+        return cal(nums1, nums2, (n1 + n2) / 2  + 1)
+    } else {
+        ans1 := cal(nums1, nums2, (n1 + n2) / 2)
+        ans2 := cal(nums1, nums2, (n1 + n2) / 2 + 1)
+        return float64(ans1 + ans2) / 2
+    }
+}
 func cal(nums1 []int, nums2 []int, tnum int) float64 {
     n1 := len(nums1)
     n2 := len(nums2)
@@ -29,25 +50,4 @@ func cal(nums1 []int, nums2 []int, tnum int) float64 {
         return cal(nums2, nums1, tnum)
     }
     return float64(nums1[index1])
-}
-func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
-    n1 := len(nums1)
-    n2 := len(nums2)
-    if n1 == 0 {
-        return findMedianSortedArrays(nums2, nums1)
-    }
-    if n2 == 0 {
-        if n1 % 2 == 1 {
-            return float64(nums1[n1/2])
-        } else {
-            return float64(nums1[n1/2-1] + nums1[n1/2]) / 2
-        }
-    }
-    if (n1 + n2) % 2 == 1 {
-        return cal(nums1, nums2, (n1 + n2) / 2  + 1)
-    } else {
-        ans1 := cal(nums1, nums2, (n1 + n2) / 2)
-        ans2 := cal(nums1, nums2, (n1 + n2) / 2 + 1)
-        return float64(ans1 + ans2) / 2
-    }
 }
