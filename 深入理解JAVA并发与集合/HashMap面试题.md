@@ -1,20 +1,25 @@
 - [HashMap面试题](#HashMap面试题)
-  - [JDK7及JDK8中HashMap底层数据结构](#JDK7及JDK8中HashMap底层数据结构)
+  - [JDK7及JDK8中HashMap底层实现原理](#JDK7及JDK8中HashMap底层实现原理)
   - [JDK8中HashMap为什么要使用红黑树](#JDK8中HashMap为什么要使用红黑树)
   - [JDK8中HashMap什么时候将链表转化为红黑树](#JDK8中HashMap什么时候将链表转化为红黑树)
-  - [JDK8中HashMap之put方法的实现过程](#JDK8中HashMap之put方法的实现过程)
-  - [JDK8中HashMap之get方法的实现过程](#JDK8中HashMap之get方法的实现过程)
+  - [JDK8中HashMap之put方法实现过程](#JDK8中HashMap之put方法实现过程)
+  - [JDK8中HashMap之get方法实现过程](#JDK8中HashMap之get方法实现过程)
   - [JDK7与JDK8中HashMap的不同点](#JDK7与JDK8中HashMap的不同点)
+  - [JDK7及JDK8中ConcurrentHashMap底层原理](#JDK7及JDK8中ConcurrentHashMap底层原理)
   - [JDK7中ConcurrentHashMap如何保证线程安全](#JDK7中ConcurrentHashMap如何保证线程安全)
+  - [JDK8中ConcurrentHashMap如何保证线程安全](#JDK8中ConcurrentHashMap如何保证线程安全)
+  - [JDK7与JDK8中ConcurrentHashMap的不同点](#JDK7与JDK8中ConcurrentHashMap的不同点)
 
 # HashMap面试题
 
 参考
+- [HashMap源码分析](应用场景与源码分析/HashMap.md)
+- [ConcurrentHashMap源码分析](应用场景与源码分析/ConcurrentHashMap.md)
 - [Java集合框架常见面试题](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/collection/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98.md)
 - [HashMap与ConcurrentHashMap面试要点](https://www.yuque.com/books/share/9f4576fb-9aa9-4965-abf3-b3a36433faa6/doh8wb)
 - [HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
 
-### JDK7及JDK8中HashMap底层数据结构
+### JDK7及JDK8中HashMap底层实现原理
 
 JDK7：数组+链表
 
@@ -36,10 +41,16 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 上面扩容的原因是，如果数组长度还比较小，就先利用扩容来缩小链表的长度
 
-### JDK8中HashMap之put方法的实现过程
+### JDK8中HashMap之put方法实现过程
 
-### JDK8中HashMap之get方法的实现过程
+### JDK8中HashMap之get方法实现过程
 
 ### JDK7与JDK8中HashMap的不同点
 
+### JDK7及JDK8中ConcurrentHashMap底层原理
+
 ### JDK7中ConcurrentHashMap如何保证线程安全
+
+### JDK8中ConcurrentHashMap如何保证线程安全
+
+### JDK7与JDK8中ConcurrentHashMap的不同点
