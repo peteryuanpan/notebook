@@ -1592,7 +1592,7 @@ Thread-0 begin
 ```
 
 改一下例子
-```
+```java
 a.setDaemon(false);
 ```
 
@@ -1614,7 +1614,7 @@ Thread-0 begin
 Tomcat的NIO实现NioEndPoint中会开启一组接受线程来接受用户的连接请求，以及一组处理线程负责具体处理用户请求，这些线程都是守护线程
 
 来看下NioEndPoint类源码
-```
+```java
 public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
 ...
     /**
