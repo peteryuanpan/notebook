@@ -653,6 +653,7 @@ AbstractQueuedSynchronizer 中的内部类 ConditionObject 的实现，可以看
 - 4、notify方法执行后，如果该实例存在多个线程在等待，唤醒哪个线程是随机的
 - 5、相比于notify方法，notifyAll方法会唤醒所有该实例正在等待的线程
 - 6、相比于wait()方法，wait(long)、wait(long,int)方法是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+- 7、wait方法执行后，其他线程中断了该线程，则该线程会抛出InterrupteException异常并返回
 
 关于1、2两点，来看一个例子
 
@@ -893,6 +894,7 @@ threadA end waiting
 - 1、join方法是实例方法，在threadA.join方法执行后，当前线程会进入等待状态（WAITING），等待threadA执行完毕，让出CPU时间片，不会释放监视器锁
 - 2、sleep方法是类方法，在sleep方法执行后，当前线程会进入有期限的等待状态（TIMED_WAITING），让出CPU时间片，不会释放监视器锁
 - 3、相比于join()方法，join(long)、join(long, int)是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+- 4、join方法执行后，其他线程中断了该线程，则该线程会抛出InterrupteException异常并返回
 
 关于1、2两点，来看一个例子
 
@@ -976,9 +978,15 @@ main end
 LockSupport中也定义了许多方法，可以用于等待唤醒机制，都是类方法，分别有：park()、park(Object)、parkNanos(long)、parkNanos(Object, long)、parkUntil(long)、parkUntil(Object, long)、unpark(Thread)
 
 总结下来，有这么几点
-- 1、park()方法执行后，会执行UNSAFE.park方法，线程会进入等待状态，让出CPU时间片，不会释放监视器锁
-- 2、unpark(Thread)方法执行后，会执行UNSAFE.unpark(Thread)方法，唤醒线程，线程会进入运行状态，获取CPU时间片
-- 3、相比于park方法，parkNanos、parkUntil是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+- 1、Locksupport与每个使用它线程关联一个许可证，LockSupport类是使用Unsafe类实现的
+- 2、park()方法执行后，线程会进入等待状态，让出CPU时间片，不会释放监视器锁
+- 3、unpark(Thread)方法执行后，会给Thread a一个许可证，唤醒线程，线程会从之前的等待状态进入运行状态，获取CPU时间片
+- 4、unpark(Thread)方法执行后，会给Thread a一个许可证，这个许可证是有延迟效应的，即在执行park()方法不会让线程进入等待状态
+- 5、park(Object)方法执行后，除了执行与park()方法一样的效果外，还会执行setBlocker将object记录到线程内部，使用线程堆栈信息可以查看，因此是推荐的方法！
+- 6、相比于park方法，parkNanos、parkUntil会将线程进入TIMED_WATING状态，parkNanos是超时x秒后自动唤醒线程，parkUntil是时间戳到达deadline后自动唤醒线程
+- 7、park方法执行后，其他线程中断了该线程，该线程会返回，但不会抛InterruptedException异常！
+
+关于2、3两点，来看一个例子
 
 ```java
 package part1;
@@ -1053,7 +1061,150 @@ threadA b = 10
 （死锁）
 ```
 
-解释：无论执行多少次，输出结果都一样，LockSupport.park()会让线程进入等待状态，让出时间片，不会释放监视器锁，也不需要先获取监视器锁才能执行，LockSupport.unpark(Thread)会唤醒线程，重新获取时间片
+解释：无论执行多少次，输出结果都一样，LockSupport.park()会让线程进入等待状态，让出时间片，不会释放监视器锁，也不需要先获取监视器锁才能执行，LockSupport.unpark(a)会提供Thread a一个许可证，会唤醒线程，线程重新获取时间片
+
+关于第4点，来看一个例子
+
+```java
+package part1;
+
+import java.util.concurrent.locks.LockSupport;
+
+public class LockSupportTest2 {
+
+    public static void main(String[] args) {
+        Thread t = Thread.currentThread();
+        LockSupport.unpark(t);
+        LockSupport.unpark(t);
+        LockSupport.park();
+        System.out.println("end park");
+        LockSupport.park();
+        System.out.println("end park");
+    }
+}
+```
+
+输出结果
+```
+end park
+（等待状态）
+```
+
+解释：LockSupport.unpark(t); 给线程t（当前线程）了一个许可证，虽然执行了两次，但许可证只有一次有效，LockSupport.park();后本来应该让线程进入等待状态的，但由于有许可证了，就没有进入，输出end park，许可证只有一次有效，下一次再LockSupport.park();时会进入等待状态
+
+关于第5点，来看一个例子
+
+```java
+package part1;
+
+import java.util.concurrent.locks.LockSupport;
+
+public class LockSupportTest3 {
+
+    public void test() {
+        LockSupport.park();
+    }
+    
+    public static void main(String[] args) {
+        new LockSupportTest3().test();
+    }
+}
+```
+
+使用jps查看到pid，然后执行jstack pid，得到结果之一
+```
+"main" #1 prio=5 os_prio=0 tid=0x0000000000f4e800 nid=0x310c waiting on condition [0x0000000002daf000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:304)
+        at part1.LockSupportTest3.main(LockSupportTest3.java:8)
+```
+
+改一下例子
+```java
+package part1;
+
+import java.util.concurrent.locks.LockSupport;
+
+public class LockSupportTest3 {
+
+    public void test() {
+        LockSupport.park(this);
+    }
+
+    public static void main(String[] args) {
+        new LockSupportTest3().test();
+    }
+}
+```
+
+使用jps查看到pid，然后执行jstack pid，得到结果之一
+```
+"main" #1 prio=5 os_prio=0 tid=0x000000000352e800 nid=0x1d70 waiting on condition [0x000000000348e000]
+   java.lang.Thread.State: WAITING (parking)
+        at sun.misc.Unsafe.park(Native Method)
+        - parking to wait for  <0x000000076b2a0630> (a part1.LockSupportTest3)
+        at java.util.concurrent.locks.LockSupport.park(LockSupport.java:175)
+        at part1.LockSupportTest3.test(LockSupportTest3.java:8)
+        at part1.LockSupportTest3.main(LockSupportTest3.java:12)
+```
+
+解释：LockSupport.park(this) 将this指针对象传入了Thread内部，使用jstack打印线程堆栈信息时，会显示对应对象（parking to wait for x000000076b2a0630 (a part1.LockSupportTest3)）
+
+来看一下LockSupport源码
+```java
+public class LockSupport {
+    private LockSupport() {} // Cannot be instantiated.
+
+    private static void setBlocker(Thread t, Object arg) {
+        // Even though volatile, hotspot doesn't need a write barrier here.
+        UNSAFE.putObject(t, parkBlockerOffset, arg);
+    }
+...
+    public static void park(Object blocker) {
+        Thread t = Thread.currentThread();
+        setBlocker(t, blocker);
+        UNSAFE.park(false, 0L);
+        setBlocker(t, null);
+    }
+...
+    // Hotspot implementation via intrinsics API
+    private static final sun.misc.Unsafe UNSAFE;
+    private static final long parkBlockerOffset;
+    private static final long SEED;
+    private static final long PROBE;
+    private static final long SECONDARY;
+    static {
+        try {
+            UNSAFE = sun.misc.Unsafe.getUnsafe();
+            Class<?> tk = Thread.class;
+            parkBlockerOffset = UNSAFE.objectFieldOffset
+                (tk.getDeclaredField("parkBlocker"));
+            SEED = UNSAFE.objectFieldOffset
+                (tk.getDeclaredField("threadLocalRandomSeed"));
+            PROBE = UNSAFE.objectFieldOffset
+                (tk.getDeclaredField("threadLocalRandomProbe"));
+            SECONDARY = UNSAFE.objectFieldOffset
+                (tk.getDeclaredField("threadLocalRandomSecondarySeed"));
+        } catch (Exception ex) { throw new Error(ex); }
+    }
+```
+
+来看一下Thread类源码
+public
+class Thread implements Runnable {
+...
+```java
+    /**
+     * The argument supplied to the current call to
+     * java.util.concurrent.locks.LockSupport.park.
+     * Set by (private) java.util.concurrent.locks.LockSupport.setBlocker
+     * Accessed using java.util.concurrent.locks.LockSupport.getBlocker
+     */
+    volatile Object parkBlocker;
+```
+
+可以看出，park(Object)方法比park()方法多出了setBlocker一步，而其内部实现是给Thread t的parkBlocker变量赋值（CAS方式实现），以便在打印堆栈时可以输出
 
 ### 线程中断机制
 
