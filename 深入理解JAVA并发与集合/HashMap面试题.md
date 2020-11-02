@@ -2,10 +2,10 @@
   - [JDK7及JDK8中HashMap底层数据结构](#JDK7及JDK8中HashMap底层数据结构)
   - [JDK8中HashMap为什么要使用红黑树](#JDK8中HashMap为什么要使用红黑树)
   - [JDK8中HashMap什么时候将链表转化为红黑树](#JDK8中HashMap什么时候将链表转化为红黑树)
-  - [JDK8中HashMap的put方法的实现过程](#JDK8中HashMap的put方法的实现过程)
-  - [JDK8中HashMap的get方法的实现过程](#JDK8中HashMap的get方法的实现过程)
+  - [JDK8中HashMap之put方法的实现过程](#JDK8中HashMap之put方法的实现过程)
+  - [JDK8中HashMap之get方法的实现过程](#JDK8中HashMap之get方法的实现过程)
   - [JDK7与JDK8中HashMap的不同点](#JDK7与JDK8中HashMap的不同点)
-  - [JDK7中ConcurrentHashMap是怎么保证并发安全的](#JDK7中ConcurrentHashMap是怎么保证并发安全的)
+  - [JDK7中ConcurrentHashMap如何保证线程安全](#JDK7中ConcurrentHashMap如何保证线程安全)
 
 # HashMap面试题
 
@@ -35,11 +35,10 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 上面扩容的原因是，如果数组长度还比较小，就先利用扩容来缩小链表的长度
 
-### JDK8中HashMap的put方法的实现过程
+### JDK8中HashMap之put方法的实现过程
 
-### JDK8中HashMap的get方法的实现过程
+### JDK8中HashMap之get方法的实现过程
 
 ### JDK7与JDK8中HashMap的不同点
 
-### JDK7中ConcurrentHashMap是怎么保证并发安全的
-
+### JDK7中ConcurrentHashMap如何保证线程安全
