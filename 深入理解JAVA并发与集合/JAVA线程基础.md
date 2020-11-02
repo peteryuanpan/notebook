@@ -1468,7 +1468,218 @@ class Thread implements Runnable {
 
 #### 守护线程与用户线程
 
-TODO
+JAVA中的线程分为两类，分别为 daemon线程（守护线程）与 user线程（用户线程）
+
+守护线程与用户线程的区别是，只有当最后一个用户线程结束时，JVM才会正常退出，而不管守护线程是否结束了，守护线程是否结束不影响JVM的退出
+
+main线程运行结束后，JVM会自动启动一个叫做DestroyJAVAVM的线程，该线程会等待所有用户线程结束后，终止JVM，来看下源码
+
+https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/jdk/src/share/bin/java.c#L354
+
+```cpp
+int JNICALL
+JavaMain(void * _args)
+{
+...
+    /*
+     * Get the application's main class.
+     *
+     * See bugid 5030265.  The Main-Class name has already been parsed
+     * from the manifest, but not parsed properly for UTF-8 support.
+     * Hence the code here ignores the value previously extracted and
+     * uses the pre-existing code to reextract the value.  This is
+     * possibly an end of release cycle expedient.  However, it has
+     * also been discovered that passing some character sets through
+     * the environment has "strange" behavior on some variants of
+     * Windows.  Hence, maybe the manifest parsing code local to the
+     * launcher should never be enhanced.
+     *
+     * Hence, future work should either:
+     *     1)   Correct the local parsing code and verify that the
+     *          Main-Class attribute gets properly passed through
+     *          all environments,
+     *     2)   Remove the vestages of maintaining main_class through
+     *          the environment (and remove these comments).
+     *
+     * This method also correctly handles launching existing JavaFX
+     * applications that may or may not have a Main-Class manifest entry.
+     */
+    mainClass = LoadMainClass(env, mode, what);
+    CHECK_EXCEPTION_NULL_LEAVE(mainClass);
+    /*
+     * In some cases when launching an application that needs a helper, e.g., a
+     * JavaFX application with no main method, the mainClass will not be the
+     * applications own main class but rather a helper class. To keep things
+     * consistent in the UI we need to track and report the application main class.
+     */
+    appClass = GetApplicationClass(env);
+    NULL_CHECK_RETURN_VALUE(appClass, -1);
+    /*
+     * PostJVMInit uses the class name as the application name for GUI purposes,
+     * for example, on OSX this sets the application name in the menu bar for
+     * both SWT and JavaFX. So we'll pass the actual application class here
+     * instead of mainClass as that may be a launcher or helper class instead
+     * of the application class.
+     */
+    PostJVMInit(env, appClass, vm);
+    /*
+     * The LoadMainClass not only loads the main class, it will also ensure
+     * that the main method's signature is correct, therefore further checking
+     * is not required. The main method is invoked here so that extraneous java
+     * stacks are not in the application stack trace.
+     */
+    mainID = (*env)->GetStaticMethodID(env, mainClass, "main",
+                                       "([Ljava/lang/String;)V");
+    CHECK_EXCEPTION_NULL_LEAVE(mainID);
+
+    /* Build platform specific argument array */
+    mainArgs = CreateApplicationArgs(env, argv, argc);
+    CHECK_EXCEPTION_NULL_LEAVE(mainArgs);
+
+    /* Invoke main method. */
+    (*env)->CallStaticVoidMethod(env, mainClass, mainID, mainArgs);
+
+    /*
+     * The launcher's exit code (in the absence of calls to
+     * System.exit) will be non-zero if main threw an exception.
+     */
+    ret = (*env)->ExceptionOccurred(env) == NULL ? 0 : 1;
+    LEAVE();
+}
+```
+
+```cpp
+#define LEAVE() \
+    do { \
+        if ((*vm)->DetachCurrentThread(vm) != JNI_OK) { \
+            JLI_ReportErrorMessage(JVM_ERROR2); \
+            ret = 1; \
+        } \
+        if (JNI_TRUE) { \
+            (*vm)->DestroyJavaVM(vm); \
+            return ret; \
+        } \
+    } while (JNI_FALSE)
+```
+
+在实现时，只需要给thread设置setDaemon(true)即可将线程设置为守护线程了
+
+```java
+package part1;
+
+import java.util.concurrent.locks.LockSupport;
+
+public class DaemonThread {
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            System.out.println(Thread.currentThread().getName() + " begin");
+            LockSupport.park();
+            System.out.println(Thread.currentThread().getName() + " end");
+        });
+        a.setDaemon(true);
+        a.start();
+        System.out.println(Thread.currentThread().getName() + " end");
+    }
+}
+```
+
+输出结果
+```
+main end
+Thread-0 begin
+（程序结束）
+```
+
+改一下例子
+```
+a.setDaemon(false);
+```
+
+输出结果
+```
+main end
+Thread-0 begin
+（程序未结束）
+```
+
+守护线程的应用场景
+- 给其他线程提供服务
+- JVM进程结束时，不要求等待该线程结束
+
+守护线程应用例子
+- JVM中垃圾回收线程
+- Tomcat的NIO实现NioEndPoint
+
+Tomcat的NIO实现NioEndPoint中会开启一组接受线程来接受用户的连接请求，以及一组处理线程负责具体处理用户请求，这些线程都是守护线程
+
+来看下NioEndPoint类源码
+```
+public class NioEndpoint extends AbstractJsseEndpoint<NioChannel,SocketChannel> 
+...
+    /**
+     * Start the NIO endpoint, creating acceptor, poller threads.
+     */
+    @Override
+    public void startInternal() throws Exception {
+
+        if (!running) {
+            running = true;
+            paused = false;
+
+            processorCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
+                    socketProperties.getProcessorCache());
+            eventCache = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
+                            socketProperties.getEventCache());
+            nioChannels = new SynchronizedStack<>(SynchronizedStack.DEFAULT_SIZE,
+                    socketProperties.getBufferPool());
+
+            // Create worker collection
+            if ( getExecutor() == null ) {
+                createExecutor();
+            }
+
+            initializeConnectionLatch();
+
+            // Start poller threads
+            pollers = new Poller[getPollerThreadCount()];
+            for (int i=0; i<pollers.length; i++) {
+                pollers[i] = new Poller();
+                Thread pollerThread = new Thread(pollers[i], getName() + "-ClientPoller-"+i);
+                pollerThread.setPriority(threadPriority);
+                pollerThread.setDaemon(true);
+                pollerThread.start();
+            }
+
+            startAcceptorThreads();
+        }
+    }
+...
+    protected void startAcceptorThreads() {
+        int count = getAcceptorThreadCount();
+        acceptors = new ArrayList<>(count);
+
+        for (int i = 0; i < count; i++) {
+            Acceptor<U> acceptor = new Acceptor<>(this);
+            String threadName = getName() + "-Acceptor-" + i;
+            acceptor.setThreadName(threadName);
+            acceptors.add(acceptor);
+            Thread t = new Thread(acceptor, threadName);
+            t.setPriority(getAcceptorThreadPriority());
+            t.setDaemon(getDaemon());
+            t.start();
+        }
+    }
+...
+    /**
+     * The default is true - the created threads will be
+     *  in daemon mode. If set to false, the control thread
+     *  will not be daemon - and will keep the process alive.
+     */
+    private boolean daemon = true;
+    public void setDaemon(boolean b) { daemon = b; }
+    public boolean getDaemon() { return daemon; }
+```
 
 #### 线程上下文切换
 
