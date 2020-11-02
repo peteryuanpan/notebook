@@ -59,25 +59,24 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 ### 文章目录
 
 #### 第0章：应用场景与源码分析
-- [应用场景与源码分析](应用场景与源码分析)
-  - 并发部分
-    - [Thread](应用场景与源码分析/Thread.md)
-    - [ThreadLocal](应用场景与源码分析/ThreadLocal.md)
-    - [FutureTask](应用场景与源码分析/FutureTask.md)
-    - [ReentrantLock]
-    - [ReentrantReadWriteLock]
-    - [Semaphore]
-    - [CountDownLath]
-    - [CyclicBarrier]
-    - [ThreadPoolExecutor]
-    - [ForkJoinPool]
-  - 集合部分
-    - [ArrayList]
-    - [LinkedList]
-    - [Vector]
-    - [CopyOnWriteArrayList]
-    - [HashMap](应用场景与源码分析/HashMap.md)
-    - [ConcurrentHashMap](应用场景与源码分析/ConcurrentHashMap.md)
+- 并发部分
+  - [Thread](应用场景与源码分析/Thread.md)
+  - [ThreadLocal](应用场景与源码分析/ThreadLocal.md)
+  - [FutureTask](应用场景与源码分析/FutureTask.md)
+  - [ReentrantLock]
+  - [ReentrantReadWriteLock]
+  - [Semaphore]
+  - [CountDownLath]
+  - [CyclicBarrier]
+  - [ThreadPoolExecutor]
+  - [ForkJoinPool]
+- 集合部分
+  - [ArrayList]
+  - [LinkedList]
+  - [Vector]
+  - [CopyOnWriteArrayList]
+  - [HashMap](应用场景与源码分析/HashMap.md)
+  - [ConcurrentHashMap](应用场景与源码分析/ConcurrentHashMap.md)
 
 #### 第1章：JAVA线程基础
 - [JAVA线程基础](JAVA线程基础.md)
