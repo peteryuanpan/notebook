@@ -1,4 +1,4 @@
-- [JAVA线程基础](#JAVA线程基础])
+- [JAVA线程基础](#JAVA线程基础)
   - [进程与线程](#进程与线程)
   - [并发与并行](#并发与并行)
   - [启动线程](#启动线程)
@@ -894,7 +894,7 @@ threadA end waiting
 - 1、join方法是实例方法，在threadA.join方法执行后，当前线程会进入等待状态（WAITING），等待threadA执行完毕，让出CPU时间片，不会释放监视器锁
 - 2、sleep方法是类方法，在sleep方法执行后，当前线程会进入有期限的等待状态（TIMED_WAITING），让出CPU时间片，不会释放监视器锁
 - 3、相比于join()方法，join(long)、join(long, int)是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
-- 4、join方法执行后，其他线程中断了该线程，则该线程会抛出InterrupteException异常并返回
+- 4、join或者sleep方法执行后，其他线程中断了该线程，则该线程会抛出InterrupteException异常并返回
 
 关于1、2两点，来看一个例子
 
@@ -1208,7 +1208,261 @@ class Thread implements Runnable {
 
 ### 线程中断机制
 
-TODO
+线程中断是一种线程间的协作模式，通过设置线程的中断标志并不能直接终止该线程的执行，而是被中断的线程根据中断状态自行处理
+
+Thread中有两个方法，两个是实例方法：public void interrupt()，public boolean isInterrupted()，一个是类方法：public static boolean interrupted()
+
+总结下来，有这么几点
+- 1、interrupt方法执行后，会给线程设置中断标志，但仅仅是设置标志，不会中断线程，线程中需要使用isInterrupted或interrupted方法来检测中断标志
+- 2、interrupt方法执行后，如果线程已经因Object#wait、Thread#join、Thread.sleep方法而进入等待状态，线程会抛出InterruptedException异常，然后返回
+- 3、interrupt方法执行后，如果线程已经因LockSupport.park方法而进入等待状态，线程会返回，但不会抛出InterruptedException异常！
+- 4、isInterrupted方法执行后，会返回对应线程（不是当前线程）是否设置了中断标志，但不会清除中断标志！
+- 5、interrupted方法执行后，会返回当前线程（注意是当前线程）是否设置了中断标志，并清除中断标志
+
+关于第1点，来看一个例子
+
+```java
+package part1;
+
+public class ThreadInterruptTest1 {
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            System.out.println(Thread.currentThread().getName() + " begin");
+            for (;;) {
+                if (0 == 1) {
+                    break;
+                }
+            }
+            System.out.println(Thread.currentThread().getName() + " end");
+        });
+        a.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        a.interrupt();
+        System.out.println("interrupt end");
+    }
+}
+```
+
+输出结果
+```
+Thread-0 begin
+interrupt end
+```
+
+解释：线程a进入for死循环一直执行，a.interrupt();只是给线程a设置了一个中断标志，但不会中断线程，线程中应使用使用isInterrupted或interrupted方法来检测中断标志
+
+关于2、3两点，来看一个例子
+
+```java
+package part1;
+
+import java.util.concurrent.locks.LockSupport;
+
+public class ThreadInterruptTest2 {
+
+    public static void main(String[] args) {
+        Thread a = new Thread(new Test() {
+            @Override
+            void gotowait() throws Exception {
+                this.wait();
+            }
+        }, "ThreadA");
+        Thread b = new Thread(new Test() {
+            @Override
+            void gotowait() throws Exception {
+                Thread.currentThread().join();
+            }
+        }, "ThreadB");
+        Thread c = new Thread(new Test() {
+            @Override
+            void gotowait() throws Exception {
+                Thread.sleep(100000000);
+            }
+        }, "ThreadC");
+        Thread d = new Thread(new Test() {
+            @Override
+            void gotowait() throws Exception {
+                LockSupport.park(this);
+            }
+        }, "ThreadD");
+        a.start();
+        b.start();
+        c.start();
+        d.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        a.interrupt();
+        b.interrupt();
+        c.interrupt();
+        d.interrupt();
+    }
+
+    abstract static class Test implements Runnable {
+
+        abstract void gotowait() throws Exception;
+
+        @Override
+        public void run() {
+            System.out.println(Thread.currentThread().getName() + " begin");
+            try {
+                gotowait();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println(Thread.currentThread().getName() + " end");
+        }
+    }
+}
+```
+
+输出结果
+```
+ThreadA begin
+ThreadD begin
+ThreadC begin
+ThreadB begin
+ThreadA end
+java.lang.IllegalMonitorStateException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Object.wait(Object.java:502)
+	at part1.ThreadInterruptTest2$1.gotowait(ThreadInterruptTest2.java:12)
+	at part1.ThreadInterruptTest2$Test.run(ThreadInterruptTest2.java:56)
+	at java.lang.Thread.run(Thread.java:748)
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at java.lang.Thread.join(Thread.java:1252)
+	at java.lang.Thread.join(Thread.java:1326)
+	at part1.ThreadInterruptTest2$2.gotowait(ThreadInterruptTest2.java:18)
+	at part1.ThreadInterruptTest2$Test.run(ThreadInterruptTest2.java:56)
+	at java.lang.Thread.run(Thread.java:748)
+java.lang.InterruptedException: sleep interrupted
+	at java.lang.Thread.sleep(Native Method)
+	at part1.ThreadInterruptTest2$3.gotowait(ThreadInterruptTest2.java:24)
+	at part1.ThreadInterruptTest2$Test.run(ThreadInterruptTest2.java:56)
+	at java.lang.Thread.run(Thread.java:748)
+ThreadB end
+ThreadC end
+ThreadD end
+```
+
+解释：Object#wait、Thread#join、Thread.sleep 和 LockSupport.park方法都会将线程进入等待状态，但在被其他线程调用 interrupt 方法而中断时，前三者会抛InterruptedException异常而返回，LockSupport.park也会返回，但不会抛异常
+
+关于4、5两点，来看一个例子
+
+```java
+package part1;
+
+public class ThreadInterruptTest3 {
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            for (;;) {
+                if (Thread.currentThread().isInterrupted()) {
+                    System.out.println(Thread.currentThread().getName() + " " + Thread.currentThread().isInterrupted());
+                    break;
+                }
+            }
+            System.out.println(Thread.currentThread().getName() + " end");
+        }, "threadA");
+        Thread b = new Thread(() -> {
+            for (;;) {
+                if (Thread.interrupted()) {
+                    System.out.println(Thread.currentThread().getName() + " " + Thread.currentThread().isInterrupted());
+                    break;
+                }
+            }
+            System.out.println(Thread.currentThread().getName() + " end");
+        }, "threadB");
+        a.start();
+        b.start();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        a.interrupt();
+        b.interrupt();
+    }
+}
+```
+
+输出结果
+```
+threadA true
+threadB false
+threadB end
+threadA end
+```
+
+解释：线程被其他线程调用interrupt方法后，会设置中断标志，通过isInterrupted和interrupted方法都可以检测中断标志，但前者不会清除中断标志，后者会清除中断标志
+
+关于第5点，再来看一个例子
+
+```java
+package part1;
+
+public class ThreadInterruptTest4 {
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+           for (;;) {
+
+           }
+        });
+        a.start();
+        a.interrupt();
+        System.out.println(a.isInterrupted());
+        System.out.println(a.interrupted());
+        System.out.println(Thread.interrupted());
+        System.out.println(a.isInterrupted());
+    }
+}
+```
+
+输出结果
+```
+true
+false
+false
+true
+```
+
+解释：这个例子很容易让人以为输出结果是 true、true、false、false... 关键在于a.interrupted()这句话，它内部实际上不是检测Thread a的中断标志，而是检测当前线程（也就是主线程）的中断标志
+
+来看一下Thread类源码
+```java
+public
+class Thread implements Runnable {
+...
+    public static boolean interrupted() {
+        return currentThread().isInterrupted(true);
+    }
+    
+    public boolean isInterrupted() {
+        return isInterrupted(false);
+    }
+    
+    /**
+     * Tests if some Thread has been interrupted.  The interrupted state
+     * is reset or not based on the value of ClearInterrupted that is
+     * passed.
+     */
+    private native boolean isInterrupted(boolean ClearInterrupted);
+```
+
+可以看出来，interrupted是返回当前线程的中断标志，且会清除中断标志（set ClearInterrupted = true），而isInterrupted是返回调用线程（不是当前线程）的中断标志，且不会清除中断标志（set ClearInterrupted = false）
+
+这里比较有意思的是，IDEA中输入a.interr，给函数提示时候，没有给出interrupted方法（实际上是可以调用的），实际写代码的时候也不建议用类似 a.interrupted() 的方式，会造成很大的误解，而建议使用 Thread.interrupted()
+
+![image](https://user-images.githubusercontent.com/10209135/97849320-57e08d80-1d2d-11eb-9f61-8a423f337a47.png)
 
 ### 并发基础概念
 
