@@ -24,6 +24,36 @@
 
 JDK8
 
+```java
+public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneable, Serializable {
+    // 序列号
+    private static final long serialVersionUID = 362498820763181265L;    
+    // 默认的初始容量是16
+    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;   
+    // 最大容量
+    static final int MAXIMUM_CAPACITY = 1 << 30; 
+    // 默认的扩容引子
+    static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    // 链表转为红黑树的第一个条件：链表长度大于8
+    static final int TREEIFY_THRESHOLD = 8; 
+    // 当红黑树上的节点数小于这个值时会转成链表
+    static final int UNTREEIFY_THRESHOLD = 6;
+    // 链表转为红黑树的第二个条件：数组长度大于等于64
+    static final int MIN_TREEIFY_CAPACITY = 64;
+    // 存放元素的数组，长度总是2的幂次倍
+    transient Node<k,v>[] table; 
+    // 存放具体元素的集
+    transient Set<map.entry<k,v>> entrySet;
+    // 存放元素的个数，注意这个不等于数组的长度
+    transient int size;
+    // 每次扩容和更改map结构的计数器
+    transient int modCount;   
+    // 当数组长度*扩容引子超过临界值时，会对数组进行扩容
+    int threshold;
+    // 扩容引子
+    final float loadFactor;
+}
+```
 
 JDK7
 
