@@ -112,7 +112,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
 
 JDK7，链表数组
 
-```
+```java
 public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneable, Serializable {
     // 默认数组的初始长度是16
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;
@@ -122,7 +122,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
     // 空链表数组
     static final Entry<?,?>[] EMPTY_TABLE = {};
-    // 数组默认是空链表数组
+    // 存放元素的数组，长度总是2的幂次倍
     transient Entry<K,V>[] table = (Entry<K,V>[]) EMPTY_TABLE;
     // 存放<KEY, VALUE>的集合
     private transient Set<Map.Entry<K,V>> entrySet = null;
