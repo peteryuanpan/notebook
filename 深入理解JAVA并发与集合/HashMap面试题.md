@@ -3,7 +3,7 @@
   - [JDK7及JDK8中数组长度为何是二的幂次方](#JDK7及JDK8中数组长度为何是二的幂次方)
   - [JDK8中HashMap为什么要使用红黑树](#JDK8中HashMap为什么要使用红黑树)
   - [JDK8中HashMap什么时候将链表转化为红黑树](#JDK8中HashMap什么时候将链表转化为红黑树)
-  - [JDK8中HashMap红黑树实现原理]
+  - [JDK8中HashMap红黑树实现原理](#JDK8中HashMap红黑树实现原理)
   - [JDK7与JDK8中HashMap的不同点](#JDK7与JDK8中HashMap的不同点)
   - [JDK7中HashMap多线程循环链表问题](#JDK7中HashMap多线程循环链表问题)
   - [JDK8中HashMap线程不安全问题](#JDK8中HashMap线程不安全问题)
