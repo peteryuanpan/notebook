@@ -5,6 +5,7 @@
     - [类图](#类图)
     - [数据结构](#数据结构)
     - [核心方法](#核心方法)
+	  - [hash方法](#hash方法)
       - [put方法](#put方法)
       - [get方法](#get方法)
       - [remove方法](#remove方法)
@@ -168,17 +169,51 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
 
 #### 核心方法
 
+#### hash方法
+
+JDK7及JDK8中的hash方法都是扰动函数，在key的hashCode方法基础上进行扰动计算，这么做是解决hashCode方法可能不够散列的问题
+
+JDK8，由于采用了红黑树，不需要hash特别散列，因此计算简单，降低CPU消耗
+
+```java
+    static final int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+    }
+```
+
+JDK7，hash比较复杂，较为散列，计算多，CPU消耗多
+
+```java
+    final int hash(Object k) {
+        int h = hashSeed;
+        if (0 != h && k instanceof String) {
+            return sun.misc.Hashing.stringHash32((String) k);
+        }
+
+        h ^= k.hashCode();
+
+        // This function ensures that hashCodes that differ only by
+        // constant multiples at each bit position have a bounded
+        // number of collisions (approximately 8 at default load factor).
+        h ^= (h >>> 20) ^ (h >>> 12);
+        return h ^ (h >>> 7) ^ (h >>> 4);
+    }
+```
+
 ##### put方法
 
 JDK8，尾插法，允许key、value为null
 
 ```java
+	// 插入一个<key, value>
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
+	// 插入一个<key, value>
     // onlyIfAbsent: 如果是true，不修改已存在的节点
     // evict: 如果是false，数组是在creation mode
-    // 返回上一个节点（被覆盖的节点或者null）
+    // 返回被覆盖节点的VALUE 或者 null（表示新建了一个节点）
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
         // 数组为null或者长度为0，则进行扩容
@@ -199,6 +234,7 @@ JDK8，尾插法，允许key、value为null
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             // 使用链表插入
             else {
+				// 遍历链表
                 for (int binCount = 0; ; ++binCount) {
                     // 链表节点的next为null，则初始化一个节点，插入之（尾插法）
                     if ((e = p.next) == null) {
@@ -218,12 +254,12 @@ JDK8，尾插法，允许key、value为null
             // e不为null，说明找到相同节点，但还未插入
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
-                // onlyIfAbsent参数为false，或者找到的节点的VALUE值为null，则覆盖它的VALUE值
+                // onlyIfAbsent参数为false，或者找到的节点的value值为null，则覆盖它的value值
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 // 自定义回调，给子类使用
                 afterNodeAccess(e);
-                // 返回找到相同节点的旧VALUE值
+                // 返回找到相同节点的旧value值
                 return oldValue;
             }
         }
@@ -234,7 +270,7 @@ JDK8，尾插法，允许key、value为null
             resize();
         // 自定义回调，给子类使用
         afterNodeInsertion(evict);
-        // 由于新建了一个节点，旧VALUE值就为null，返回之
+        // 由于新建了一个节点，旧value值就为null，返回之
         return null;
     }
 ```
@@ -242,28 +278,117 @@ JDK8，尾插法，允许key、value为null
 JDK7，头插法
 
 ```java
+	// 插入一个<key, value>
+	// 返回被覆盖节点的VALUE 或者 null（表示新建了一个节点）
     public V put(K key, V value) {
+    	// 数组是空数组（默认就是空数组），则扩容
         if (table == EMPTY_TABLE) {
             inflateTable(threshold);
         }
+		// key为null，插入节点
         if (key == null)
             return putForNullKey(value);
+		// 计算hash值
         int hash = hash(key);
+		// 计算index，index=hash&(table.length-1)，table.length一定是2的幂次方，因此相当于index=hash%table.length
         int i = indexFor(hash, table.length);
+		// 遍历链表
         for (Entry<K,V> e = table[i]; e != null; e = e.next) {
             Object k;
+			// 链表节点的hash、key等于待插入元素的hash、key，则找到相同节点
             if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {
                 V oldValue = e.value;
+				// 替换节点的value值
                 e.value = value;
+				// 自定义回调方法，给子类使用
                 e.recordAccess(this);
+				// 返回节点的旧value值
                 return oldValue;
             }
         }
-
+		// 需要插入一个新节点，modCount加1
         modCount++;
+		// 在数组的index=i位置插入节点
         addEntry(hash, key, value, i);
+		// 由于新建了一个节点，旧value值就为null，返回之
         return null;
     }
+	// 调整数组长度到第一个比toSize大的2的幂次方数
+    private void inflateTable(int toSize) {
+		// 保证数组长度为2的幂次方
+        // Find a power of 2 >= toSize
+        int capacity = roundUpToPowerOf2(toSize);
+		// 这句话好像多余
+        threshold = (int) Math.min(capacity * loadFactor, MAXIMUM_CAPACITY + 1);
+		// 初始化一个新的链表数组
+        table = new Entry[capacity];
+		// 调整hash种子
+        initHashSeedAsNeeded(capacity);
+    }
+	// 返回一个值，该值是第一个比number大的数，且是2的幂次方数
+    private static int roundUpToPowerOf2(int number) {
+        // assert number >= 0 : "number must be non-negative";
+        return number >= MAXIMUM_CAPACITY
+                ? MAXIMUM_CAPACITY
+                : (number > 1) ? Integer.highestOneBit((number - 1) << 1) : 1;
+    }
+	// 插入key为null的节点
+    private V putForNullKey(V value) {
+		// 遍历链表
+        for (Entry<K,V> e = table[0]; e != null; e = e.next) {
+			// 发现key为null的节点，则替换value
+            if (e.key == null) {
+                V oldValue = e.value;
+                e.value = value;
+				// 自定义回调，给子类使用
+                e.recordAccess(this);
+				// 返回null节点的旧value
+                return oldValue;
+            }
+        }
+		// 需要插入一个新节点，modCount加1
+        modCount++;
+		// 在数组的index=0位置插入节点
+        addEntry(0, null, value, 0);
+		// 由于新建了一个节点，旧value值就为null，返回之
+        return null;
+    }
+	// 在table[bucketIndex]位置，使用头插法，插入一个节点
+    void addEntry(int hash, K key, V value, int bucketIndex) {
+		// 当数组长度大于等于8 且 数组在bucetIndex位置不为null 时，进行扩容
+        if ((size >= threshold) && (null != table[bucketIndex])) {
+			// 进行扩容到2倍的当前数组长度
+            resize(2 * table.length);
+			// 重新计算hash值
+            hash = (null != key) ? hash(key) : 0;
+			// 重新计算bucketIndex值
+            bucketIndex = indexFor(hash, table.length);
+        }
+		// 正式插入节点
+        createEntry(hash, key, value, bucketIndex);
+    }
+	// 使用h & (length-1)来计算index，length一定是2的幂次方，因此相当于h%length
+    static int indexFor(int h, int length) {
+        // assert Integer.bitCount(length) == 1 : "length must be a non-zero power of 2";
+        return h & (length-1);
+    }
+	// 在table[bucketIndex]位置，使用头插法，正式插入一个节点
+    void createEntry(int hash, K key, V value, int bucketIndex) {
+		// 取得旧节点
+        Entry<K,V> e = table[bucketIndex];
+		// 初始化一个新节点，旧节点作为了新节点的next节点，因此是头插法
+        table[bucketIndex] = new Entry<>(hash, key, value, e);
+		// 数组元素个数加1
+        size++;
+    }
+	static class Entry<K,V> implements Map.Entry<K,V> {
+	    Entry(int h, K k, V v, Entry<K,V> n) {
+            value = v;
+            next = n;
+            key = k;
+            hash = h;
+        }
+	}
 ```
 
 ##### get方法
@@ -503,5 +628,17 @@ JDK7
         transfer(newTable, initHashSeedAsNeeded(newCapacity));
         table = newTable;
         threshold = (int)Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1);
+    }
+    final boolean initHashSeedAsNeeded(int capacity) {
+        boolean currentAltHashing = hashSeed != 0;
+        boolean useAltHashing = sun.misc.VM.isBooted() &&
+                (capacity >= Holder.ALTERNATIVE_HASHING_THRESHOLD);
+        boolean switching = currentAltHashing ^ useAltHashing;
+        if (switching) {
+            hashSeed = useAltHashing
+                ? sun.misc.Hashing.randomHashSeed(this)
+                : 0;
+        }
+        return switching;
     }
 ```
