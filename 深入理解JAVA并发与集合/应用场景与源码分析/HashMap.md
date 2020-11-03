@@ -401,17 +401,22 @@ JDK8
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
     }
-    // 返回hash，key对应的value值，找不到则返回null
+    // 返回hash，key对应的节点，找不到则返回null
     final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
+        // 三个条件：数组不为null，数组长度大于0，数组index位置（index=(n-1)&hash）已存在链表
         if ((tab = table) != null && (n = tab.length) > 0 &&
             (first = tab[(n - 1) & hash]) != null) {
+            // 检查头节点，如果匹配则返回
             if (first.hash == hash && // always check first node
                 ((k = first.key) == key || (key != null && key.equals(k))))
                 return first;
+            // 头节点的next节点不为null，则往下遍历查找
             if ((e = first.next) != null) {
+                // 已经转为红黑树了，则使用红黑树查找，并返回找到的节点，找不到返回null
                 if (first instanceof TreeNode)
                     return ((TreeNode<K,V>)first).getTreeNode(hash, key);
+                // 遍历链表，若找到节点，则返回之
                 do {
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
@@ -419,6 +424,7 @@ JDK8
                 } while ((e = e.next) != null);
             }
         }
+        // 找不到节点，返回null
         return null;
     }
 ```
@@ -426,21 +432,50 @@ JDK8
 JDK7
 
 ```java
+    // 返回key对应的value值，找不到则返回null
     public V get(Object key) {
+        // key为null
         if (key == null)
             return getForNullKey();
+        // 查找节点
         Entry<K,V> entry = getEntry(key);
-
+        // 若找到节点则返回之，找不到则返回null
         return null == entry ? null : entry.getValue();
     }
+    // 返回key为null对应的value值，找不到则返回null
     private V getForNullKey() {
+        // 数组长度为0，说明找不到，返回null
         if (size == 0) {
             return null;
         }
+        // 遍历链表（index=0位置）
         for (Entry<K,V> e = table[0]; e != null; e = e.next) {
+            // 找到key为null对应的value值，返回之
             if (e.key == null)
                 return e.value;
         }
+        // 找不到节点，返回null
+        return null;
+    }
+    // 返回key对应的节点，找不到则返回null
+    final Entry<K,V> getEntry(Object key) {
+        // 数组长度为0，说明找不到，返回null
+        if (size == 0) {
+            return null;
+        }
+        // 计算hash值
+        int hash = (key == null) ? 0 : hash(key);
+        // 遍历链表
+        for (Entry<K,V> e = table[indexFor(hash, table.length)];
+             e != null;
+             e = e.next) {
+            Object k;
+            // 链表节点的hash、key等于查找的hash、key，则找到节点，返回之
+            if (e.hash == hash &&
+                ((k = e.key) == key || (key != null && key.equals(k))))
+                return e;
+        }
+        // 找不到节点，返回null
         return null;
     }
 ```
