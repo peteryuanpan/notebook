@@ -20,6 +20,8 @@
 
 #### 类图
 
+![image](https://user-images.githubusercontent.com/10209135/97936983-41cbdf00-1db8-11eb-9bd5-325e3c645377.png)
+
 #### 数据结构
 
 JDK8
@@ -28,9 +30,9 @@ JDK8
 public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneable, Serializable {
     // 序列号
     private static final long serialVersionUID = 362498820763181265L;    
-    // 默认的初始容量是16
+    // 默认数组的初始长度是16
     static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;   
-    // 最大容量
+    // 数组的最大长度
     static final int MAXIMUM_CAPACITY = 1 << 30; 
     // 默认的扩容引子
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
@@ -47,15 +49,87 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     // 存放元素的个数，注意这个不等于数组的长度
     transient int size;
     // 每次扩容和更改map结构的计数器
-    transient int modCount;   
+    transient int modCount;
     // 当数组长度*扩容引子超过临界值时，会对数组进行扩容
     int threshold;
     // 扩容引子
     final float loadFactor;
+    // 
+    static class Node<K,V> implements Map.Entry<K,V> {
+        final int hash;
+        final K key;
+        V value;
+        Node<K,V> next;
+    }
+    static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
+        TreeNode<K,V> parent;  // red-black tree links
+        TreeNode<K,V> left;
+        TreeNode<K,V> right;
+        TreeNode<K,V> prev;    // needed to unlink next upon deletion
+        boolean red;
+    }
+    final class KeySet extends AbstractSet<K> {}
+    final class Values extends AbstractCollection<V> {}
+    final class EntrySet extends AbstractSet<Map.Entry<K,V>> {}
+    abstract class HashIterator {
+        Node<K,V> next;        // next entry to return
+        Node<K,V> current;     // current entry
+        int expectedModCount;  // for fast-fail
+        int index;             // current slot
+    }
+    final class KeyIterator extends HashIterator implements Iterator<K> {}
+    final class ValueIterator extends HashIterator implements Iterator<V> {}
+    final class EntryIterator extends HashIterator implements Iterator<Map.Entry<K,V>> {}
+    static class HashMapSpliterator<K,V> {
+        final HashMap<K,V> map;
+        Node<K,V> current;          // current node
+        int index;                  // current index, modified on advance/split
+        int fence;                  // one past last index
+        int est;                    // size estimate
+        int expectedModCount;       // for comodification checks
+    }
+    static final class KeySpliterator<K,V> extends HashMapSpliterator<K,V> implements Spliterator<K> {}
+    static final class ValueSpliterator<K,V> extends HashMapSpliterator<K,V> implements Spliterator<V> {}
+    static final class EntrySpliterator<K,V> extends HashMapSpliterator<K,V> implements Spliterator<Map.Entry<K,V>> {}
 }
 ```
 
-JDK7
+JDK7，可以看得出来数据结构简单了很多
+
+```
+public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneable, Serializable {
+    // 默认数组的初始长度是16
+    static final int DEFAULT_INITIAL_CAPACITY = 1 << 4;
+    static final int MAXIMUM_CAPACITY = 1 << 30;
+    static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    static final Entry<?,?>[] EMPTY_TABLE = {};
+    transient Entry<K,V>[] table = (Entry<K,V>[]) EMPTY_TABLE;
+    transient int size;
+    int threshold;
+    final float loadFactor;
+    transient int modCount;
+    static final int ALTERNATIVE_HASHING_THRESHOLD_DEFAULT = Integer.MAX_VALUE;
+    transient int hashSeed = 0;
+    static class Entry<K,V> implements Map.Entry<K,V> {
+        final K key;
+        V value;
+        Entry<K,V> next;
+        int hash;
+    }
+    private abstract class HashIterator<E> implements Iterator<E> {
+        Entry<K,V> next;        // next entry to return
+        int expectedModCount;   // For fast-fail
+        int index;              // current slot
+        Entry<K,V> current;     // current entry
+    }
+    private final class ValueIterator extends HashIterator<V> {}
+    private final class KeyIterator extends HashIterator<K> {}
+    private final class EntryIterator extends HashIterator<Map.Entry<K,V>> {}
+    private final class KeySet extends AbstractSet<K> {}
+    private final class Values extends AbstractCollection<V> {}
+    private final class EntrySet extends AbstractSet<Map.Entry<K,V>> {}
+}
+```
 
 #### 核心方法
 
