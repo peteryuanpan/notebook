@@ -290,7 +290,7 @@ JDK7，头插法
             return putForNullKey(value);
         // 计算hash值
         int hash = hash(key);
-		// 计算index，index=hash&(table.length-1)，table.length一定是2的幂次方，因此相当于index=hash%table.length
+        // 计算index，index=hash&(table.length-1)，table.length一定是2的幂次方，因此相当于index=hash%table.length
         int i = indexFor(hash, table.length);
         // 遍历链表
         for (Entry<K,V> e = table[i]; e != null; e = e.next) {
@@ -388,7 +388,7 @@ JDK7，头插法
             key = k;
             hash = h;
         }
-	}
+    }
 ```
 
 ##### get方法
