@@ -206,11 +206,11 @@ JDK7，hash比较复杂，较为散列，计算多，CPU消耗多
 JDK8，尾插法，允许key、value为null
 
 ```java
-	// 插入一个<key, value>
+    // 插入一个<key, value>
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
-	// 插入一个<key, value>
+    // 插入一个<key, value>
     // onlyIfAbsent: 如果是true，不修改已存在的节点
     // evict: 如果是false，数组是在creation mode
     // 返回被覆盖节点的VALUE 或者 null（表示新建了一个节点）
@@ -278,17 +278,17 @@ JDK8，尾插法，允许key、value为null
 JDK7，头插法
 
 ```java
-	// 插入一个<key, value>
-	// 返回被覆盖节点的VALUE 或者 null（表示新建了一个节点）
+    // 插入一个<key, value>
+    // 返回被覆盖节点的VALUE 或者 null（表示新建了一个节点）
     public V put(K key, V value) {
-    	// 数组是空数组（默认就是空数组），则扩容
+        // 数组是空数组（默认就是空数组），则扩容
         if (table == EMPTY_TABLE) {
             inflateTable(threshold);
         }
-		// key为null，插入节点
+        // key为null，插入节点
         if (key == null)
             return putForNullKey(value);
-		// 计算hash值
+        // 计算hash值
         int hash = hash(key);
 		// 计算index，index=hash&(table.length-1)，table.length一定是2的幂次方，因此相当于index=hash%table.length
         int i = indexFor(hash, table.length);
