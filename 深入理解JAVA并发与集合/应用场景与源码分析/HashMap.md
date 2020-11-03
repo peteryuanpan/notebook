@@ -292,15 +292,15 @@ JDK7，头插法
         int hash = hash(key);
 		// 计算index，index=hash&(table.length-1)，table.length一定是2的幂次方，因此相当于index=hash%table.length
         int i = indexFor(hash, table.length);
-		// 遍历链表
+        // 遍历链表
         for (Entry<K,V> e = table[i]; e != null; e = e.next) {
             Object k;
-			// 链表节点的hash、key等于待插入元素的hash、key，则找到相同节点
+            // 链表节点的hash、key等于待插入元素的hash、key，则找到相同节点
             if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {
                 V oldValue = e.value;
-				// 替换节点的value值
+                // 替换节点的value值
                 e.value = value;
-				// 自定义回调方法，给子类使用
+                // 自定义回调方法，给子类使用
                 e.recordAccess(this);
                 // 返回节点的旧value值
                 return oldValue;
@@ -381,8 +381,8 @@ JDK7，头插法
         // 数组元素个数加1
         size++;
     }
-	static class Entry<K,V> implements Map.Entry<K,V> {
-	    Entry(int h, K k, V v, Entry<K,V> n) {
+    static class Entry<K,V> implements Map.Entry<K,V> {
+        Entry(int h, K k, V v, Entry<K,V> n) {
             value = v;
             next = n;
             key = k;
