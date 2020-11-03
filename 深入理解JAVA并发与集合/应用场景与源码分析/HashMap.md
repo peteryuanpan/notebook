@@ -302,83 +302,83 @@ JDK7，头插法
                 e.value = value;
 				// 自定义回调方法，给子类使用
                 e.recordAccess(this);
-				// 返回节点的旧value值
+                // 返回节点的旧value值
                 return oldValue;
             }
         }
-		// 需要插入一个新节点，modCount加1
+        // 需要插入一个新节点，modCount加1
         modCount++;
-		// 在数组的index=i位置插入节点
+        // 在数组的index=i位置插入节点
         addEntry(hash, key, value, i);
-		// 由于新建了一个节点，旧value值就为null，返回之
+        // 由于新建了一个节点，旧value值就为null，返回之
         return null;
     }
-	// 调整数组长度到第一个比toSize大的2的幂次方数
+    // 调整数组长度到第一个比toSize大的2的幂次方数
     private void inflateTable(int toSize) {
-		// 保证数组长度为2的幂次方
+        // 保证数组长度为2的幂次方
         // Find a power of 2 >= toSize
         int capacity = roundUpToPowerOf2(toSize);
-		// 这句话好像多余
+        // 这句话好像多余
         threshold = (int) Math.min(capacity * loadFactor, MAXIMUM_CAPACITY + 1);
-		// 初始化一个新的链表数组
+        // 初始化一个新的链表数组
         table = new Entry[capacity];
-		// 调整hash种子
+        // 调整hash种子
         initHashSeedAsNeeded(capacity);
     }
-	// 返回一个值，该值是第一个比number大的数，且是2的幂次方数
+    // 返回一个值，该值是第一个比number大的数，且是2的幂次方数
     private static int roundUpToPowerOf2(int number) {
         // assert number >= 0 : "number must be non-negative";
         return number >= MAXIMUM_CAPACITY
                 ? MAXIMUM_CAPACITY
                 : (number > 1) ? Integer.highestOneBit((number - 1) << 1) : 1;
     }
-	// 插入key为null的节点
+    // 插入key为null的节点
     private V putForNullKey(V value) {
-		// 遍历链表
+        // 遍历链表
         for (Entry<K,V> e = table[0]; e != null; e = e.next) {
-			// 发现key为null的节点，则替换value
+            // 发现key为null的节点，则替换value
             if (e.key == null) {
                 V oldValue = e.value;
                 e.value = value;
-				// 自定义回调，给子类使用
+                // 自定义回调，给子类使用
                 e.recordAccess(this);
-				// 返回null节点的旧value
+                // 返回null节点的旧value
                 return oldValue;
             }
         }
-		// 需要插入一个新节点，modCount加1
+        // 需要插入一个新节点，modCount加1
         modCount++;
-		// 在数组的index=0位置插入节点
+        // 在数组的index=0位置插入节点
         addEntry(0, null, value, 0);
-		// 由于新建了一个节点，旧value值就为null，返回之
+        // 由于新建了一个节点，旧value值就为null，返回之
         return null;
     }
-	// 在table[bucketIndex]位置，使用头插法，插入一个节点
+    // 在table[bucketIndex]位置，使用头插法，插入一个节点
     void addEntry(int hash, K key, V value, int bucketIndex) {
-		// 当数组长度大于等于8 且 数组在bucetIndex位置不为null 时，进行扩容
+        // 当数组长度大于等于8 且 数组在bucetIndex位置不为null 时，进行扩容
         if ((size >= threshold) && (null != table[bucketIndex])) {
-			// 进行扩容到2倍的当前数组长度
+            // 进行扩容到2倍的当前数组长度
             resize(2 * table.length);
-			// 重新计算hash值
+            // 重新计算hash值
             hash = (null != key) ? hash(key) : 0;
-			// 重新计算bucketIndex值
+            // 重新计算bucketIndex值
             bucketIndex = indexFor(hash, table.length);
         }
-		// 正式插入节点
+        // 正式插入节点
         createEntry(hash, key, value, bucketIndex);
     }
-	// 使用h & (length-1)来计算index，length一定是2的幂次方，因此相当于h%length
+    // 使用h & (length-1)来计算index，length一定是2的幂次方，因此相当于h%length
     static int indexFor(int h, int length) {
         // assert Integer.bitCount(length) == 1 : "length must be a non-zero power of 2";
         return h & (length-1);
     }
-	// 在table[bucketIndex]位置，使用头插法，正式插入一个节点
+    // 在table[bucketIndex]位置，使用头插法，正式插入一个节点
     void createEntry(int hash, K key, V value, int bucketIndex) {
-		// 取得旧节点
+        // 取得旧节点
         Entry<K,V> e = table[bucketIndex];
-		// 初始化一个新节点，旧节点作为了新节点的next节点，因此是头插法
+        // 初始化一个新节点，旧节点作为了新节点的next节点，因此是头插法
         table[bucketIndex] = new Entry<>(hash, key, value, e);
-		// 数组元素个数加1
+        // 数组元素个数加1
         size++;
     }
 	static class Entry<K,V> implements Map.Entry<K,V> {
