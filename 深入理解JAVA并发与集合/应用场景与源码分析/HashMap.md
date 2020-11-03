@@ -234,7 +234,7 @@ JDK8，尾插法，允许key、value为null
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
             // 使用链表插入
             else {
-				// 遍历链表
+                // 遍历链表
                 for (int binCount = 0; ; ++binCount) {
                     // 链表节点的next为null，则初始化一个节点，插入之（尾插法）
                     if ((e = p.next) == null) {
@@ -396,10 +396,12 @@ JDK7，头插法
 JDK8
 
 ```java
+    // 返回key对应的value值，找不到则返回null
     public V get(Object key) {
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
     }
+    // 返回hash，key对应的value值，找不到则返回null
     final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
         if ((tab = table) != null && (n = tab.length) > 0 &&
