@@ -65,7 +65,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
         V value;
         Node<K,V> next;
     }
-    // 红黑数的数据结构
+    // 红黑数的数据结构，TreeNode extends LinkedHashMap.Entry extends HashMap.Node，因此TreeNode是Node的子类
     static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
         TreeNode<K,V> parent;  // red-black tree links
         TreeNode<K,V> left;
@@ -170,7 +170,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
 
 ##### put方法
 
-JDK8，尾插法
+JDK8，尾插法，允许key、value为null
 
 ```java
     public V put(K key, V value) {
@@ -181,43 +181,60 @@ JDK8，尾插法
     // 返回上一个节点（被覆盖的节点或者null）
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
+        // 数组为null或者长度为0，则进行扩容
         if ((tab = table) == null || (n = tab.length) == 0)
             n = (tab = resize()).length;
+        // (n-1)&hash得到元素index，n一定是2的幂次方，数组index位置上链表是null，则初始化一个新节点
         if ((p = tab[i = (n - 1) & hash]) == null)
             tab[i] = newNode(hash, key, value, null);
+        // 数组index位置上已存在链表，则插入
         else {
             Node<K,V> e; K k;
+            // 链表第一个节点（或者红黑树头节点）的hash、key等于待插入节点的hash、key，则找到相同节点
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 e = p;
+            // 已经转为了红黑树，则使用红黑树插入，e为null表示插入成功，e不为null表示找到相同节点
             else if (p instanceof TreeNode)
                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+            // 使用链表插入
             else {
                 for (int binCount = 0; ; ++binCount) {
+                    // 链表节点的next为null，则初始化一个节点，插入之（尾插法）
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
+                        // 当链表节点数大于等于8（条件一），则尝试转为红黑树
                         if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
                             treeifyBin(tab, hash);
                         break;
                     }
+                    // 链表节点的hash、key等于待插入元素的hash、key，则找到相同节点
                     if (e.hash == hash &&
                         ((k = e.key) == key || (key != null && key.equals(k))))
                         break;
                     p = e;
                 }
             }
+            // e不为null，说明找到相同节点，但还未插入
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
+                // onlyIfAbsent参数为false，或者找到的节点的VALUE值为null，则覆盖它的VALUE值
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
+                // 自定义回调，给子类使用
                 afterNodeAccess(e);
+                // 返回找到相同节点的旧VALUE值
                 return oldValue;
             }
         }
+        // 一定新建了一个节点，modCount加1
         ++modCount;
+        // 数组元素个数加1，当元素个数大于等于8（条件一），则尝试转为红黑树
         if (++size > threshold)
             resize();
+        // 自定义回调，给子类使用
         afterNodeInsertion(evict);
+        // 由于新建了一个节点，旧VALUE值就为null，返回之
         return null;
     }
 ```
