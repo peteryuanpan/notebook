@@ -20,7 +20,7 @@
 
 ### 应用场景
 
-需要使用一种时间复杂度低的键值对的存储结构，支持插入、查询、删除、替换、自动扩容等操作，且是在单线程或不存在考虑线程安全问题的场景下，HashMap非常适用
+需要使用一种时间复杂度低的键值对的数据结构，keySet不允许重复，支持插入、查询、删除、替换、自动扩容等操作，且是在单线程或不存在考虑线程安全问题的场景下，HashMap非常适用
 
 在JDK8引入红黑树后，HashMap的插入、查询、删除、替换操作的时间复杂度都是O(log)级别的
 
@@ -498,7 +498,7 @@ JDK7
 JDK8
 
 ```java
-    // 删除key对应的节点，若找到则返回之，否则返回null
+    // 删除key对应的节点，若找到则返回value，否则返回null
     public V remove(Object key) {
         Node<K,V> e;
         return (e = removeNode(hash(key), key, null, false, true)) == null ?
@@ -569,37 +569,49 @@ JDK8
 JDK7
 
 ```java
+    // 删除节点，若找到则返回value，否则返回null
     public V remove(Object key) {
         Entry<K,V> e = removeEntryForKey(key);
         return (e == null ? null : e.value);
     }
+    // 删除节点，若找到则返回之，否则返回null
     final Entry<K,V> removeEntryForKey(Object key) {
+        // 节点个数为0
         if (size == 0) {
             return null;
         }
+        // 计算hash值
         int hash = (key == null) ? 0 : hash(key);
+        // 计算index值
         int i = indexFor(hash, table.length);
+        // 获取头节点
         Entry<K,V> prev = table[i];
         Entry<K,V> e = prev;
-
+        // 链表循环
         while (e != null) {
             Entry<K,V> next = e.next;
             Object k;
+            // hash与key一样，则找到节点
             if (e.hash == hash &&
                 ((k = e.key) == key || (key != null && key.equals(k)))) {
+                // modCound加1
                 modCount++;
+                // 节点个数减1
                 size--;
+                // 去除找到的节点
                 if (prev == e)
                     table[i] = next;
                 else
                     prev.next = next;
+                // 自定义回调方法，给子类使用
                 e.recordRemoval(this);
+                // 返回找到的节点
                 return e;
             }
             prev = e;
             e = next;
         }
-
+        // 链表循环完了，返回null
         return e;
     }
 ```
@@ -609,12 +621,16 @@ JDK7
 JDK8独有，该方法在putVal、computeIfAbsent、compute、merge方法中被调用
 
 ```java
+    // 将链表转为红黑树
     final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n, index; Node<K,V> e;
+        // 数组为null，或者数组长度小于64（反之是转为红黑树的第二个条件），进行扩容，不转红黑树
         if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
             resize();
+        // 数组链表不为null
         else if ((e = tab[index = (n - 1) & hash]) != null) {
             TreeNode<K,V> hd = null, tl = null;
+            // 构造红黑树链表
             do {
                 TreeNode<K,V> p = replacementTreeNode(e, null);
                 if (tl == null)
@@ -625,10 +641,69 @@ JDK8独有，该方法在putVal、computeIfAbsent、compute、merge方法中被�
                 }
                 tl = p;
             } while ((e = e.next) != null);
+            // 数组index位置更新为红黑树链表，并且正式转为红黑树
             if ((tab[index] = hd) != null)
                 hd.treeify(tab);
         }
     }
+    TreeNode<K,V> replacementTreeNode(Node<K,V> p, Node<K,V> next) {
+        return new TreeNode<>(p.hash, p.key, p.value, next);
+    }
+    static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
+        TreeNode<K,V> parent;  // red-black tree links
+        TreeNode<K,V> left;
+        TreeNode<K,V> right;
+        TreeNode<K,V> prev;    // needed to unlink next upon deletion
+        boolean red;
+        TreeNode(int hash, K key, V val, Node<K,V> next) {
+            super(hash, key, val, next);
+        }
+        /**
+         * Forms tree of the nodes linked from this node.
+         */
+        final void treeify(Node<K,V>[] tab) {
+            TreeNode<K,V> root = null;
+            for (TreeNode<K,V> x = this, next; x != null; x = next) {
+                next = (TreeNode<K,V>)x.next;
+                x.left = x.right = null;
+                if (root == null) {
+                    x.parent = null;
+                    x.red = false;
+                    root = x;
+                }
+                else {
+                    K k = x.key;
+                    int h = x.hash;
+                    Class<?> kc = null;
+                    for (TreeNode<K,V> p = root;;) {
+                        int dir, ph;
+                        K pk = p.key;
+                        if ((ph = p.hash) > h)
+                            dir = -1;
+                        else if (ph < h)
+                            dir = 1;
+                        else if ((kc == null &&
+                                  (kc = comparableClassFor(k)) == null) ||
+                                 (dir = compareComparables(kc, k, pk)) == 0)
+                            dir = tieBreakOrder(k, pk);
+
+                        TreeNode<K,V> xp = p;
+                        if ((p = (dir <= 0) ? p.left : p.right) == null) {
+                            x.parent = xp;
+                            if (dir <= 0)
+                                xp.left = x;
+                            else
+                                xp.right = x;
+                            root = balanceInsertion(root, x);
+                            break;
+                        }
+                    }
+                }
+            }
+            moveRootToFront(tab, root);
+        }
+...
+     }
 ```
 
 ### resize方法
