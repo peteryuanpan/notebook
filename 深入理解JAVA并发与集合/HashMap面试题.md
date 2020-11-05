@@ -1,13 +1,14 @@
 - [HashMap面试题](#HashMap面试题)
   - [JDK7及JDK8中HashMap实现原理](#JDK7及JDK8中HashMap实现原理)
-  - [JDK7及JDK8中数组长度为何是二的幂次方](#JDK7及JDK8中数组长度为何是二的幂次方)
+  - [JDK8中数组长度为何是2的幂次方](#JDK8中数组长度为何是2的幂次方)
   - [JDK8中HashMap为什么要使用红黑树](#JDK8中HashMap为什么要使用红黑树)
   - [JDK8中HashMap什么时候将链表转化为红黑树](#JDK8中HashMap什么时候将链表转化为红黑树)
   - [JDK8中HashMap红黑树实现原理](#JDK8中HashMap红黑树实现原理)
-  - [JDK7与JDK8中HashMap的不同点](#JDK7与JDK8中HashMap的不同点)
   - [JDK8中HashMap多种遍历方式](#JDK8中HashMap多种遍历方式)
   - [JDK7中HashMap多线程循环链表问题](#JDK7中HashMap多线程循环链表问题)
-  - [JDK8中HashMap线程不安全问题](#JDK8中HashMap线程不安全问题)
+  - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
+  - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
+  - [JDK7与JDK8中HashMap的不同点](#JDK7与JDK8中HashMap的不同点)
   - [JDK7及JDK8中ConcurrentHashMap实现原理](#JDK7及JDK8中ConcurrentHashMap实现原理)
   - [JDK7中ConcurrentHashMap如何保证线程安全](#JDK7中ConcurrentHashMap如何保证线程安全)
   - [JDK8中ConcurrentHashMap如何保证线程安全](#JDK8中ConcurrentHashMap如何保证线程安全)
@@ -31,9 +32,10 @@ JDK8: 链表数组、红黑树
 
 JDK8中既使用了单向链表，也使用了双向链表，双向链表主要是为了链表操作方便，应该在插入，扩容，链表转红黑树，红黑树转链表的过程中都要操作链表
 
+
 TODO：没理解
 
-### JDK7及JDK8中数组长度为何是二的幂次方
+### JDK8中数组长度为何是2的幂次方
 
 ### JDK8中HashMap为什么要使用红黑树
 
@@ -49,13 +51,15 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 ### JDK8中HashMap红黑树实现原理
 
-### JDK7与JDK8中HashMap的不同点
-
 ### JDK8中HashMap多种遍历方式
 
 ### JDK7中HashMap多线程循环链表问题
 
-### JDK8中HashMap线程不安全问题
+### JDK8中HashMap2个线程同时put会发生什么
+
+### JDK8中HashMap1个线程put1个线程get会发生什么
+
+### JDK7与JDK8中HashMap的不同点
 
 ### JDK7及JDK8中ConcurrentHashMap实现原理
 
