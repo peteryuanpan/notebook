@@ -60,11 +60,11 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     transient Node<k,v>[] table; 
     // 存放<KEY, VALUE>的集合
     transient Set<map.entry<k,v>> entrySet;
-    // 总节点个数
+    // 节点个数
     transient int size;
     // 每次扩容和更改map结构的计数器
     transient int modCount;
-    // 当数组长度*扩容引子超过临界值时，会对数组进行扩容
+    // 当节点个数*扩容引子超过临界值时，会对数组进行扩容
     int threshold;
     // 扩容引子
     final float loadFactor;
@@ -136,9 +136,9 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     transient Entry<K,V>[] table = (Entry<K,V>[]) EMPTY_TABLE;
     // 存放<KEY, VALUE>的集合
     private transient Set<Map.Entry<K,V>> entrySet = null;
-    // 总节点个数
+    // 节点个数
     transient int size;
-    // 当数组长度*扩容引子超过临界值时，会对数组进行扩容
+    // 当节点个数*扩容引子超过临界值时，会对数组进行扩容
     int threshold;
     // 扩容引子
     final float loadFactor;
