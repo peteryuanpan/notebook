@@ -9,6 +9,7 @@
       - [put方法](#put方法)
       - [get方法](#get方法)
       - [remove方法](#remove方法)
+      - [treeifyBin方法](#treeifyBin方法)
       - [resize方法](#resize方法)
 
 # HashMap
@@ -19,7 +20,15 @@
 
 ### 应用场景
 
+需要使用一种时间复杂度低的键值对的存储结构，支持插入、查询、删除、替换、自动扩容等操作，且是在单线程或不存在考虑线程安全问题的场景下，HashMap非常适用
+
+在JDK8引入红黑树后，HashMap的插入、查询、删除、替换操作的时间复杂度都是O(log)级别的
+
 ### 核心思想
+
+数组负责存储，通过hash&(数组长度-1)确定index，数组长度一定为2的幂次方，适当的时候自动扩容
+
+链表负责解决hash冲突，链表长度和数组长度达到一定条件时，将链表转为红黑树，提高查询效率
 
 ### 类结构分析
 
@@ -51,7 +60,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     transient Node<k,v>[] table; 
     // 存放<KEY, VALUE>的集合
     transient Set<map.entry<k,v>> entrySet;
-    // 数据元素的个数，注意这个不等于数组的长度
+    // 总节点个数
     transient int size;
     // 每次扩容和更改map结构的计数器
     transient int modCount;
@@ -127,7 +136,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     transient Entry<K,V>[] table = (Entry<K,V>[]) EMPTY_TABLE;
     // 存放<KEY, VALUE>的集合
     private transient Set<Map.Entry<K,V>> entrySet = null;
-    // 数据元素的个数，注意这个不等于数组的长度
+    // 总节点个数
     transient int size;
     // 当数组长度*扩容引子超过临界值时，会对数组进行扩容
     int threshold;
@@ -203,16 +212,20 @@ JDK7，hash比较复杂，较为散列，计算多，CPU消耗多
 
 ##### put方法
 
-JDK8，尾插法，允许key、value为null
+JDK8，尾插法
 
 ```java
-    // 插入一个<key, value>
+    // 插入一个<key, value>，若节点已存在则覆盖之
     public V put(K key, V value) {
         return putVal(hash(key), key, value, false, true);
     }
+    // 插入一个<key, value>，若节点已存在则不覆盖！
+    public V putIfAbsent(K key, V value) {
+        return putVal(hash(key), key, value, true, true);
+    }
     // 插入一个<key, value>
-    // onlyIfAbsent: 如果是true，不修改已存在的节点
-    // evict: 如果是false，数组是在creation mode
+    // 如果onlyIfAbsent是true，不覆盖已存在的节点
+    // 如果evict是false，数组是在creation mode
     // 返回被覆盖节点的VALUE 或者 null（表示新建了一个节点）
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
@@ -265,7 +278,7 @@ JDK8，尾插法，允许key、value为null
         }
         // 一定新建了一个节点，modCount加1
         ++modCount;
-        // 数组元素个数加1，当元素个数大于等于8（条件一），则尝试转为红黑树
+        // 节点个数加1，当元素个数大于等于8（条件一），则尝试转为红黑树
         if (++size > threshold)
             resize();
         // 自定义回调，给子类使用
@@ -278,7 +291,7 @@ JDK8，尾插法，允许key、value为null
 JDK7，头插法
 
 ```java
-    // 插入一个<key, value>
+    // 插入一个<key, value>，若节点已存在则覆盖之
     // 返回被覆盖节点的VALUE 或者 null（表示新建了一个节点）
     public V put(K key, V value) {
         // 数组是空数组（默认就是空数组），则扩容
@@ -378,7 +391,7 @@ JDK7，头插法
         Entry<K,V> e = table[bucketIndex];
         // 初始化一个新节点，旧节点作为了新节点的next节点，因此是头插法
         table[bucketIndex] = new Entry<>(hash, key, value, e);
-        // 数组元素个数加1
+        // 节点个数加1
         size++;
     }
     static class Entry<K,V> implements Map.Entry<K,V> {
@@ -396,18 +409,18 @@ JDK7，头插法
 JDK8
 
 ```java
-    // 返回key对应的value值，找不到则返回null
+    // 查找key对应的value值，找不到则返回null
     public V get(Object key) {
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
     }
-    // 返回hash，key对应的节点，找不到则返回null
+    // 查找hash，key对应的节点，找不到则返回null
     final Node<K,V> getNode(int hash, Object key) {
         Node<K,V>[] tab; Node<K,V> first, e; int n; K k;
         // 三个条件：数组不为null，数组长度大于0，数组index位置（index=(n-1)&hash）已存在链表
         if ((tab = table) != null && (n = tab.length) > 0 &&
             (first = tab[(n - 1) & hash]) != null) {
-            // 检查头节点，如果匹配则返回
+            // 检查头节点，如果hash和key一样则返回
             if (first.hash == hash && // always check first node
                 ((k = first.key) == key || (key != null && key.equals(k))))
                 return first;
@@ -432,7 +445,7 @@ JDK8
 JDK7
 
 ```java
-    // 返回key对应的value值，找不到则返回null
+    // 查找key对应的value值，找不到则返回null
     public V get(Object key) {
         // key为null
         if (key == null)
@@ -442,7 +455,7 @@ JDK7
         // 若找到节点则返回之，找不到则返回null
         return null == entry ? null : entry.getValue();
     }
-    // 返回key为null对应的value值，找不到则返回null
+    // 查找key为null对应的value值，找不到则返回null
     private V getForNullKey() {
         // 数组长度为0，说明找不到，返回null
         if (size == 0) {
@@ -457,7 +470,7 @@ JDK7
         // 找不到节点，返回null
         return null;
     }
-    // 返回key对应的节点，找不到则返回null
+    // 查找key对应的节点，找不到则返回null
     final Entry<K,V> getEntry(Object key) {
         // 数组长度为0，说明找不到，返回null
         if (size == 0) {
@@ -485,23 +498,36 @@ JDK7
 JDK8
 
 ```java
+    // 删除key对应的节点，若找到则返回之，否则返回null
     public V remove(Object key) {
         Node<K,V> e;
         return (e = removeNode(hash(key), key, null, false, true)) == null ?
             null : e.value;
     }
+    // 删除<key, value>对应的节点，删除则返回true，否则返回false
+    public boolean remove(Object key, Object value) {
+        return removeNode(hash(key), key, value, true, true) != null;
+    }
+    // 删除节点，若找到则返回之，否则返回null
+    // 若matchValue为true，删除hash, key, value对应的节点
+    // 若matchValue为false，删除hash, key对应的节点
+    // movable与红黑树操作有关
     final Node<K,V> removeNode(int hash, Object key, Object value,
                                boolean matchValue, boolean movable) {
         Node<K,V>[] tab; Node<K,V> p; int n, index;
+        // 三个条件：数组不为null，数组长度大于0，数组index位置（index=(n-1)&hash）已存在链表
         if ((tab = table) != null && (n = tab.length) > 0 &&
             (p = tab[index = (n - 1) & hash]) != null) {
             Node<K,V> node = null, e; K k; V v;
+            // 头节点的hash和key一样，则找到node
             if (p.hash == hash &&
                 ((k = p.key) == key || (key != null && key.equals(k))))
                 node = p;
             else if ((e = p.next) != null) {
+                // 已经是红黑树，则在树上找node
                 if (p instanceof TreeNode)
                     node = ((TreeNode<K,V>)p).getTreeNode(hash, key);
+                // 在链表上找node
                 else {
                     do {
                         if (e.hash == hash &&
@@ -514,20 +540,28 @@ JDK8
                     } while ((e = e.next) != null);
                 }
             }
+            // node不为null，表示找到node，根据matchValue判断是否进行value的匹配
             if (node != null && (!matchValue || (v = node.value) == value ||
                                  (value != null && value.equals(v)))) {
+                // 已经是红黑树，在树上删除node
                 if (node instanceof TreeNode)
                     ((TreeNode<K,V>)node).removeTreeNode(this, tab, movable);
+                // 去除要删除的链表节点
                 else if (node == p)
                     tab[index] = node.next;
                 else
                     p.next = node.next;
+                // modCound加1
                 ++modCount;
+                // 节点个数减1
                 --size;
+                // 自定义回调方法，给子类使用
                 afterNodeRemoval(node);
+                // 返回删除的节点
                 return node;
             }
         }
+        // 没找到对应的node，不删除，返回null
         return null;
     }
 ```
@@ -567,6 +601,33 @@ JDK7
         }
 
         return e;
+    }
+```
+
+### treeifyBin方法
+
+JDK8独有，该方法在putVal、computeIfAbsent、compute、merge方法中被调用
+
+```java
+    final void treeifyBin(Node<K,V>[] tab, int hash) {
+        int n, index; Node<K,V> e;
+        if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
+            resize();
+        else if ((e = tab[index = (n - 1) & hash]) != null) {
+            TreeNode<K,V> hd = null, tl = null;
+            do {
+                TreeNode<K,V> p = replacementTreeNode(e, null);
+                if (tl == null)
+                    hd = p;
+                else {
+                    p.prev = tl;
+                    tl.next = p;
+                }
+                tl = p;
+            } while ((e = e.next) != null);
+            if ((tab[index] = hd) != null)
+                hd.treeify(tab);
+        }
     }
 ```
 
@@ -677,5 +738,20 @@ JDK7
                 : 0;
         }
         return switching;
+    }
+    void transfer(Entry[] newTable, boolean rehash) {
+        int newCapacity = newTable.length;
+        for (Entry<K,V> e : table) {
+            while(null != e) {
+                Entry<K,V> next = e.next;
+                if (rehash) {
+                    e.hash = null == e.key ? 0 : hash(e.key);
+                }
+                int i = indexFor(e.hash, newCapacity);
+                e.next = newTable[i];
+                newTable[i] = e;
+                e = next;
+            }
+        }
     }
 ```
