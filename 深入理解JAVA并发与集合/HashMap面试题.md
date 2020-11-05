@@ -24,6 +24,8 @@
 
 ### JDK7与JDK8中HashMap的不同点
 
+回答这个问题，需要对JDK7及JDK8中HashMap底层实现原理，hash、put、get、remove、resize等方法实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [HashMap源码分析](应用场景与源码分析/HashMap.md)
+
 从几个层面来看
 - 底层数据结构：JDK7是链表数组，JDK8是链表数组 + 红黑树
 - 链表插入法：JDK7是头插法（多线程扩容的情况下使用头插法会出现循环链表的问题），JDK8是尾插法
