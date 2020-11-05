@@ -37,11 +37,13 @@
 
 ### JDK8中HashMap数组长度为何是2的幂次方
 
-JDK7中也一样，数组长度n设计为2的幂次方，这样index=(n-1)&hash，就相当于index=hash%n，一是降低了计算消耗，二是让数组扩容过程变得简单
+JDK7中也一样，数组长度n设计为2的幂次方，这样index=(n-1)&hash，就相当于index=hash%n，主要是降低了计算消耗，其次让数组扩容过程变得简单
+
+每次扩容数组长度增加1倍，在JDK8的实现中利用了这个特点，扩容时将一个链表（或红黑树）分为两个链表（或红黑树）进行插入
 
 ### JDK8中HashMap数组什么时候扩容
 
-
+JDK7中也一样，一般是当 size > threshold 时进行扩容，size是节点个数，threshold是扩容阈值（一般情况下，threshold = size * loadFactor，loadFactor是扩容引子）
 
 ### JDK8中HashMap为什么要使用红黑树
 
