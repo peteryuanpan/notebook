@@ -64,7 +64,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     transient int size;
     // 每次扩容和更改map结构的计数器
     transient int modCount;
-    // 当节点个数*扩容引子超过临界值时，会对数组进行扩容
+    // 扩容阈值，一般情况下，当节点个数大于扩容阈值时会进行扩容，扩容阈值等于数组长度乘以扩容引子
     int threshold;
     // 扩容引子
     final float loadFactor;
@@ -138,7 +138,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     private transient Set<Map.Entry<K,V>> entrySet = null;
     // 节点个数
     transient int size;
-    // 当节点个数*扩容引子超过临界值时，会对数组进行扩容
+    // 扩容阈值，一般情况下，当节点个数大于扩容阈值时会进行扩容，扩容阈值等于数组长度乘以扩容引子
     int threshold;
     // 扩容引子
     final float loadFactor;
@@ -711,48 +711,65 @@ JDK8独有，该方法在putVal、computeIfAbsent、compute、merge方法中被�
 JDK8
 
 ```java
+    // 扩容，返回新的数组
     final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
         int newCap, newThr = 0;
+        // 旧数组长度大于0
         if (oldCap > 0) {
+            // 旧数组长度太大了，不进行扩容，直接返回旧数组
             if (oldCap >= MAXIMUM_CAPACITY) {
                 threshold = Integer.MAX_VALUE;
                 return oldTab;
             }
+            // 一般情况下，新数组长度为旧数组长度两倍，新扩容阈值也为旧扩容阈值两倍
             else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY &&
                      oldCap >= DEFAULT_INITIAL_CAPACITY)
                 newThr = oldThr << 1; // double threshold
         }
+        // 旧数组长度等于0，旧扩容阈值大于0
         else if (oldThr > 0) // initial capacity was placed in threshold
             newCap = oldThr;
+        // 旧数组长度等于0，旧扩容阈值等于0，按默认策略分配值
         else {               // zero initial threshold signifies using defaults
             newCap = DEFAULT_INITIAL_CAPACITY;
             newThr = (int)(DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
         }
+        // 新扩容阈值等于0，按默认策略分配值
         if (newThr == 0) {
-            float ft = (float)newCap * loadFactor;
+            float ft = (float)newCap * loadFactor; // 一般情况下，扩容阈值等于数组长度乘以扩容引子
             newThr = (newCap < MAXIMUM_CAPACITY && ft < (float)MAXIMUM_CAPACITY ?
                       (int)ft : Integer.MAX_VALUE);
         }
+        // 确定了扩容阈值
         threshold = newThr;
+        // 初始化新数组
         @SuppressWarnings({"rawtypes","unchecked"})
         Node<K,V>[] newTab = (Node<K,V>[])new Node[newCap];
         table = newTab;
+        // 旧数组不为null，开始转移数据
         if (oldTab != null) {
+            // 从0开始枚举每个旧数组的位置
             for (int j = 0; j < oldCap; ++j) {
                 Node<K,V> e;
+                // 数组位置上有元素，赋值给e
                 if ((e = oldTab[j]) != null) {
+                    // 旧数组元素清空
                     oldTab[j] = null;
+                    // e的next是null，说明就一个元素，直接插入到新数组中
                     if (e.next == null)
                         newTab[e.hash & (newCap - 1)] = e;
+                    // 已经是红黑树了，将红黑树分为两个子红黑树，插入到新数组中
                     else if (e instanceof TreeNode)
                         ((TreeNode<K,V>)e).split(this, newTab, j, oldCap);
+                    // 还是链表
                     else { // preserve order
                         Node<K,V> loHead = null, loTail = null;
                         Node<K,V> hiHead = null, hiTail = null;
                         Node<K,V> next;
+                        // 根据 e.hash & oldCap 结果是0或1，分别构建两个新的链表，一个是低位链表，一个是高位链表
                         do {
                             next = e.next;
                             if ((e.hash & oldCap) == 0) {
@@ -770,10 +787,12 @@ JDK8
                                 hiTail = e;
                             }
                         } while ((e = next) != null);
+                        // 低位链表插入新数组，位置与旧数组位置一致
                         if (loTail != null) {
                             loTail.next = null;
                             newTab[j] = loHead;
                         }
+                        // 高位链表插入新数组，位置是旧数组位置+旧数组长度（新数组正好是有一半是旧数据，一半是新数据）
                         if (hiTail != null) {
                             hiTail.next = null;
                             newTab[j + oldCap] = hiHead;
@@ -782,9 +801,12 @@ JDK8
                 }
             }
         }
+        // 返回新数组
         return newTab;
     }
     static final class TreeNode<K,V> extends LinkedHashMap.Entry<K,V> {
+        // 这是“将红黑树分为两个子红黑树，插入到新数组中”的过程
+        // 与上面“构建两个新的链表，一个是低位链表，一个是高位链表，分别插入数组”的思想是一样的
         final void split(HashMap<K,V> map, Node<K,V>[] tab, int index, int bit) {
             TreeNode<K,V> b = this;
             // Relink into lo and hi lists, preserving order
