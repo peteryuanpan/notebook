@@ -859,19 +859,26 @@ JDK8
 JDK7
 
 ```java
+    // 扩容，新数组长度为newCapacity
+    // 从其他代码来看，不会出现newCapacity比oldCapacity小的情况
     void resize(int newCapacity) {
         Entry[] oldTable = table;
         int oldCapacity = oldTable.length;
+        // oldCapacity太大了，不扩容了
         if (oldCapacity == MAXIMUM_CAPACITY) {
             threshold = Integer.MAX_VALUE;
             return;
         }
-
+        // 初始化新的数组
         Entry[] newTable = new Entry[newCapacity];
+        // 转移旧数组元素到新数组中，并决定是否rehash
         transfer(newTable, initHashSeedAsNeeded(newCapacity));
+        // 新数组赋值
         table = newTable;
+        // 计算新的扩容阈值
         threshold = (int)Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1);
     }
+    // 决定是否进行rehash，逻辑比较复杂
     final boolean initHashSeedAsNeeded(int capacity) {
         boolean currentAltHashing = hashSeed != 0;
         boolean useAltHashing = sun.misc.VM.isBooted() &&
@@ -884,15 +891,22 @@ JDK7
         }
         return switching;
     }
+    // 转移旧数组元素到新数组中
     void transfer(Entry[] newTable, boolean rehash) {
+        // 获取新数组长度
         int newCapacity = newTable.length;
+        // 枚举旧数组每个位置
         for (Entry<K,V> e : table) {
+            // 链表循环
             while(null != e) {
                 Entry<K,V> next = e.next;
+                // 如果进行rehash，则对每个元素重新hash（大量做这一步是比较耗时的）
                 if (rehash) {
                     e.hash = null == e.key ? 0 : hash(e.key);
                 }
+                // 重新计算index
                 int i = indexFor(e.hash, newCapacity);
+                // 将元素插入链表（头插法）
                 e.next = newTable[i];
                 newTable[i] = e;
                 e = next;
