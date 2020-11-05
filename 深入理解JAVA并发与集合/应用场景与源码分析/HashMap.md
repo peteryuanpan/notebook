@@ -877,4 +877,9 @@ JDK7
             }
         }
     }
+    // 使用h & (length-1)来计算index，length一定是2的幂次方，因此相当于h%length
+    static int indexFor(int h, int length) {
+        // assert Integer.bitCount(length) == 1 : "length must be a non-zero power of 2";
+        return h & (length-1);
+    }
 ```
