@@ -24,7 +24,6 @@
 - [ConcurrentHashMap相关面试题](https://www.yuque.com/books/share/9f4576fb-9aa9-4965-abf3-b3a36433faa6/biiid7)
 - [HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
 - [面试问题记录汇总](https://github.com/peteryuanpan/notebook/issues/85)
-- [鲁班学院面试课第二节和第三节](https://www.lubanjava.com/course/detail/520.html)
 
 ### JDK7与JDK8中HashMap的不同点
 
