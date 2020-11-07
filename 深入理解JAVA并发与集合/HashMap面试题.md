@@ -6,7 +6,7 @@
   - [JDK8中HashMap什么时候将链表转化为红黑树](#JDK8中HashMap什么时候将链表转化为红黑树)
   - [JDK8中HashMap红黑树实现原理](#JDK8中HashMap红黑树实现原理)
   - [JDK8中HashMap4种遍历方式](#JDK8中HashMap4种遍历方式)
-  - [JDK7中HashMap多线程循环链表问题](#JDK7中HashMap多线程循环链表问题)
+  - [JDK7中HashMap2个线程resize时循环链表问题](#JDK7中HashMap2个线程resize时循环链表问题)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
   - [JDK8中LinkedHashMap与HashMap的不同及实现原理](#JDK8中LinkedHashMap与HashMap的不同及实现原理)
@@ -69,7 +69,9 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 ### JDK8中HashMap4种遍历方式
 
-### JDK7中HashMap多线程循环链表问题
+### JDK7中HashMap2个线程resize时循环链表问题
+
+关键在于JDK7中HashMap使用的是头插法，会出现循环链表，而JDK8中HashMap使用的是尾插法，则不会出现
 
 processon画一下图
 
@@ -79,7 +81,9 @@ processon画一下图
 
 代码例子测试
 
-会出现keySet集合元素个数变少的情况，为什么?
+会出现keySet集合元素个数变少的情况
+
+processon画一下图
 
 ### JDK8中HashMap1个线程put1个线程get会发生什么
 
