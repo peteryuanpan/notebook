@@ -74,9 +74,152 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 关键在于JDK7中HashMap使用的是头插法，会出现循环链表，而JDK8中HashMap使用的是尾插法，则不会出现
 
-processon画一下图
+来看下JDK7中resize时的代码
 
-看一下周瑜老师的视频
+```java
+    void resize(int newCapacity) {
+        Entry[] oldTable = table;
+        int oldCapacity = oldTable.length;
+        if (oldCapacity == MAXIMUM_CAPACITY) {
+            threshold = Integer.MAX_VALUE;
+            return;
+        }
+
+        Entry[] newTable = new Entry[newCapacity];
+        transfer(newTable, initHashSeedAsNeeded(newCapacity));
+        table = newTable;
+        threshold = (int)Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1);
+    }
+    void transfer(Entry[] newTable, boolean rehash) {
+        int newCapacity = newTable.length;
+        for (Entry<K,V> e : table) {
+            while(null != e) {
+                Entry<K,V> next = e.next;
+                if (rehash) {
+                    e.hash = null == e.key ? 0 : hash(e.key);
+                }
+                int i = indexFor(e.hash, newCapacity);
+                e.next = newTable[i];
+                newTable[i] = e;
+                e = next;
+            }
+        }
+    }
+```
+
+会存在以下的情况
+
+线程1执行了resize，执行到了 next = e.next;
+
+此时，旧数组index=1位置中，存在一个链表 |->a->b，新数组还是空，然后线程1让出CPU时间片
+
+```
+1|->a->b  ====>  |(EMPTY)
+```
+
+线程2也执行了resize，并执行完了transfer（这种情况是可能发生的，CPU执行的太快，存在不确定性）
+
+此时，新数组中生成了新的链表，由于采用的头插法（这是关键），旧数组中链表 |->a->b 变成了 |->b->a，然后线程2让出CPU时间片
+
+```
+旧数组     ====   新数组
+1|->a->b   ====  |(EMPTY)
+1|(EMPTY)  ====  |->b->a
+```
+
+线程1继续执行，注意e、next都是局部变量，属于线程工作内存私有的，会存在从CPU缓存中获取数据而不直接从主内存获取数据的情况（第一次除外）
+
+即使线程2中旧数组index=1位置的链表已经是(EMPTY)了，线程1中旧数组的链表仍可能保持原样（可以这么理解），但线程1中新数组的链表可能会是从主内存获取的数据
+
+此时，旧数组链表的元素a通过头插法插入新数组中，就可能会形成 |->a->b->a 这样的循环链表
+
+```
+旧数组    ====   新数组
+1|->a->b  ====  |->b->a
+1|->b     ====  |->a->b->a
+```
+
+在上面的解释中，我用了许多“可能”，这是由于并发中的不确定性导致的，一个线程执行多少行指令而让出CPU时间片，从CPU缓存还是主内存中读取数据，这些都无法有一个非常确定的结论
+
+甚至会让人认为，那么多凑巧的情况真的会出现吗? 那我们不放测试一下
+
+```java
+package hashmap;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class HashMapLinkedLoopProblemTest {
+
+    static final int N = 100000;
+    static String[] str_arr = new String[N];
+    static Map<String, String> map = new HashMap<>();
+
+    static {
+        for (int i = 0; i < N; i ++)
+            str_arr[i] = String.valueOf(i);
+    }
+
+    public static void main(String[] args) {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < N; i ++) {
+                    System.out.println(Thread.currentThread().getName() + " " + i);
+                    map.put(str_arr[i], str_arr[i]);
+                }
+            }
+        });
+        Thread a = new Thread(t, "ThreadA");
+        Thread b = new Thread(t, "ThreadB");
+        a.start();
+        b.start();
+        try {
+            a.join();
+            b.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(Thread.currentThread().getName() + " end");
+    }
+}
+```
+
+输出结果（JDK7下运行，偶现，但复现率很高）
+```
+ThreadA 27034
+ThreadA 27035
+ThreadA 27036
+...
+ThreadB 21288
+ThreadB 21289
+ThreadB 21290
+...
+（不输出了，但程序在运行）
+```
+
+用jps查看进程号pid，再执行jstack pid，可以看到两个线程都在 at java.util.HashMap.put(HashMap.java:494) 这一行死循环了
+```
+"ThreadB" prio=6 tid=0x0000000012597800 nid=0x2fc0 runnable [0x0000000012ebf000]
+   java.lang.Thread.State: RUNNABLE
+        at java.util.HashMap.put(HashMap.java:494)
+        at hashmap.HashMapLinkedLoopProblemTest$1.run(HashMapLinkedLoopProblemTest.java:23)
+        at java.lang.Thread.run(Thread.java:745)
+        at java.lang.Thread.run(Thread.java:745)
+
+"ThreadA" prio=6 tid=0x0000000012597000 nid=0x2318 runnable [0x0000000012dbf000]
+   java.lang.Thread.State: RUNNABLE
+        at java.util.HashMap.put(HashMap.java:494)
+        at hashmap.HashMapLinkedLoopProblemTest$1.run(HashMapLinkedLoopProblemTest.java:23)
+        at java.lang.Thread.run(Thread.java:745)
+        at java.lang.Thread.run(Thread.java:745)
+```
+
+JDK7中，HashMap.java:494行如下图，可以看出是在for循环一直运行，这是resize之后出现的循环链表
+
+加个断点后，可以看出e所表示的key->value一直是2个数字，比如21619->21619、15239->15239、21619->21619、15239->15239、...，但挺可惜，不知为何，IDEA这里debug不出e.next的信息
+
+![image](https://user-images.githubusercontent.com/10209135/98442724-5eae3c80-2141-11eb-988b-4770557ae816.png)
 
 ### JDK8中HashMap2个线程同时get会发生什么
 
