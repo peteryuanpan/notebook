@@ -219,13 +219,33 @@ ThreadB 21290
         at java.lang.Thread.run(Thread.java:745)
 ```
 
-查看HashMap.java:494行代码，如下图，可以看出是在for循环一直运行，这是resize之后出现的循环链表
+查看HashMap.java:494行代码，如下图，可以看出是在for循环一直运行
 
 加个断点后，可以看出e所表示的key->value一直是2个数字，比如21619->21619、15239->15239、21619->21619、15239->15239、...，但挺可惜，不知为何，IDEA这里debug不出e.next的信息
 
 ![image](https://user-images.githubusercontent.com/10209135/98442724-5eae3c80-2141-11eb-988b-4770557ae816.png)
 
-最后需要再强调说明的是，JDK7中HashMap使用的是头插法，这是出现循环链表的关键，而JDK8中使用的是尾插法，就不会出现循环链表了，最多是线程2多执行了一次线程1的插入活，这里就不画文字图了，可以自行模拟下
+这样就完了吗? 当然没有，上面的分析并没有确定一定是resize之后出现的循环链表，不妨将测试例子修改一下
+
+```java
+public class HashMapLinkedLoopProblemTest {
+
+    static final int N = 100000;
+    static String[] str_arr = new String[N];
+    static Map<String, String> map = new HashMap<>(200000); // 关键!
+...
+```
+
+输出结果（无论执行多少次）
+```
+main end
+```
+
+当把HashMap数组初始化为20万长度时，就不能复现出死循环的问题了，这是由于HashMap在这段代码中没有执行过resize方法
+
+HashMap扩容（resize）的条件是 size > threshold，而 threshold = capacity * loadFactor，capacity是数组长度即20万，loadFactor是扩容引子默认是0.75，size是节点个数最多是10万，10万 < 20万 * 0.75，因此永远不会执行resize方法，这样我们就能证明是resize之后出现的循环链表，使得put方法中的for循环一直在执行了
+
+最后，需要再强调说明的是，JDK7中HashMap使用的是头插法，这是出现循环链表的关键，而JDK8中使用的是尾插法，尾插法最多是使得一个线程多执行了一次另一个线程的插入活，不会出现循环链表
 
 ### JDK8中HashMap2个线程同时get会发生什么
 
@@ -302,7 +322,7 @@ public class HashMapConcurrencyTest2 {
 200000
 ```
 
-只用了2个线程，但分别向HashMap插入10万个元素，按理说结果应该是20万，可有很大概率能复现出小于20万
+用了2个线程分别向HashMap插入10万个元素，按理说结果应该是20万，可有很大概率能复现出小于20万
 
 这是因为在HashMap.put时，如果发生了Hash碰撞，需要在一个链表上插入元素（可以反推，如果不发生Hash碰撞，总元素个数是不会变少的）
 
