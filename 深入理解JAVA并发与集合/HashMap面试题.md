@@ -7,6 +7,7 @@
   - [JDK8中HashMap红黑树实现原理](#JDK8中HashMap红黑树实现原理)
   - [JDK8中HashMap4种遍历方式](#JDK8中HashMap4种遍历方式)
   - [JDK7中HashMap2个线程resize时循环链表问题](#JDK7中HashMap2个线程resize时循环链表问题)
+  - [JDK8中HashMap2个线程同时get会发生什么](#JDK8中HashMap2个线程同时get会发生什么)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
   - [JDK8中LinkedHashMap与HashMap的不同及实现原理](#JDK8中LinkedHashMap与HashMap的不同及实现原理)
@@ -76,6 +77,12 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 processon画一下图
 
 看一下周瑜老师的视频
+
+### JDK8中HashMap2个线程同时get会发生什么
+
+不会有线程安全问题，都能正常获取到数据
+
+get方法不会触发resize，不会使链表或红黑树节点发生变动
 
 ### JDK8中HashMap2个线程同时put会发生什么
 
