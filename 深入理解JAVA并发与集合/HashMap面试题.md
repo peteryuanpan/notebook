@@ -258,7 +258,7 @@ public class HashMapConcurrencyTest2 {
         Thread a = new Thread(() -> {
             try {
                 for (int i = 0; i < 100000; i ++) {
-                    String s = Thread.currentThread().getName() + i;
+                    String s = Thread.currentThread().getName() + ": " + i;
                     map.put(s, s);
                 }
             } catch (Exception e) {
@@ -271,7 +271,7 @@ public class HashMapConcurrencyTest2 {
         countDownLatch = new CountDownLatch(threadNum);
 
         for (int i = 0; i < threadNum; i ++) {
-            Thread t = new Thread(a, "Thread" + i + ": ");
+            Thread t = new Thread(a, "Thread" + i);
             t.start();
         }
 
@@ -313,6 +313,8 @@ public class HashMapConcurrencyTest2 {
 线程2：a -> c，让出CPU时间片
 线程1：a -> c -> d，这样 b 就丢失了
 ```
+
+解决方案有多种：synchonized、ReentrantLock、ConcurrentHashMap（推荐）
 
 ### JDK8中HashMap1个线程put1个线程get会发生什么
 
