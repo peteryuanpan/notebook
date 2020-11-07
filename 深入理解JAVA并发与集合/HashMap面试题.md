@@ -10,6 +10,7 @@
   - [JDK8中HashMap2个线程同时get会发生什么](#JDK8中HashMap2个线程同时get会发生什么)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
+  - [JDK8中Hashtable与HashMap实现原理上的相同及不同点](#JDK8中Hashtable与HashMap实现原理上的相同及不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点](#JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点)
   - [JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点](#JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点)
@@ -97,6 +98,8 @@ processon画一下图
 ### JDK8中HashMap1个线程put1个线程get会发生什么
 
 代码例子测试
+
+### JDK8中Hashtable与HashMap实现原理上的相同及不同点
 
 ### JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点
 
