@@ -72,7 +72,19 @@ TODO
 
 ### JDK8中HashMap4种遍历方式
 
-TODO
+参考：[HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
+
+4种遍历方式
+- 迭代器（Iterator）
+- For Each
+- Lambda 表达式（JDK8+）
+- Streams API（JDK8+）
+
+文中实际写了7种情况，测试下来遍历性能都差不多
+
+而迭代器的遍历方式删除数据是安全的（单线程），另外三种情况会出现线程不安全的情况
+
+个人认为这不是重点，就不一一测试了，关键是知晓有这4种方式，并且了解4种遍历方式的实现原理及区别，后面2种是属于JAVA8新特性
 
 ### JDK7中HashMap2个线程resize时循环链表问题
 
@@ -338,7 +350,68 @@ public class HashMapConcurrencyTest2 {
 
 ### JDK8中HashMap1个线程put1个线程get会发生什么
 
-代码例子测试
+目前认为不会有异常
+
+测试例子
+
+```java
+package hashmap;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class HashMapConcurrencyTest3 {
+
+    private static int N = 100000;
+    static String[] str_arr = new String[N];
+    private static Map<String, String> map = new HashMap<>();
+
+    static {
+        for (int i = 0; i < N; i ++)
+            str_arr[i] = String.valueOf(i);
+    }
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            for (int i = 0; i < N; i ++) {
+                map.put(str_arr[i], str_arr[i]);
+            }
+        });
+        Thread b = new Thread(() -> {
+            for (int i = 0; i < N; i ++) {
+                String s = map.get(str_arr[i]);
+                if (s == null)
+                    System.out.println(i + " s is null");
+            }
+        });
+        a.start();
+        b.start();
+        try {
+            a.join();
+            b.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(map.size());
+    }
+}
+```
+
+输出结果
+```
+...
+33800 s is null
+36000 s is null
+36001 s is null
+36002 s is null
+36003 s is null
+36004 s is null
+36005 s is null
+97204 s is null
+100000
+```
+
+输出size一定是10万，且会出现get为null的情况（属于异常吗?），是完全可以理解的现象
 
 ### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点
 
