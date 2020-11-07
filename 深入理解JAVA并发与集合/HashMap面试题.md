@@ -258,12 +258,6 @@ HashMap扩容（resize）的条件是 size > threshold，而 threshold = capacit
 
 最后，需要再强调说明的是，JDK7中HashMap使用的是头插法，这是出现循环链表的关键，而JDK8中使用的是尾插法，尾插法最多是使得一个线程多执行了一次另一个线程的插入活，不会出现循环链表
 
-### JDK8中HashMap2个线程同时get会发生什么
-
-不会有线程安全问题，都能正常获取到数据
-
-get方法不会触发resize，不会使链表或红黑树节点发生变动
-
 ### JDK8中HashMap2个线程同时put会发生什么
 
 会出现总元素个数变少的情况
