@@ -66,9 +66,13 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 ### JDK8中HashMap红黑树实现原理
 
+TODO
+
 如何理解红黑树内部维护了一个双向链表?
 
 ### JDK8中HashMap4种遍历方式
+
+TODO
 
 ### JDK7中HashMap2个线程resize时循环链表问题
 
@@ -221,6 +225,8 @@ ThreadB 21290
 
 ![image](https://user-images.githubusercontent.com/10209135/98442724-5eae3c80-2141-11eb-988b-4770557ae816.png)
 
+最后需要再强调说明的是，JDK7中HashMap使用的是头插法，这是出现循环链表的关键，而JDK8中使用的是尾插法，就不会出现循环链表了，最多是线程2多执行了一次线程1的插入活，这里就不画文字图了，可以自行模拟下
+
 ### JDK8中HashMap2个线程同时get会发生什么
 
 不会有线程安全问题，都能正常获取到数据
@@ -229,11 +235,84 @@ get方法不会触发resize，不会使链表或红黑树节点发生变动
 
 ### JDK8中HashMap2个线程同时put会发生什么
 
-代码例子测试
+会出现总元素个数变少的情况
 
-会出现keySet集合元素个数变少的情况
+来看下测试例子
 
-processon画一下图
+```java
+package hashmap;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+
+public class HashMapConcurrencyTest2 {
+
+    private static Map<String, String> map = new HashMap<>();
+    //private static Map<String, String> map = new ConcurrentHashMap<>();
+    private static CountDownLatch countDownLatch;
+    private static final int threadNum = 2;
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            try {
+                for (int i = 0; i < 100000; i ++) {
+                    String s = Thread.currentThread().getName() + i;
+                    map.put(s, s);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                countDownLatch.countDown();
+            }
+        });
+
+        countDownLatch = new CountDownLatch(threadNum);
+
+        for (int i = 0; i < threadNum; i ++) {
+            Thread t = new Thread(a, "Thread" + i + ": ");
+            t.start();
+        }
+
+        try {
+            countDownLatch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(map.size());
+    }
+}
+```
+
+输出结果（偶现，但复现率很高）
+```
+196774
+```
+
+改一下测试例子
+```
+    //private static Map<String, String> map = new HashMap<>();
+    private static Map<String, String> map = new ConcurrentHashMap<>();
+```
+
+输出结果（无论执行多少次）
+```
+200000
+```
+
+只用了2个线程，但分别向HashMap插入10万个元素，按理说结果应该是20万，可有很大概率能复现出小于20万
+
+这是因为在HashMap.put时，如果发生了Hash碰撞，需要在一个链表上插入元素（可以反推，如果不发生Hash碰撞，总元素个数是不会变少的）
+
+当两个线程同时在一个数组位置的链表上插入元素时，可能会出现下面的情况，这样总元素个数就变少了
+
+```
+线程1：a -> b，让出CPU时间片
+线程2：a -> c，让出CPU时间片
+线程1：a -> c -> d，这样 b 就丢失了
+```
 
 ### JDK8中HashMap1个线程put1个线程get会发生什么
 
