@@ -1,5 +1,5 @@
 - [HashMap面试题](#HashMap面试题)
-  - [JDK7与JDK8中HashMap的不同点](#JDK7与JDK8中HashMap的不同点)
+  - [JDK7与JDK8中HashMap实现原理上的相同及不同点](#JDK7与JDK8中HashMap实现原理上的相同及不同点)
   - [JDK8中HashMap数组长度为何是2的幂次方](#JDK8中HashMap数组长度为何是2的幂次方)
   - [JDK8中HashMap数组什么时候扩容](#JDK8中HashMap数组什么时候扩容)
   - [JDK8中HashMap为什么要使用红黑树](#JDK8中HashMap为什么要使用红黑树)
@@ -10,10 +10,9 @@
   - [JDK8中HashMap2个线程同时get会发生什么](#JDK8中HashMap2个线程同时get会发生什么)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
-  - [JDK8中LinkedHashMap与HashMap的不同及实现原理](#JDK8中LinkedHashMap与HashMap的不同及实现原理)
-  - [JDK7与JDK8中ConcurrentHashMap的不同点](#JDK7与JDK8中ConcurrentHashMap的不同点)
-  - [JDK7中ConcurrentHashMap如何保证线程安全](#JDK7中ConcurrentHashMap如何保证线程安全)
-  - [JDK8中ConcurrentHashMap如何保证线程安全](#JDK8中ConcurrentHashMap如何保证线程安全)
+  - [JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点](#JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点)
+  - [JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点](#JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点)
+  - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点)
 
 # HashMap面试题
 
@@ -28,11 +27,14 @@
 - [HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
 - [简书：为什么HashMap线程不安全](https://www.jianshu.com/p/e2f75c8cce01)
 
-### JDK7与JDK8中HashMap的不同点
+### JDK7与JDK8中HashMap实现原理上的相同及不同点
 
-回答这个问题，需要对JDK7及JDK8中HashMap底层实现原理，hash、put、get、remove、resize等方法实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [HashMap源码分析](应用场景与源码分析/HashMap.md)
+回答这个问题，需要对JDK7及JDK8中HashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [HashMap源码分析](应用场景与源码分析/HashMap.md)
 
-从几个层面来看
+相同点
+- TODO
+
+不同点，从几个层面来看
 - 底层数据结构：JDK7是链表数组，JDK8是链表数组 + 红黑树
 - Hash复杂度：JDK7Hash算法更复杂，Hash更散列，JDK8有红黑树保障，Hash算法更简单，计算消耗更小
 - 链表插入法：JDK7是头插法（多线程扩容的情况下使用头插法会出现循环链表的问题），JDK8是尾插法
@@ -96,10 +98,14 @@ processon画一下图
 
 代码例子测试
 
-### JDK8中LinkedHashMap与HashMap的不同及实现原理
+### JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点
 
-### JDK7与JDK8中ConcurrentHashMap的不同点
+### JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点
 
-### JDK7中ConcurrentHashMap如何保证线程安全
+### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点
 
-### JDK8中ConcurrentHashMap如何保证线程安全
+回答这个问题，需要对JDK7及JDK8中ConcurrentHashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [ConcurrentHashMap源码分析](应用场景与源码分析/ConcurrentHashMap.md)
+
+要涉及到扩容
+
+JDK8中ConcurrentHashMap的CounterCell?
