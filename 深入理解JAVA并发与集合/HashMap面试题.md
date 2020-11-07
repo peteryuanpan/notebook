@@ -10,12 +10,12 @@
   - [JDK8中HashMap2个线程同时get会发生什么](#JDK8中HashMap2个线程同时get会发生什么)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
+  - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点)
+  - [JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点](#JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点)
   - [JDK8中Hashtable与HashMap实现原理上的相同及不同点](#JDK8中Hashtable与HashMap实现原理上的相同及不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点](#JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点)
   - [JDK8中TreeMap与HashMap实现原理上的相同及不同点](#JDK8中TreeMap与HashMap实现原理上的相同及不同点)
-  - [JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点](#JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点)
-  - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点)
-
+  
 # HashMap面试题
 
 参考
@@ -31,7 +31,7 @@
 
 ### JDK7与JDK8中HashMap实现原理上的相同及不同点
 
-回答这个问题，需要对JDK7及JDK8中HashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [HashMap源码分析](应用场景与源码分析/HashMap.md)
+回答这些问题，需要对JDK7及JDK8中HashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [HashMap源码分析](应用场景与源码分析/HashMap.md)
 
 相同点
 - TODO
@@ -100,18 +100,18 @@ processon画一下图
 
 代码例子测试
 
+### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点
+
+回答这些问题，需要对JDK7及JDK8中ConcurrentHashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [ConcurrentHashMap源码分析](应用场景与源码分析/ConcurrentHashMap.md)
+
+要涉及到扩容
+
+JDK8中ConcurrentHashMap的CounterCell?
+
+### JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点
+
 ### JDK8中Hashtable与HashMap实现原理上的相同及不同点
 
 ### JDK8中LinkedHashMap与HashMap实现原理上的相同及不同点
 
 ### JDK8中TreeMap与HashMap实现原理上的相同及不同点
-
-### JDK8中ConcurrentHashMap与HashMap实现原理上的相同及不同点
-
-### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的相同及不同点
-
-回答这个问题，需要对JDK7及JDK8中ConcurrentHashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [ConcurrentHashMap源码分析](应用场景与源码分析/ConcurrentHashMap.md)
-
-要涉及到扩容
-
-JDK8中ConcurrentHashMap的CounterCell?
