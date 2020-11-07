@@ -9,6 +9,7 @@
   - [JDK7中HashMap多线程循环链表问题](#JDK7中HashMap多线程循环链表问题)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
+  - [JDK8中LinkedHashMap与HashMap的不同及实现原理](#JDK8中LinkedHashMap与HashMap的不同及实现原理)
   - [JDK7与JDK8中ConcurrentHashMap的不同点](#JDK7与JDK8中ConcurrentHashMap的不同点)
   - [JDK7中ConcurrentHashMap如何保证线程安全](#JDK7中ConcurrentHashMap如何保证线程安全)
   - [JDK8中ConcurrentHashMap如何保证线程安全](#JDK8中ConcurrentHashMap如何保证线程安全)
@@ -18,12 +19,13 @@
 参考
 - [HashMap源码分析](应用场景与源码分析/HashMap.md)
 - [ConcurrentHashMap源码分析](应用场景与源码分析/ConcurrentHashMap.md)
+- [面试问题记录汇总](https://github.com/peteryuanpan/notebook/issues/85)
 - [Java集合框架常见面试题](https://github.com/Snailclimb/JavaGuide/blob/master/docs/java/collection/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6%E5%B8%B8%E8%A7%81%E9%9D%A2%E8%AF%95%E9%A2%98.md)
 - [HashMap与ConcurrentHashMap面试要点](https://www.yuque.com/books/share/9f4576fb-9aa9-4965-abf3-b3a36433faa6/doh8wb)
 - [HashMap相关面试题](https://www.yuque.com/books/share/9f4576fb-9aa9-4965-abf3-b3a36433faa6/hv4o3e)
 - [ConcurrentHashMap相关面试题](https://www.yuque.com/books/share/9f4576fb-9aa9-4965-abf3-b3a36433faa6/biiid7)
 - [HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
-- [面试问题记录汇总](https://github.com/peteryuanpan/notebook/issues/85)
+- [简书：为什么HashMap线程不安全](https://www.jianshu.com/p/e2f75c8cce01)
 
 ### JDK7与JDK8中HashMap的不同点
 
@@ -63,15 +65,27 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 ### JDK8中HashMap红黑树实现原理
 
-如何理解红黑树内部维护了一个双向链表？
+如何理解红黑树内部维护了一个双向链表?
 
 ### JDK8中HashMap4种遍历方式
 
 ### JDK7中HashMap多线程循环链表问题
 
+processon画一下图
+
+看一下周瑜老师的视频
+
 ### JDK8中HashMap2个线程同时put会发生什么
 
+代码例子测试
+
+会出现keySet集合元素个数变少的情况，为什么?
+
 ### JDK8中HashMap1个线程put1个线程get会发生什么
+
+代码例子测试
+
+### JDK8中LinkedHashMap与HashMap的不同及实现原理
 
 ### JDK7与JDK8中ConcurrentHashMap的不同点
 
