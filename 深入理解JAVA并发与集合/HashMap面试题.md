@@ -215,7 +215,7 @@ ThreadB 21290
         at java.lang.Thread.run(Thread.java:745)
 ```
 
-JDK7中，HashMap.java:494行如下图，可以看出是在for循环一直运行，这是resize之后出现的循环链表
+查看HashMap.java:494行代码，如下图，可以看出是在for循环一直运行，这是resize之后出现的循环链表
 
 加个断点后，可以看出e所表示的key->value一直是2个数字，比如21619->21619、15239->15239、21619->21619、15239->15239、...，但挺可惜，不知为何，IDEA这里debug不出e.next的信息
 
