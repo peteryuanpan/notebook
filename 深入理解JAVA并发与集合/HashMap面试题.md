@@ -292,7 +292,7 @@ public class HashMapConcurrencyTest2 {
 ```
 
 改一下测试例子
-```
+```java
     //private static Map<String, String> map = new HashMap<>();
     private static Map<String, String> map = new ConcurrentHashMap<>();
 ```
