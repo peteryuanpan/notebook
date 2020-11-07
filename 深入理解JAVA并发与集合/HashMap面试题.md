@@ -7,9 +7,8 @@
   - [JDK8中HashMap红黑树实现原理](#JDK8中HashMap红黑树实现原理)
   - [JDK8中HashMap4种遍历方式](#JDK8中HashMap4种遍历方式)
   - [JDK7中HashMap2个线程resize时循环链表问题](#JDK7中HashMap2个线程resize时循环链表问题)
-  - [JDK8中HashMap2个线程同时get会发生什么](#JDK8中HashMap2个线程同时get会发生什么)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
-  - [JDK8中HashMap1个线程put1个线程get会发生什么](#JDK8中HashMap1个线程put1个线程get会发生什么)
+  - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
   - [JDK8中Hashtable与HashMap实现原理上的不同点](#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
@@ -348,70 +347,9 @@ public class HashMapConcurrencyTest2 {
 
 解决方案有多种：synchonized、ReentrantLock、ConcurrentHashMap（推荐）
 
-### JDK8中HashMap1个线程put1个线程get会发生什么
+### JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么
 
-目前认为不会有异常
-
-测试例子
-
-```java
-package hashmap;
-
-import java.util.HashMap;
-import java.util.Map;
-
-public class HashMapConcurrencyTest3 {
-
-    private static int N = 100000;
-    static String[] str_arr = new String[N];
-    private static Map<String, String> map = new HashMap<>();
-
-    static {
-        for (int i = 0; i < N; i ++)
-            str_arr[i] = String.valueOf(i);
-    }
-
-    public static void main(String[] args) {
-        Thread a = new Thread(() -> {
-            for (int i = 0; i < N; i ++) {
-                map.put(str_arr[i], str_arr[i]);
-            }
-        });
-        Thread b = new Thread(() -> {
-            for (int i = 0; i < N; i ++) {
-                String s = map.get(str_arr[i]);
-                if (s == null)
-                    System.out.println(i + " s is null");
-            }
-        });
-        a.start();
-        b.start();
-        try {
-            a.join();
-            b.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(map.size());
-    }
-}
-```
-
-输出结果
-```
-...
-33800 s is null
-36000 s is null
-36001 s is null
-36002 s is null
-36003 s is null
-36004 s is null
-36005 s is null
-97204 s is null
-100000
-```
-
-输出size一定是10万，且会出现get为null的情况（属于异常吗?），是完全可以理解的现象
+TODO
 
 ### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点
 
