@@ -61,10 +61,12 @@ P类问题、NP类问题、NPC问题
 |013|求1到X中数字1出现的次数|[problem233](Leetcode/problem233_求1到X中数字1出现的次数)|leetcode|动态规划|数列统计类||
 |014|求一个数是否是有效数|[problem65](Leetcode/problem65_求一个数是否是有效数)|leetcode|白题|条件判断||
 |015|求a到b中有多少个翻转对称数|[problem248](Leetcode/problem248_求a到b中有多少个翻转对称数)|leetcode|动态规划|数列统计类||
-|016|最佳碰头地点|[problem296](Leetcode/problem296_最佳碰头地点)|leetcode|动态规划|公式推导||
+|016|最佳碰头地点|[problem296](Leetcode/problem296_最佳碰头地点)|leetcode|动态规划|||
 |017|多条环路公交车线两点间最少上车次数|[problem815](Leetcode/problem815_多条环路公交车线两点间最少上车次数)|leetcode|搜索|广度优先搜索||
 |018|计算三次最小生成树|[weekly-contest-205_problem4](Leetcode/weekly-contest-205_problem4_计算三次最小生成树)|leetcode|图论|最小生成树||
 |019|求数列中长度大于2的等差子序列个数|[problem446](Leetcode/problem446_求数列中长度大于2的等差子序列个数)|leetcode|动态规划|||
+|020|求数组的一个极大值|[problem162](Leetcode/problem162_求数组的一个极大值)|leetcode|白题|二分||
+|021|求指定条件下房子涂色的最小花费|[problem1473](Leetcode/problem1473_求指定条件下房子涂色的最小花费)|leetcode|动态规划|||
 
 ### 标签与模板
 
@@ -93,7 +95,6 @@ P类问题、NP类问题、NPC问题
 |----数学三角形
 |----背包
 |----公共子串、子序列
-|----公式推导
 |----动态规划与其他结构结合
 
 图论
