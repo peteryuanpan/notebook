@@ -8,7 +8,7 @@
 
 我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
 
-### 文章导读
+### 笔记导读
 
 <details close>
     <summary>深入理解JAVA虚拟机-第一至三层</summary>
