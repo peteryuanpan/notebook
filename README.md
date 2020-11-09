@@ -4,6 +4,10 @@
 
 以下是我在学习过程中的笔记记录，主要包含JVM原理、JAVA并发与集合、设计模式、数据结构与算法等
 
+### 草稿本
+
+我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
+
 ### 文章导读
 
 <details open>
@@ -43,10 +47,6 @@
 + [第3章：行为型模式](深入理解设计模式#第3章行为型模式)
 + [第4章：设计模式面试题](深入理解设计模式#第4章设计模式面试题)
 </details>
-
-### 草稿本
-
-我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
 
 ### 联系我
 
