@@ -9,7 +9,8 @@
   - [JDK7中HashMap2个线程resize时循环链表问题](#JDK7中HashMap2个线程resize时循环链表问题)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
-  - [JDK8中HashMap的快速失败机制与ConcurrentHashMap的安全失败机制](#JDK8中HashMap的快速失败机制与ConcurrentHashMap的安全失败机制)
+  - [JDK7与JDK8中HashMap的快速失败机制](#JDK7与JDK8中HashMap的快速失败机制)
+  - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
   - [JDK8中Hashtable与HashMap实现原理上的不同点](#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
@@ -27,6 +28,7 @@
 - [ConcurrentHashMap相关面试题](https://www.yuque.com/books/share/9f4576fb-9aa9-4965-abf3-b3a36433faa6/biiid7)
 - [HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
 - [简书：为什么HashMap线程不安全](https://www.jianshu.com/p/e2f75c8cce01)
+- [掘金：快速失败机制&失败安全机制](https://juejin.im/post/6844904046617182215)
 
 ### JDK7与JDK8中HashMap实现原理上的不同点
 
@@ -342,9 +344,167 @@ public class HashMapConcurrencyTest2 {
 
 ### JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么
 
-TODO
+会触发快速失败机制，抛 java.util.ConcurrentModificationException 异常
 
-### JDK8中HashMap的快速失败机制与ConcurrentHashMap的安全失败机制
+来看下测试例子
+
+```java
+package hashmap;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class HashMapConcurrencyTest3 {
+
+    private static Map<String, String> map = new HashMap<>();
+    //private static Map<String, String> map = new ConcurrentHashMap<>();
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            for (int i = 0; i < 1000000; i ++) {
+                map.put(String.valueOf(i), String.valueOf(i));
+            }
+        });
+
+        Thread b = new Thread(() -> {
+            Iterator i = map.keySet().iterator();
+            while (i.hasNext()) {
+                i.next();
+            }
+        });
+
+        a.start();
+        b.start();
+
+        try {
+            a.join();
+            b.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(Thread.currentThread().getName() + " end");
+    }
+}
+```
+
+输出结果
+```
+Exception in thread "Thread-1" java.util.ConcurrentModificationException
+	at java.util.HashMap$HashIterator.nextNode(HashMap.java:1445)
+	at java.util.HashMap$KeyIterator.next(HashMap.java:1469)
+	at hashmap.HashMapConcurrencyTest3.lambda$main$1(HashMapConcurrencyTest3.java:23)
+	at java.lang.Thread.run(Thread.java:748)
+main end
+```
+
+改一下测试例子
+```java
+    //private static Map<String, String> map = new HashMap<>();
+    private static Map<String, String> map = new ConcurrentHashMap<>();
+```
+
+输出结果
+```
+main end
+```
+
+见下方解释
+
+### JDK7与JDK8中HashMap的快速失败机制
+
+快速失败机制是HashMap中对数据安全和线程安全的一种防范机制
+
+在上面的例子中，我们看到了 JDK8中HashMap1个线程put1个线程迭代器遍历，会抛 java.util.ConcurrentModificationException 异常
+
+来看 at java.util.HashMap$HashIterator.nextNode(HashMap.java:1445)
+
+```java
+    abstract class HashIterator {
+        final Node<K,V> nextNode() {
+            Node<K,V>[] t;
+            Node<K,V> e = next;
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+            if (e == null)
+                throw new NoSuchElementException();
+            if ((next = (current = e).next) == null && (t = table) != null) {
+                do {} while (index < t.length && (next = t[index++]) == null);
+            }
+            return e;
+        }
+```
+
+可以看出，当 modCount != expectedModCount 时，就会抛此异常，这样的判断在 JDK7 及 JDK8 中的 HashMap 十分常见，它的目的是保证数据安全，不要出现这种情况
+
+其实快速失败机制不仅仅是多线程下会出现，在单线程下也会遇到，来看一个例子
+
+```java
+package hashmap;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+public class HashMapConcurrentModificationExceptionTest1 {
+
+    public static void main(String[] args) {
+        Map<String ,String> map = new HashMap<>();
+        map.put("1", "1");
+        map.put("2", "2");
+        Iterator i = map.keySet().iterator();
+        while (i.hasNext()) {
+            String key = (String) i.next();
+            if ("1".equals(key)) {
+                map.remove(key);
+                //i.remove();
+            }
+        }
+    }
+    System.out.println("end");
+}
+```
+
+输出结果
+```
+Exception in thread "main" java.util.ConcurrentModificationException
+	at java.util.HashMap$HashIterator.remove(HashMap.java:1459)
+	at hashmap.HashMapConcurrentModificationExceptionTest1.main(HashMapConcurrentModificationExceptionTest1.java:18)
+```
+
+修改一下测试例子
+```java
+                //map.remove(key);
+                i.remove();
+```
+
+输出结果
+```
+end
+```
+
+在单线程下，HashMap边迭代边删除需要使用迭代器（Iterator）来进行删除，下面是源码，可以看出在 i.remove() 最后会执行 expectedModCount = modCount; 将 expectedModCount 修正
+
+```
+    abstract class HashIterator {
+        public final void remove() {
+            Node<K,V> p = current;
+            if (p == null)
+                throw new IllegalStateException();
+            if (modCount != expectedModCount)
+                throw new ConcurrentModificationException();
+            current = null;
+            K key = p.key;
+            removeNode(hash(key), key, null, false, false);
+            expectedModCount = modCount;
+        }
+```
+
+JDK7与JDK8的HashMap源码中，只有两处对 expectedModCount 进行了修正，一处是HashIterator的构造方法，一处是HashIterator的remove方法
+
+### JDK7与JDK8中ConcurrentHashMap的安全失败机制
 
 TODO
 
