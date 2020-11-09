@@ -28,6 +28,8 @@
 
 > In computer science, a collection or container is a grouping of some variable number of data items (possibly zero) that have some shared significance to the problem being solved and need to be operated upon together in some controlled fashion. A collection is a concept applicable to abstract data types, and does not prescribe a specific implementation as a concrete data structure. From https://en.wikipedia.org/wiki/Collection_(abstract_data_type)
 
+澄清一下，JAVA中严格来说Collection接口及实现类是集合，Map接口及实现类是容器，但在这里我都称之为“集合”了
+
 ### JAVA语言的水深
 
 JAVA这潭大湖，从上往下，一共有7层（人为定义的）
@@ -66,13 +68,13 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [ThreadPoolExecutor]
   - [ForkJoinPool]
 - 集合部分
+  - [Vector]
   - [ArrayList]
   - [LinkedList]
-  - [Vector]
   - [CopyOnWriteArrayList]
   - [Hashtable]
-  - [TreeMap]
   - [HashMap](应用场景与源码分析/HashMap.md)
+  - [TreeMap]
   - [LinkedHashMap]
   - [ConcurrentHashMap](应用场景与源码分析/ConcurrentHashMap.md)
 
