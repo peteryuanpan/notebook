@@ -47,3 +47,9 @@
 ### 草稿本
 
 我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
+
+### 联系我
+
+如果你希望联系我，一起交流技术问题，一起学习，可以加我工作微信：xiaopanpanloveu（备注从github而来）
+
+还可以关注我B站的账号[圆圆爱总结](https://space.bilibili.com/121055628)，业余时间会有学习直播，以及精选录播视频上传
