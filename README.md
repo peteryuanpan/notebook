@@ -65,7 +65,7 @@
 </details>
 
 <details close>
-    <summary>深入数据结构与算法</summary>
+    <summary>深入理解数据结构与算法</summary>
 
 + 前言
 + [数据结构与算法总结](深入理解数据结构与算法/数据结构与算法总结)
