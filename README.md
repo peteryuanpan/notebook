@@ -10,7 +10,7 @@
 
 ### 文章导读
 
-<details open>
+<details close>
     <summary>深入理解JAVA虚拟机-第一至三层</summary>
     
 + JAVA虚拟机的定义
@@ -31,7 +31,7 @@
   + [第8章：JVM面试题](深入理解JAVA虚拟机-第一至三层#第8章jvm面试题)
 </details>
 
-<details open>
+<details close>
     <summary>深入理解JAVA并发与集合</summary>
 
 + 并发与集合的定义
@@ -47,7 +47,7 @@
   + [第6章：集合面试题](深入理解JAVA并发与集合#第6章集合面试题)
 </details>
 
-<details open>
+<details close>
     <summary>深入理解设计模式</summary>
 
 + 设计模式的定义
