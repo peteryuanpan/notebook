@@ -4,8 +4,7 @@
   - [JDK8中HashMap数组什么时候扩容](#JDK8中HashMap数组什么时候扩容)
   - [JDK8中HashMap为什么要使用红黑树](#JDK8中HashMap为什么要使用红黑树)
   - [JDK8中HashMap什么时候将链表转化为红黑树](#JDK8中HashMap什么时候将链表转化为红黑树)
-  - [JDK8中HashMap红黑树实现原理](#JDK8中HashMap红黑树实现原理)
-  - [JDK8中HashMap4种遍历方式](#JDK8中HashMap4种遍历方式)
+  - [JDK8中HashMap及TreeMap的红黑树实现原理](#JDK8中HashMap及TreeMap的红黑树实现原理)
   - [JDK7中HashMap2个线程resize时循环链表问题](#JDK7中HashMap2个线程resize时循环链表问题)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
@@ -14,7 +13,6 @@
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
   - [JDK8中Hashtable与HashMap实现原理上的不同点](#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
-  - [JDK8中TreeMap与HashMap实现原理上的不同点](#JDK8中TreeMap与HashMap实现原理上的不同点)
   
 # HashMap面试题
 
@@ -66,25 +64,11 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 
 因此，正确的答案是：**当链表中的元素个数大于等于8，并且数组的长度大于等于64时才会将链表转为红黑树**
 
-### JDK8中HashMap红黑树实现原理
+### JDK8中HashMap及TreeMap的红黑树实现原理
 
 TODO
 
 如何理解红黑树内部维护了一个双向链表?
-
-### JDK8中HashMap4种遍历方式
-
-参考：[HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
-
-4种遍历方式
-- 迭代器（Iterator）
-- For Each
-- Lambda 表达式（JDK8+）
-- Streams API（JDK8+）
-
-文中实际写了7种情况，测试下来遍历性能都差不多，还分别对快速失败机制进行了测试
-
-我这里就不一一测试了，主要是要知晓有这4种方式，并且了解4种遍历方式的实现原理，后面2种是属于JAVA8新特性
 
 ### JDK7中HashMap2个线程resize时循环链表问题
 
@@ -519,5 +503,3 @@ JDK8中ConcurrentHashMap的CounterCell?
 ### JDK8中Hashtable与HashMap实现原理上的不同点
 
 ### JDK8中LinkedHashMap与HashMap实现原理上的不同点
-
-### JDK8中TreeMap与HashMap实现原理上的不同点
