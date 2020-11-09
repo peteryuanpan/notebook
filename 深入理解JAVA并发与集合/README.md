@@ -20,13 +20,11 @@
 
 参考的优秀博文：[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)
 
-### 并发的定义
+### 并发与集合的定义
 
 在计算机科学中，并发是一种能力，指在一个系统中，拥有多个计算，这些计算有同时执行、潜在交互的特性，但不影响计算结果
 
 > In computer science, concurrency is the ability of different parts or units of a program, algorithm, or problem to be executed out-of-order or in partial order, without affecting the final outcome. From https://en.wikipedia.org/wiki/Concurrency_(computer_science)
-
-### 集合的定义
 
 在计算机科学中，集合是一个抽象的概念，它的具象容器可装载零至多个，有相同类型且可放在一起操作的数据
 
