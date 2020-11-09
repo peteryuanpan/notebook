@@ -10,6 +10,7 @@
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
+  - [JDK8中HashMap的快速失败机制与ConcurrentHashMap的安全失败机制](#JDK8中HashMap的快速失败机制与ConcurrentHashMap的安全失败机制)
   - [JDK8中Hashtable与HashMap实现原理上的不同点](#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
   - [JDK8中TreeMap与HashMap实现原理上的不同点](#JDK8中TreeMap与HashMap实现原理上的不同点)
@@ -343,7 +344,7 @@ public class HashMapConcurrencyTest2 {
 
 TODO
 
-### JDK8中HashMap的快速失败机制与ConcurrentHashMap的失败安全机制
+### JDK8中HashMap的快速失败机制与ConcurrentHashMap的安全失败机制
 
 TODO
 
