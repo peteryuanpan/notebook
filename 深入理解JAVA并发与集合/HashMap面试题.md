@@ -79,11 +79,9 @@ TODO
 - Lambda 表达式（JDK8+）
 - Streams API（JDK8+）
 
-文中实际写了7种情况，测试下来遍历性能都差不多
+文中实际写了7种情况，测试下来遍历性能都差不多，还分别对ConcurrentModificationException进行了测试
 
-而迭代器的遍历方式删除数据是安全的（单线程），另外三种情况会出现线程不安全的情况
-
-个人认为这不是重点，就不一一测试了，关键是知晓有这4种方式，并且了解4种遍历方式的实现原理及区别，后面2种是属于JAVA8新特性
+我这里就不一一测试了，主要是要知晓有这4种方式，并且了解4种遍历方式的实现原理，后面2种是属于JAVA8新特性
 
 ### JDK7中HashMap2个线程resize时循环链表问题
 
@@ -342,6 +340,10 @@ public class HashMapConcurrencyTest2 {
 解决方案有多种：synchonized、ReentrantLock、ConcurrentHashMap（推荐）
 
 ### JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么
+
+TODO
+
+### JDK8中HashMap的快速失败机制与ConcurrentHashMap的失败安全机制
 
 TODO
 
