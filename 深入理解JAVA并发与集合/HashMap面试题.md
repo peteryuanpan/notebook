@@ -473,7 +473,7 @@ end
 
 在单线程下，HashMap边迭代边删除需要使用迭代器（Iterator）来进行删除，下面是源码，可以看出在 i.remove() 最后会执行 expectedModCount = modCount; 将 expectedModCount 修正
 
-```
+```java
     abstract class HashIterator {
         public final void remove() {
             Node<K,V> p = current;
