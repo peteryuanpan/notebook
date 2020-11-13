@@ -19,7 +19,6 @@
 + 如何学习JVM
 + 项目成果
   + [类文件结构解析](https://github.com/peteryuanpan/ParseClassFile)
-  + [垃圾收集算法C++实现](https://github.com/peteryuanpan/garbage-collect-demo)
 + 文章目录
   + [第0章：JVM基础概念](深入理解JAVA虚拟机-第一至三层#第0章jvm基础概念)
   + [第1章：类加载机制与类加载器](深入理解JAVA虚拟机-第一至三层#第1章类加载机制与类加载器)
