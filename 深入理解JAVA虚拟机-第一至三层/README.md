@@ -53,8 +53,6 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 类文件结构解析：https://github.com/peteryuanpan/ParseClassFile
 
-垃圾收集算法C++实现：https://github.com/peteryuanpan/garbage-collect-demo
-
 ### 文章目录
 
 #### 第0章：JVM基础概念
