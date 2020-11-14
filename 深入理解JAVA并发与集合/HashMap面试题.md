@@ -33,7 +33,7 @@
 
 ### 前提声明（重要！！）
 
-本文内容是面试题，因此总结的比较简要，如果是第一次学习HashMap或ConcurrentHashMap的朋友，不要细钻下面的面试题，你直接看肯定是不明不白的，而应该先去看这三份源码分析：[HashMap源码分析](应用场景与源码分析/HashMap.md)、[JDK7.ConcurrentHashMap源码分析](应用场景与源码分析/JDK7.ConcurrentHashMap.md)、[JDK8.ConcurrentHashMap源码分析](应用场景与源码分析/JDK8.ConcurrentHashMap.md)。这里面包含了应用场景、类图、数据结构、关键方法的分析，有详细的注释帮助理解
+本文内容是面试题，因此总结的比较简要，如果是第一次学习HashMap或ConcurrentHashMap的朋友，不要细钻下面的面试题，你直接看肯定是不明不白的，而应该先去看这三份源码分析：[HashMap源码分析](应用场景与源码分析/HashMap.md)、[JDK7.ConcurrentHashMap源码分析](应用场景与源码分析/JDK7.ConcurrentHashMap.md)、[JDK8.ConcurrentHashMap源码分析](应用场景与源码分析/JDK8.ConcurrentHashMap.md)。这里面包含了应用场景、类图、数据结构、关键方法的分析，有详细的注释帮助理解，如果还是看不明白，说明我表达的不够，你可以去看看一看其它博主的文章结合一起理解
 
 另外要说明的是，我更希望的是通过 源码分析 + 面试题，引导读者对HashMap及ConcurrentHashMap有一个基本的概念理解，而不是把所有的理解都灌输出来，因为我认为，对这种数据结构的理解，你必须自己去分析源码（最好能对着源码写一写注释），才能将代码的理解印刻在脑海中，而至于印刻得多深刻、多快能掌握，取决你数据结构与算法的功底了
 
