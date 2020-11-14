@@ -31,9 +31,15 @@
 - [简书：为什么HashMap线程不安全](https://www.jianshu.com/p/e2f75c8cce01)
 - [掘金：快速失败机制&失败安全机制](https://juejin.im/post/6844904046617182215)
 
-### JDK7与JDK8中HashMap实现原理上的不同点
+### 前提声明（重要！！）
 
-回答这些问题，需要对JDK7及JDK8中HashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [HashMap源码分析](应用场景与源码分析/HashMap.md)
+本文内容是面试题，因此总结的比较简要，如果是第一次学习HashMap或ConcurrentHashMap的朋友，不要细钻下面的面试题，你直接看肯定是不明不白的，而应该先去看这三份源码分析：[HashMap源码分析](应用场景与源码分析/HashMap.md)、[JDK7.ConcurrentHashMap源码分析](应用场景与源码分析/JDK7.ConcurrentHashMap.md)、[JDK8.ConcurrentHashMap源码分析](应用场景与源码分析/JDK8.ConcurrentHashMap.md)。这里面包含了应用场景、类图、数据结构、关键方法的分析，有详细的注释帮助理解
+
+另外要说明的是，我更希望的是通过 源码分析 + 面试题，引导读者对HashMap及ConcurrentHashMap有一个基本的概念理解，而不是把所有的理解都灌输出来，因为我认为，对这种数据结构的理解，你必须自己去分析源码（最好能对着源码写一写注释），才能将代码的理解印刻在脑海中，而至于印刻得多深刻、多快能掌握，取决你数据结构与算法的功底了
+
+我比较喜欢的方式是，通过关键成员属性（比如Entry数组、Segment数组） + 关键方法（比如构造方法、put方法），理解这个数据结构的核心思想，然后能够做到自己在纸上演练一遍，说清楚且基本无误，就OK了，至于很细节的东西，没有必要去强记，而一些关键的点（尤其是对比不同点），我以下面面试题的形式记录出来，帮助复习回忆
+
+### JDK7与JDK8中HashMap实现原理上的不同点
 
 不同点，从几个层面来看
 - 底层数据结构：JDK7是链表数组，JDK8是链表数组 + 红黑树
@@ -500,8 +506,6 @@ TODO
 TODO
 
 ### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点
-
-回答这些问题，需要对JDK7及JDK8中ConcurrentHashMap底层实现原理比较清楚，可以先自行回忆一下，若不清楚可以看 [ConcurrentHashMap源码分析](应用场景与源码分析/ConcurrentHashMap.md)
 
 要涉及到扩容
 
