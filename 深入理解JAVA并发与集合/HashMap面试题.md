@@ -250,7 +250,7 @@ main end
 
 HashMap扩容（resize）的条件是 size > threshold，而 threshold = capacity * loadFactor，capacity是数组长度即20万，loadFactor是扩容引子默认是0.75，size是节点个数最多是10万，10万 < 20万 * 0.75，因此永远不会执行resize方法，这样我们就能证明是resize之后出现的循环链表，使得put方法中的for循环一直在执行了
 
-最后，需要再强调说明的是，JDK7中HashMap使用的是头插法，这是出现循环链表的关键，而JDK8中使用的是尾插法，尾插法最多是使得一个线程多执行了一次另一个线程的插入活，不会出现循环链表
+总结一下，JDK7出现循环链表的关键有两点：一是采用了头插法，二是多个线程操作并执行了resize。而JDK8中使用的是尾插法，尾插法最多是使得一个线程多执行了一次另一个线程的插入活，就不会出现循环链表了
 
 ### JDK8中HashMap2个线程同时put会发生什么
 
