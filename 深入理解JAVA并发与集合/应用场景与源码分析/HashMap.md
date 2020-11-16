@@ -22,7 +22,9 @@
 
 需要使用一种时间复杂度低的键值对的数据结构，keySet不允许重复，支持插入、查询、删除、替换、自动扩容等操作，且是在单线程或不存在考虑线程安全问题的场景下，HashMap非常适用
 
-在JDK8引入红黑树后，HashMap的插入、查询、删除、替换操作的时间复杂度都是O(log)级别的
+应用举例
+- Spring中的单例池，以< String, Object >结构，存储BeanName到单例Bean对象的映射关系
+- HttpServletRequest中，以< String, String[] >结构，存储参数名到参数值的映射关系（实际上是LinkedHashMap，参考org.apache.catalina.util.ParameterMap）
 
 ### 核心思想
 
