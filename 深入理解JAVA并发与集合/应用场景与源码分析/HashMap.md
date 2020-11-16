@@ -70,7 +70,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     transient Set<map.entry<k,v>> entrySet;
     // 节点个数
     transient int size;
-    // 每次扩容和更改map结构的计数器
+    // 快速失败机制用的modCount
     transient int modCount;
     // 扩容阈值，一般情况下，当节点个数大于扩容阈值时会进行扩容，扩容阈值等于数组长度乘以扩容引子
     int threshold;
@@ -150,7 +150,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     int threshold;
     // 扩容引子
     final float loadFactor;
-    // 每次扩容和更改map结构的计数器
+    // 快速失败机制用的modCount
     transient int modCount;
     // hash种子
     transient int hashSeed = 0;
