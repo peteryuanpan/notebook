@@ -650,7 +650,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                     lock();
                     break;
                 }
-                (3) 检测hash获取的Segment[index]的头节点是否发生了变化，若发生了则retires清为-1
+                // (3) 检测hash获取的Segment[index]的头节点是否发生了变化，若发生了则retires清为-1
                 else if ((retries & 1) == 0 &&
                          (f = entryForHash(this, hash)) != first) {
                     e = first = f; // re-traverse if entry changed
