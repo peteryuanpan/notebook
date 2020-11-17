@@ -8,6 +8,7 @@
       - [put方法](#put方法)
       - [get方法](#get方法)
       - [remove方法](#remove方法)
+      - [scanAndLock方法](#scanAndLock方法)
 
 # JDK7.ConcurrentHashMap
 
