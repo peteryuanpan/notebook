@@ -414,79 +414,6 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
 }
 ```
 
-这里补充一个测试，上面有一步是 j = (hash >>> segmentShift) & segmentMask;，但我经过测试发现，segmentMask似乎不需要
-
-代码如下
-
-```java
-package hashmap;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.LockSupport;
-
-public class ConcurrentHashMapTest1 {
-
-    public static void main(String[] args) {
-        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
-        for (int i = 0; i < 1000000; i ++) {
-            String s = String.valueOf(i);
-            map.put(s, s);
-            try {
-                Method hashMethod = ConcurrentHashMap.class.getDeclaredMethod("hash", Object.class);
-                hashMethod.setAccessible(true);
-                int hash = (int) hashMethod.invoke(map, s);
-
-                Field segmentMaskField = ConcurrentHashMap.class.getDeclaredField("segmentMask");
-                segmentMaskField.setAccessible(true);
-                int segmentMask = (int) segmentMaskField.get(map);
-
-                Field segmentShiftField = ConcurrentHashMap.class.getDeclaredField("segmentShift");
-                segmentShiftField.setAccessible(true);
-                int segmentShift = (int) segmentShiftField.get(map);
-
-                int j1 = (hash >>> segmentShift) & segmentMask;
-                int j2 = (hash >>> segmentShift);
-
-                System.out.println("i: " + i);
-                System.out.println("hash: " + hash);
-                System.out.println("segmentMask: " + segmentMask);
-                System.out.println("segmentShift: " + segmentShift);
-                System.out.println("j1: " + j1);
-                System.out.println("j2: " + j2);
-                System.out.println();
-                if (j1 != j2) {
-                    while(true) {}
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-}
-```
-
-输出结果
-```
-...
-i: 999998
-hash: 1514696203
-segmentMask: 15
-segmentShift: 28
-j1: 5
-j2: 5
-
-i: 999999
-hash: 1031046062
-segmentMask: 15
-segmentShift: 28
-j1: 3
-j2: 3
-```
-
-解释：j1 永远等于 j2，不会进入死循环
-
 ##### get方法
 
 ```java
@@ -586,7 +513,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             return oldValue;
         }
     }
-    // 获取Segment[h]
+    // 通过hash获取Segment[index]
     private Segment<K,V> segmentForHash(int h) {
         long u = (((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE;
         return (Segment<K,V>) UNSAFE.getObjectVolatile(segments, u);
@@ -675,33 +602,54 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
 
 ##### scanAndLock方法
 
-put方法中会调用 scanAndLockForPut，remove和replace方法中会调用 scanAndLock，在这里一并分析一下
+下面的方法是整个JDK7.ConcurrentHashMap的核心方法，因为它诠释了是如何保证线程安全的
+- put方法中在tryLock失败后会调用scanAndLockForPut方法，remove和replace方法中在tryLock失败后会调用scanAndLock方法
+- scanAndLockForPut方法和scanAndLock方法上层都没有加互斥锁，所以在涉及到
 
 ```java
 public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
+        // 尝试在put方法前获取锁，并合适时候初始化节点
+        // 若尝试64次后获取不成功，会强制lock，进入等待队列
         private HashEntry<K,V> scanAndLockForPut(K key, int hash, V value) {
+            // 根据hash获取Segment[index]的头节点
             HashEntry<K,V> first = entryForHash(this, hash);
+            // 将头节点赋值给e
             HashEntry<K,V> e = first;
+            // node是需要返回的节点，可能会初始化
             HashEntry<K,V> node = null;
+            // 重试次数
             int retries = -1; // negative while locating node
+            // 尝试获取锁，获取不到则进入while循环
+            // while循环中，会做三件事
+            // (1) 遍历链表，尝试将retires清0，并合适时候初始化节点
+            // (2) ++retries，当超过64时，强制lock，进入等待队列
+            // (3) 检测hash获取的Segment[index]的头节点是否发生了变化，若发生了则retires清为-1
             while (!tryLock()) {
                 HashEntry<K,V> f; // to recheck first below
+                // (1) 遍历链表，尝试将retires清0，并合适时候初始化节点
                 if (retries < 0) {
+                    // retries为-1时进入，可以发现第一次while循环一定进入
+                    // e和node皆为null时，初始化节点，赋值给node
+                    // e为null时，retries清0
                     if (e == null) {
                         if (node == null) // speculatively create node
                             node = new HashEntry<K,V>(hash, key, value, null);
                         retries = 0;
                     }
+                    // e不为null，key等于e.key，匹配到节点了，retires清0
                     else if (key.equals(e.key))
                         retries = 0;
+                    // e不为null，key不等于e.key，e赋值为e的后继节点
                     else
                         e = e.next;
                 }
+                // (2) ++retries，当超过64时，强制lock，进入等待队列
                 else if (++retries > MAX_SCAN_RETRIES) {
                     lock();
                     break;
                 }
+                (3) 检测hash获取的Segment[index]的头节点是否发生了变化，若发生了则retires清为-1
                 else if ((retries & 1) == 0 &&
                          (f = entryForHash(this, hash)) != first) {
                     e = first = f; // re-traverse if entry changed
@@ -710,6 +658,9 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             }
             return node;
         }
+        // 尝试在remove、replace方法前获取锁
+        // 若尝试64次后获取不成功，会强制lock，进入等待队列
+        // 与 scanAndLockForPut 方法很相似，就 retries < 0 时策略略有区别
         private void scanAndLock(Object key, int hash) {
             // similar to but simpler than scanAndLockForPut
             HashEntry<K,V> first = entryForHash(this, hash);
@@ -735,6 +686,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             }
         }
     }
+    // 通过hash获取Segment[index]
     static final <K,V> HashEntry<K,V> entryForHash(Segment<K,V> seg, int h) {
         HashEntry<K,V>[] tab;
         return (seg == null || (tab = seg.table) == null) ? null :
