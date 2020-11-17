@@ -299,12 +299,16 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                         // node为null，新建节点，并设置node的next为first节点（头插法）
                         else
                             node = new HashEntry<K,V>(hash, key, value, first);
+                        
+                        // 注意，上面的操作，还没有将table[index]指向node
+                        
                         // count加1
                         int c = count + 1;
-                        // 元素个数超过阈值，且table长度未达到最大，进行扩容，扩容过程中会重新构建table
+                        // 元素个数超过阈值，且table长度未达到最大，进行扩容
+                        // 扩容过程中会重新构建table，还会将node插入新位置
                         if (c > threshold && tab.length < MAXIMUM_CAPACITY)
                             rehash(node);
-                        // 不需要扩容，把node赋值于table[index]，此时node是头节点了（头插法）
+                        // 不需要扩容，把table[index]指向node，此时node是头节点了（头插法）
                         else
                             setEntryAt(tab, index, node);
                         // modCount加1
@@ -341,7 +345,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
         if ((s = (Segment<K,V>)UNSAFE.getObject          // nonvolatile; recheck
              (segments, (j << SSHIFT) + SBASE)) == null) //  in ensureSegment
             s = ensureSegment(j);
-        // 调用Segment#put方法
+        // 调用Segment#put方法，将元素put进该端的HashEntry数组中
+        // 不同段的put操作是不互斥的，可以并行进行
         return s.put(key, hash, value, false);
     }
     // putIfAbsent 与 put 类似，但 onlyIfAbsent = true，含义是若已存在元素则不覆盖
@@ -518,11 +523,13 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
 
 ```java
 public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+    // 删除KEY对应的键值对，返回删除的VALUE或者null
     public V remove(Object key) {
         int hash = hash(key);
         Segment<K,V> s = segmentForHash(hash);
         return s == null ? null : s.remove(key, hash, null);
     }
+    // 删除<KEY, VALUE>键值对，返回删除成功与否
     public boolean remove(Object key, Object value) {
         int hash = hash(key);
         Segment<K,V> s;
@@ -530,26 +537,38 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
             s.remove(key, hash, value) != null;
     }
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
+        // 删除<KEY, VALUE>键值对，VALUE可能为null，其hash值已知
         final V remove(Object key, int hash, Object value) {
+            // 尝试获取锁，如果获取失败，调用 scanAndLockForPut 最多循环64次获取锁
             if (!tryLock())
                 scanAndLock(key, hash);
             V oldValue = null;
             try {
                 HashEntry<K,V>[] tab = table;
+                // 通过hash获取index
                 int index = (tab.length - 1) & hash;
+                // CAS指令获取 table[index] 的 first 节点
                 HashEntry<K,V> e = entryAt(tab, index);
+                // e的前驱节点
                 HashEntry<K,V> pred = null;
+                // 遍历链表
                 while (e != null) {
                     K k;
                     HashEntry<K,V> next = e.next;
+                    // 匹配节点
                     if ((k = e.key) == key ||
                         (e.hash == hash && key.equals(k))) {
                         V v = e.value;
+                        // value为null，表示不需要匹配value
+                        // value不为null，则进行匹配
                         if (value == null || value == v || value.equals(v)) {
+                            // e的前驱节点为null，则将table[index]指向e的后继节点（删除e）
                             if (pred == null)
                                 setEntryAt(tab, index, next);
+                            // 否则，将e的前驱节点next指向e的后继节点（删除e）
                             else
                                 pred.setNext(next);
+                            // modCount加1，count减1
                             ++modCount;
                             --count;
                             oldValue = v;
@@ -560,37 +579,61 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                     e = next;
                 }
             } finally {
+                // 释放锁
                 unlock();
             }
             return oldValue;
         }
+    }
+    // 获取Segment[h]
+    private Segment<K,V> segmentForHash(int h) {
+        long u = (((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE;
+        return (Segment<K,V>) UNSAFE.getObjectVolatile(segments, u);
     }
 }
 ```
 
 ##### rehash方法
 
+rehash方法实际上是扩容，没有重新hash
+
+rehash方法只在Segment#put方法中被调用了，put方法获取了锁，因此是保证原子性的
+
 ```java
 public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
+        // 扩容，且将node插入新位置
         private void rehash(HashEntry<K,V> node) {
             HashEntry<K,V>[] oldTable = table;
+            // 旧数组长度
             int oldCapacity = oldTable.length;
+            // 新数组长度固定为旧数组长度的2倍
             int newCapacity = oldCapacity << 1;
+            // 新的扩容阈值（新数组长度乘以扩容引子）
             threshold = (int)(newCapacity * loadFactor);
+            // 初始化一个新的HashEntry数组
             HashEntry<K,V>[] newTable =
                 (HashEntry<K,V>[]) new HashEntry[newCapacity];
+            // 用于定位元素在新数组的位置
             int sizeMask = newCapacity - 1;
+            // 枚举旧数组的每个位置，将元素转移到新数组上
             for (int i = 0; i < oldCapacity ; i++) {
+                // 获取index=i的头节点
                 HashEntry<K,V> e = oldTable[i];
                 if (e != null) {
+                    // 获取e的后继节点
                     HashEntry<K,V> next = e.next;
+                    // 通过hash重新计算新的index
                     int idx = e.hash & sizeMask;
+                    // e的后继节点为null，则将e赋值于新数组的新index位置
                     if (next == null)   //  Single node on list
                         newTable[idx] = e;
+                    // 否则，枚举链表，将元素转移到新数组上
                     else { // Reuse consecutive sequence at same slot
                         HashEntry<K,V> lastRun = e;
                         int lastIdx = idx;
+                        // 找到一个节点 lastRun，lastRun 往后的后继节点 hash 值计算出来的 index 都与 lastRun 一样
+                        // lastIdx 为 lastRun 通过 hash 计算出来的 index
                         for (HashEntry<K,V> last = next;
                              last != null;
                              last = last.next) {
@@ -600,21 +643,29 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
                                 lastRun = last;
                             }
                         }
+                        // 将新数组的 lastIndex 位置指向 lastRun（lastRun后继可能还有节点，一并属于lastIdx位置）
                         newTable[lastIdx] = lastRun;
                         // Clone remaining nodes
+                        // 从 e 枚举到 lastRun
                         for (HashEntry<K,V> p = e; p != lastRun; p = p.next) {
                             V v = p.value;
+                            // 沿用旧的hash值
                             int h = p.hash;
+                            // 获取新的位置 K
+                            // 重要！可以发现，K 要不然等于旧数组位置，要不然等于旧数组位置加上旧数组长度
                             int k = h & sizeMask;
+                            // 采用头插法，将元素插入新数组
                             HashEntry<K,V> n = newTable[k];
                             newTable[k] = new HashEntry<K,V>(h, p.key, v, n);
                         }
                     }
                 }
             }
+            // 使用头插法，将node插入新位置
             int nodeIndex = node.hash & sizeMask; // add the new node
             node.setNext(newTable[nodeIndex]);
             newTable[nodeIndex] = node;
+            // 新表替换旧表
             table = newTable;
         }
     }
