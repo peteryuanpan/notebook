@@ -1,3 +1,12 @@
+- [JDK7.ConcurrentHashMap](#JDK7.ConcurrentHashMap)
+  - [应用场景](#应用场景)
+  - [核心思想](#核心思想)
+  - [类结构分析](#类结构分析)
+    - [数据结构](#数据结构)
+    - [核心方法](#核心方法)
+      - [构造方法](#构造方法)
+      - [put方法](#put方法)
+      - [Segment-put方法](#Segment-put方法)
 
 # JDK7.ConcurrentHashMap
 
@@ -294,7 +303,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
     }
 ```
 
-##### Segment.put方法
+##### Segment-put方法
 
 ```java
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
