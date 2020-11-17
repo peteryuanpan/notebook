@@ -604,7 +604,8 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
 
 下面的方法是整个JDK7.ConcurrentHashMap的核心方法，因为它诠释了是如何保证线程安全的
 - put方法中在tryLock失败后会调用scanAndLockForPut方法，remove和replace方法中在tryLock失败后会调用scanAndLock方法
-- scanAndLockForPut方法和scanAndLock方法上层都没有加互斥锁，所以在涉及到
+- scanAndLockForPut方法和scanAndLock方法上层都没有加互斥锁，所以entryForHash方法中使用了CAS指令来保证原子性，seg.table使用了volatile修饰来保证可见性与有序性
+- scanAndLockForPut方法和scanAndLock方法目的都是获取独占锁，若尝试64次后依然未获取到，会调用lock()方法进入AQS等待队列
 
 ```java
 public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
