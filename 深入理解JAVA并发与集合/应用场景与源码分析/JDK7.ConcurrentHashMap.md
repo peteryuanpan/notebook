@@ -6,7 +6,8 @@
     - [核心方法](#核心方法)
       - [构造方法](#构造方法)
       - [put方法](#put方法)
-      - [Segment-put方法](#Segment-put方法)
+      - [get方法](#get方法)
+      - [remove方法](#remove方法)
 
 # JDK7.ConcurrentHashMap
 
@@ -252,7 +253,74 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
 
 ##### put方法
 
+JDK7 中 ConcurrentHashMap 的 put、remove、replace、clear 方法最终都会调用 Segment 中的对应方法。Segment 继承了 ReentrantLock，是一把独占锁（下面就不重复说明了）
+
 ```java
+public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+    static final class Segment<K,V> extends ReentrantLock implements Serializable {
+        // put 一个 < key, value >，已知其hash值，onlyIfAbsent为false表示强制覆盖
+        final V put(K key, int hash, V value, boolean onlyIfAbsent) {
+            // 先tryLock尝试获取锁，若获取成功，则 node 为 null
+            // 若获取失败，调用 scanAndLockForPut 最多循环64次获取锁
+            HashEntry<K,V> node = tryLock() ? null :
+                scanAndLockForPut(key, hash, value);
+            V oldValue;
+            try {
+                // 获取段的数组table
+                HashEntry<K,V>[] tab = table;
+                // 通过hash计算出index
+                int index = (tab.length - 1) & hash;
+                // CAS指令获取table[index]的first节点
+                HashEntry<K,V> first = entryAt(tab, index);
+                // 遍历链表
+                for (HashEntry<K,V> e = first;;) {
+                    // 链表节点不为null
+                    if (e != null) {
+                        K k;
+                        // 发现一个元素能匹配上
+                        if ((k = e.key) == key ||
+                            (e.hash == hash && key.equals(k))) {
+                            oldValue = e.value;
+                            // onlyIfAbsent为false时，使用新VALUE覆盖旧VALUE，并且modCount加1
+                            if (!onlyIfAbsent) {
+                                e.value = value;
+                                ++modCount;
+                            }
+                            break;
+                        }
+                        e = e.next;
+                    }
+                    // 遍历了所有链表节点都没有匹配上，说明要插入一个新节点
+                    else {
+                        // node不为null，设置node的next为first节点（头插法）
+                        if (node != null)
+                            node.setNext(first);
+                        // node为null，新建节点，并设置node的next为first节点（头插法）
+                        else
+                            node = new HashEntry<K,V>(hash, key, value, first);
+                        // count加1
+                        int c = count + 1;
+                        // 元素个数超过阈值，且table长度未达到最大，进行扩容，扩容过程中会重新构建table
+                        if (c > threshold && tab.length < MAXIMUM_CAPACITY)
+                            rehash(node);
+                        // 不需要扩容，把node赋值于table[index]，此时node是头节点了（头插法）
+                        else
+                            setEntryAt(tab, index, node);
+                        // modCount加1
+                        ++modCount;
+                        count = c;
+                        oldValue = null;
+                        break;
+                    }
+                }
+            } finally {
+                // 释放锁
+                unlock();
+            }
+            // 返回旧VALUE或null
+            return oldValue;
+        }
+    }
     // 传入 map m，调用 put 方法将 < key, value > 全部打入
     public void putAll(Map<? extends K, ? extends V> m) {
         for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
@@ -314,6 +382,29 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
         // 返回seg引用
         return seg;
     }
+    // CAS指令获取 table[i] 的 first 节点
+    static final <K,V> HashEntry<K,V> entryAt(HashEntry<K,V>[] tab, int i) {
+        return (tab == null) ? null :
+            (HashEntry<K,V>) UNSAFE.getObjectVolatile
+            (tab, ((long)i << TSHIFT) + TBASE);
+    }
+    // CAS指令赋值 e 于 table[i]
+    static final <K,V> void setEntryAt(HashEntry<K,V>[] tab, int i,
+                                       HashEntry<K,V> e) {
+        UNSAFE.putOrderedObject(tab, ((long)i << TSHIFT) + TBASE, e);
+    }
+    static final class HashEntry<K,V> {
+        final int hash;
+        final K key;
+        volatile V value;
+        volatile HashEntry<K,V> next;
+        
+        // CAS指令设置next
+        final void setNext(HashEntry<K,V> n) {
+            UNSAFE.putOrderedObject(this, nextOffset, n);
+        }
+    }
+}
 ```
 
 这里补充一个测试，上面有一步是 j = (hash >>> segmentShift) & segmentMask;，但我经过测试发现，segmentMask似乎不需要
@@ -389,51 +480,83 @@ j2: 3
 
 解释：j1 永远等于 j2，不会进入死循环
 
-##### Segment-put方法
-
-JDK7中ConcurrentHashMap的 put、remove、replace、clear 方法最终都会调用 Segment 中的对应方法
-
-Segment 继承了 ReentrantLock，是一把独占锁（下面就不重复说明了）
+##### get方法
 
 ```java
+public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+    // 通过KEY获取VALUE值
+    public V get(Object key) {
+        Segment<K,V> s; // manually integrate access methods to reduce overhead
+        HashEntry<K,V>[] tab;
+        // 获取KEY的hash值
+        int h = hash(key);
+        // 获取内存偏移量
+        long u = (((h >>> segmentShift) & segmentMask) << SSHIFT) + SBASE;
+        // Segment[u]不为null，且table不为null
+        if ((s = (Segment<K,V>)UNSAFE.getObjectVolatile(segments, u)) != null &&
+            (tab = s.table) != null) {
+            // 通过 (tab.length - 1) & h 计算出 index
+            // 获取 table[index] 的 first 节点，遍历链表
+            for (HashEntry<K,V> e = (HashEntry<K,V>) UNSAFE.getObjectVolatile
+                     (tab, ((long)(((tab.length - 1) & h)) << TSHIFT) + TBASE);
+                 e != null; e = e.next) {
+                K k;
+                // 发现匹配节点，返回之
+                if ((k = e.key) == key || (e.hash == h && key.equals(k)))
+                    return e.value;
+            }
+        }
+        // 未匹配节点，返回null
+        return null;
+    }
+    
+}
+```
+
+##### remove方法
+
+```java
+public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+    public V remove(Object key) {
+        int hash = hash(key);
+        Segment<K,V> s = segmentForHash(hash);
+        return s == null ? null : s.remove(key, hash, null);
+    }
+    public boolean remove(Object key, Object value) {
+        int hash = hash(key);
+        Segment<K,V> s;
+        return value != null && (s = segmentForHash(hash)) != null &&
+            s.remove(key, hash, value) != null;
+    }
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
-        final V put(K key, int hash, V value, boolean onlyIfAbsent) {
-            HashEntry<K,V> node = tryLock() ? null :
-                scanAndLockForPut(key, hash, value);
-            V oldValue;
+        final V remove(Object key, int hash, Object value) {
+            if (!tryLock())
+                scanAndLock(key, hash);
+            V oldValue = null;
             try {
                 HashEntry<K,V>[] tab = table;
                 int index = (tab.length - 1) & hash;
-                HashEntry<K,V> first = entryAt(tab, index);
-                for (HashEntry<K,V> e = first;;) {
-                    if (e != null) {
-                        K k;
-                        if ((k = e.key) == key ||
-                            (e.hash == hash && key.equals(k))) {
-                            oldValue = e.value;
-                            if (!onlyIfAbsent) {
-                                e.value = value;
-                                ++modCount;
-                            }
-                            break;
+                HashEntry<K,V> e = entryAt(tab, index);
+                HashEntry<K,V> pred = null;
+                while (e != null) {
+                    K k;
+                    HashEntry<K,V> next = e.next;
+                    if ((k = e.key) == key ||
+                        (e.hash == hash && key.equals(k))) {
+                        V v = e.value;
+                        if (value == null || value == v || value.equals(v)) {
+                            if (pred == null)
+                                setEntryAt(tab, index, next);
+                            else
+                                pred.setNext(next);
+                            ++modCount;
+                            --count;
+                            oldValue = v;
                         }
-                        e = e.next;
-                    }
-                    else {
-                        if (node != null)
-                            node.setNext(first);
-                        else
-                            node = new HashEntry<K,V>(hash, key, value, first);
-                        int c = count + 1;
-                        if (c > threshold && tab.length < MAXIMUM_CAPACITY)
-                            rehash(node);
-                        else
-                            setEntryAt(tab, index, node);
-                        ++modCount;
-                        count = c;
-                        oldValue = null;
                         break;
                     }
+                    pred = e;
+                    e = next;
                 }
             } finally {
                 unlock();
@@ -441,5 +564,129 @@ Segment 继承了 ReentrantLock，是一把独占锁（下面就不重复说明�
             return oldValue;
         }
     }
+}
 ```
 
+##### rehash方法
+
+```java
+public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+    static final class Segment<K,V> extends ReentrantLock implements Serializable {
+        private void rehash(HashEntry<K,V> node) {
+            HashEntry<K,V>[] oldTable = table;
+            int oldCapacity = oldTable.length;
+            int newCapacity = oldCapacity << 1;
+            threshold = (int)(newCapacity * loadFactor);
+            HashEntry<K,V>[] newTable =
+                (HashEntry<K,V>[]) new HashEntry[newCapacity];
+            int sizeMask = newCapacity - 1;
+            for (int i = 0; i < oldCapacity ; i++) {
+                HashEntry<K,V> e = oldTable[i];
+                if (e != null) {
+                    HashEntry<K,V> next = e.next;
+                    int idx = e.hash & sizeMask;
+                    if (next == null)   //  Single node on list
+                        newTable[idx] = e;
+                    else { // Reuse consecutive sequence at same slot
+                        HashEntry<K,V> lastRun = e;
+                        int lastIdx = idx;
+                        for (HashEntry<K,V> last = next;
+                             last != null;
+                             last = last.next) {
+                            int k = last.hash & sizeMask;
+                            if (k != lastIdx) {
+                                lastIdx = k;
+                                lastRun = last;
+                            }
+                        }
+                        newTable[lastIdx] = lastRun;
+                        // Clone remaining nodes
+                        for (HashEntry<K,V> p = e; p != lastRun; p = p.next) {
+                            V v = p.value;
+                            int h = p.hash;
+                            int k = h & sizeMask;
+                            HashEntry<K,V> n = newTable[k];
+                            newTable[k] = new HashEntry<K,V>(h, p.key, v, n);
+                        }
+                    }
+                }
+            }
+            int nodeIndex = node.hash & sizeMask; // add the new node
+            node.setNext(newTable[nodeIndex]);
+            newTable[nodeIndex] = node;
+            table = newTable;
+        }
+    }
+}
+```
+
+##### scanAndLock方法
+
+put方法中会调用 scanAndLockForPut，remove和replace方法中会调用 scanAndLock，在这里一并分析一下
+
+```java
+public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V>, Serializable {
+    static final class Segment<K,V> extends ReentrantLock implements Serializable {
+        private HashEntry<K,V> scanAndLockForPut(K key, int hash, V value) {
+            HashEntry<K,V> first = entryForHash(this, hash);
+            HashEntry<K,V> e = first;
+            HashEntry<K,V> node = null;
+            int retries = -1; // negative while locating node
+            while (!tryLock()) {
+                HashEntry<K,V> f; // to recheck first below
+                if (retries < 0) {
+                    if (e == null) {
+                        if (node == null) // speculatively create node
+                            node = new HashEntry<K,V>(hash, key, value, null);
+                        retries = 0;
+                    }
+                    else if (key.equals(e.key))
+                        retries = 0;
+                    else
+                        e = e.next;
+                }
+                else if (++retries > MAX_SCAN_RETRIES) {
+                    lock();
+                    break;
+                }
+                else if ((retries & 1) == 0 &&
+                         (f = entryForHash(this, hash)) != first) {
+                    e = first = f; // re-traverse if entry changed
+                    retries = -1;
+                }
+            }
+            return node;
+        }
+        private void scanAndLock(Object key, int hash) {
+            // similar to but simpler than scanAndLockForPut
+            HashEntry<K,V> first = entryForHash(this, hash);
+            HashEntry<K,V> e = first;
+            int retries = -1;
+            while (!tryLock()) {
+                HashEntry<K,V> f;
+                if (retries < 0) {
+                    if (e == null || key.equals(e.key))
+                        retries = 0;
+                    else
+                        e = e.next;
+                }
+                else if (++retries > MAX_SCAN_RETRIES) {
+                    lock();
+                    break;
+                }
+                else if ((retries & 1) == 0 &&
+                         (f = entryForHash(this, hash)) != first) {
+                    e = first = f;
+                    retries = -1;
+                }
+            }
+        }
+    }
+    static final <K,V> HashEntry<K,V> entryForHash(Segment<K,V> seg, int h) {
+        HashEntry<K,V>[] tab;
+        return (seg == null || (tab = seg.table) == null) ? null :
+            (HashEntry<K,V>) UNSAFE.getObjectVolatile
+            (tab, ((long)(((tab.length - 1) & h)) << TSHIFT) + TBASE);
+    }
+}
+```
