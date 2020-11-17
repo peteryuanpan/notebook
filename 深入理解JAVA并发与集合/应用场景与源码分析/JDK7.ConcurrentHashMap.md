@@ -253,21 +253,29 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
 ##### put方法
 
 ```java
+    // 传入 map m，调用 put 方法将 < key, value > 全部打入
     public void putAll(Map<? extends K, ? extends V> m) {
         for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
             put(e.getKey(), e.getValue());
     }
+    // put 一个 < key, value >
     public V put(K key, V value) {
         Segment<K,V> s;
         if (value == null)
             throw new NullPointerException();
+        // 计算key的hash值
         int hash = hash(key);
+        // 通过 SegmentShift、SegmentMask 计算出 j
         int j = (hash >>> segmentShift) & segmentMask;
+        // (j << SSHIFT) + SBASE 表示内存偏移量
+        // 如果 Segment[j] 位置为 null，则进行初始化
         if ((s = (Segment<K,V>)UNSAFE.getObject          // nonvolatile; recheck
              (segments, (j << SSHIFT) + SBASE)) == null) //  in ensureSegment
             s = ensureSegment(j);
+        // 调用Segment#put方法
         return s.put(key, hash, value, false);
     }
+    // putIfAbsent 与 put 类似，但 onlyIfAbsent = true，含义是若已存在元素则不覆盖
     public V putIfAbsent(K key, V value) {
         Segment<K,V> s;
         if (value == null)
@@ -279,29 +287,107 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
             s = ensureSegment(j);
         return s.put(key, hash, value, true);
     }
+    // 初始化 Segments[k] 位置
     private Segment<K,V> ensureSegment(int k) {
         final Segment<K,V>[] ss = this.segments;
+        // u为内存偏移量
         long u = (k << SSHIFT) + SBASE; // raw offset
         Segment<K,V> seg;
+        // CAS指令确认 Segment[k] 位置为 null，则进行初始化
         if ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u)) == null) {
+            // 获取 Segment[0]，使用它的 length，loadFator，threshold
             Segment<K,V> proto = ss[0]; // use segment 0 as prototype
             int cap = proto.table.length;
             float lf = proto.loadFactor;
             int threshold = (int)(cap * lf);
+            // 初始化出一个 HashEntry 数组，长度等于 Segment[0] 的 HashEntry 数组
             HashEntry<K,V>[] tab = (HashEntry<K,V>[])new HashEntry[cap];
-            if ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u))
-                == null) { // recheck
+            // 使用CAS自旋的方法，初始化 Segment[k]，赋值于 seg引用
+            if ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u)) == null) { // recheck
                 Segment<K,V> s = new Segment<K,V>(lf, threshold, tab);
-                while ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u))
-                       == null) {
+                while ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u)) == null) {
                     if (UNSAFE.compareAndSwapObject(ss, u, null, seg = s))
                         break;
                 }
             }
         }
+        // 返回seg引用
         return seg;
     }
 ```
+
+这里补充一个测试，上面有一步是 j = (hash >>> segmentShift) & segmentMask;，但我经过测试发现，segmentMask似乎不需要
+
+代码如下
+
+```java
+package hashmap;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.LockSupport;
+
+public class ConcurrentHashMapTest1 {
+
+    public static void main(String[] args) {
+        ConcurrentHashMap<String, String> map = new ConcurrentHashMap<>();
+        for (int i = 0; i < 1000000; i ++) {
+            String s = String.valueOf(i);
+            map.put(s, s);
+            try {
+                Method hashMethod = ConcurrentHashMap.class.getDeclaredMethod("hash", Object.class);
+                hashMethod.setAccessible(true);
+                int hash = (int) hashMethod.invoke(map, s);
+
+                Field segmentMaskField = ConcurrentHashMap.class.getDeclaredField("segmentMask");
+                segmentMaskField.setAccessible(true);
+                int segmentMask = (int) segmentMaskField.get(map);
+
+                Field segmentShiftField = ConcurrentHashMap.class.getDeclaredField("segmentShift");
+                segmentShiftField.setAccessible(true);
+                int segmentShift = (int) segmentShiftField.get(map);
+
+                int j1 = (hash >>> segmentShift) & segmentMask;
+                int j2 = (hash >>> segmentShift);
+
+                System.out.println("i: " + i);
+                System.out.println("hash: " + hash);
+                System.out.println("segmentMask: " + segmentMask);
+                System.out.println("segmentShift: " + segmentShift);
+                System.out.println("j1: " + j1);
+                System.out.println("j2: " + j2);
+                System.out.println();
+                if (j1 != j2) {
+                    while(true) {}
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+输出结果
+```
+...
+i: 999998
+hash: 1514696203
+segmentMask: 15
+segmentShift: 28
+j1: 5
+j2: 5
+
+i: 999999
+hash: 1031046062
+segmentMask: 15
+segmentShift: 28
+j1: 3
+j2: 3
+```
+
+解释：j1 永远等于 j2，不会进入死循环
 
 ##### Segment-put方法
 
