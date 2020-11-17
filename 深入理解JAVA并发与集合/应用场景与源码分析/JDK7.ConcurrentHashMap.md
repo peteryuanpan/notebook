@@ -141,4 +141,206 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
 
 #### 核心方法
 
-##### xxx方法
+##### 构造方法
+
+```java
+    // 默认的构造方法，DEFAULT_INITIAL_CAPACITY = 16，DEFAULT_LOAD_FACTOR = 0.75，DEFAULT_CONCURRENCY_LEVEL = 16
+    public ConcurrentHashMap() {
+        this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL);
+    }
+    // 构造方法，指定initialCapacity
+    public ConcurrentHashMap(int initialCapacity) {
+        this(initialCapacity, DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL);
+    }
+    // 构造方法，指定initialCapacity，loadFactor
+    public ConcurrentHashMap(int initialCapacity, float loadFactor) {
+        this(initialCapacity, loadFactor, DEFAULT_CONCURRENCY_LEVEL);
+    }
+    // 构造方法，通过Map m构造
+    public ConcurrentHashMap(Map<? extends K, ? extends V> m) {
+        this(Math.max((int) (m.size() / DEFAULT_LOAD_FACTOR) + 1,
+                      DEFAULT_INITIAL_CAPACITY),
+             DEFAULT_LOAD_FACTOR, DEFAULT_CONCURRENCY_LEVEL);
+        putAll(m);
+    }
+    // 核心构造方法
+    public ConcurrentHashMap(int initialCapacity,
+                             float loadFactor, int concurrencyLevel) {
+        // 参数不符合范围
+        if (!(loadFactor > 0) || initialCapacity < 0 || concurrencyLevel <= 0)
+            throw new IllegalArgumentException();
+        // 最大并发数为 MAX_SEGMENTS
+        if (concurrencyLevel > MAX_SEGMENTS)
+            concurrencyLevel = MAX_SEGMENTS;
+        // Find power-of-two sizes best matching arguments
+        int sshift = 0;
+        int ssize = 1;
+        // ssize 最小的不小于 concurrencyLevel 的数字，比如 cLevel = 15，ssize = 16
+        // 2^sshift 等于 ssize
+        while (ssize < concurrencyLevel) {
+            ++sshift;
+            ssize <<= 1;
+        }
+        // segmentShift + sshift = 32
+        this.segmentShift = 32 - sshift;
+        // segmentMask 用于与预算
+        this.segmentMask = ssize - 1;
+        
+        // 到了这里，ssize、sshift、segmentShift、segmentMask 就确定好了，它们各有用途
+        // ssize 是 Segment 数组的长度，下文会用到
+        // segmentShift 和 segmentMask 在 put 方法中等会用到，用于确认数据属于哪个 Segment
+        
+        // HashEntry 最大长度为 MAXIMUM_CAPACITY
+        if (initialCapacity > MAXIMUM_CAPACITY)
+            initialCapacity = MAXIMUM_CAPACITY;
+        // 下面这一步的理解非常重要
+        // c 保证了 每个 Segment 中的 HashEntry 数组尽量平分数据，且 c * ssize >= initialCapcity
+        int c = initialCapacity / ssize;
+        if (c * ssize < initialCapacity)
+            ++c;
+        // cap 是 每个 Segment 中 HashEntry 数组的初始长度
+        // cap 是最小的不小于 c 的数字，cap 最小为 2
+        int cap = MIN_SEGMENT_TABLE_CAPACITY;
+        while (cap < c)
+            cap <<= 1;
+        // create segments and segments[0]
+        // 但是，只初始化 Segment[0]，其他位置用了懒初始化
+        Segment<K,V> s0 =
+            new Segment<K,V>(loadFactor, (int)(cap * loadFactor),
+                             (HashEntry<K,V>[])new HashEntry[cap]);
+        // 初始化 Segment 数组
+        Segment<K,V>[] ss = (Segment<K,V>[])new Segment[ssize];
+        // 使用 CAS 指令给 Segment[0] 位置赋值
+        UNSAFE.putOrderedObject(ss, SBASE, s0); // ordered write of segments[0]
+        this.segments = ss;
+    }
+```
+
+##### hash方法
+
+类似于JDK7中HashMap的hash方法，hash方法是扰动函数，在key的hashCode方法基础上进行强扰动计算，保证hash散列
+
+```java
+    private int hash(Object k) {
+        int h = hashSeed;
+
+        if ((0 != h) && (k instanceof String)) {
+            return sun.misc.Hashing.stringHash32((String) k);
+        }
+
+        h ^= k.hashCode();
+
+        // Spread bits to regularize both segment and index locations,
+        // using variant of single-word Wang/Jenkins hash.
+        h += (h <<  15) ^ 0xffffcd7d;
+        h ^= (h >>> 10);
+        h += (h <<   3);
+        h ^= (h >>>  6);
+        h += (h <<   2) + (h << 14);
+        return h ^ (h >>> 16);
+    }
+```
+
+##### put方法
+
+```java
+    public void putAll(Map<? extends K, ? extends V> m) {
+        for (Map.Entry<? extends K, ? extends V> e : m.entrySet())
+            put(e.getKey(), e.getValue());
+    }
+    public V put(K key, V value) {
+        Segment<K,V> s;
+        if (value == null)
+            throw new NullPointerException();
+        int hash = hash(key);
+        int j = (hash >>> segmentShift) & segmentMask;
+        if ((s = (Segment<K,V>)UNSAFE.getObject          // nonvolatile; recheck
+             (segments, (j << SSHIFT) + SBASE)) == null) //  in ensureSegment
+            s = ensureSegment(j);
+        return s.put(key, hash, value, false);
+    }
+    public V putIfAbsent(K key, V value) {
+        Segment<K,V> s;
+        if (value == null)
+            throw new NullPointerException();
+        int hash = hash(key);
+        int j = (hash >>> segmentShift) & segmentMask;
+        if ((s = (Segment<K,V>)UNSAFE.getObject
+             (segments, (j << SSHIFT) + SBASE)) == null)
+            s = ensureSegment(j);
+        return s.put(key, hash, value, true);
+    }
+    private Segment<K,V> ensureSegment(int k) {
+        final Segment<K,V>[] ss = this.segments;
+        long u = (k << SSHIFT) + SBASE; // raw offset
+        Segment<K,V> seg;
+        if ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u)) == null) {
+            Segment<K,V> proto = ss[0]; // use segment 0 as prototype
+            int cap = proto.table.length;
+            float lf = proto.loadFactor;
+            int threshold = (int)(cap * lf);
+            HashEntry<K,V>[] tab = (HashEntry<K,V>[])new HashEntry[cap];
+            if ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u))
+                == null) { // recheck
+                Segment<K,V> s = new Segment<K,V>(lf, threshold, tab);
+                while ((seg = (Segment<K,V>)UNSAFE.getObjectVolatile(ss, u))
+                       == null) {
+                    if (UNSAFE.compareAndSwapObject(ss, u, null, seg = s))
+                        break;
+                }
+            }
+        }
+        return seg;
+    }
+```
+
+##### Segment.put方法
+
+```java
+    static final class Segment<K,V> extends ReentrantLock implements Serializable {
+        final V put(K key, int hash, V value, boolean onlyIfAbsent) {
+            HashEntry<K,V> node = tryLock() ? null :
+                scanAndLockForPut(key, hash, value);
+            V oldValue;
+            try {
+                HashEntry<K,V>[] tab = table;
+                int index = (tab.length - 1) & hash;
+                HashEntry<K,V> first = entryAt(tab, index);
+                for (HashEntry<K,V> e = first;;) {
+                    if (e != null) {
+                        K k;
+                        if ((k = e.key) == key ||
+                            (e.hash == hash && key.equals(k))) {
+                            oldValue = e.value;
+                            if (!onlyIfAbsent) {
+                                e.value = value;
+                                ++modCount;
+                            }
+                            break;
+                        }
+                        e = e.next;
+                    }
+                    else {
+                        if (node != null)
+                            node.setNext(first);
+                        else
+                            node = new HashEntry<K,V>(hash, key, value, first);
+                        int c = count + 1;
+                        if (c > threshold && tab.length < MAXIMUM_CAPACITY)
+                            rehash(node);
+                        else
+                            setEntryAt(tab, index, node);
+                        ++modCount;
+                        count = c;
+                        oldValue = null;
+                        break;
+                    }
+                }
+            } finally {
+                unlock();
+            }
+            return oldValue;
+        }
+    }
+```
+
