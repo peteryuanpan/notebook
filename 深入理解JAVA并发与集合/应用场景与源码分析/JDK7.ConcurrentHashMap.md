@@ -70,7 +70,7 @@ public class HashMap<K,V> extends AbstractMap<K,V> implements Map<K,V>, Cloneabl
         volatile V value;
         volatile HashEntry<K,V> next;
     }
-    // Segment 类，其内部结构类似于 JDK7的 HashMap
+    // Segment 类，其内部结构类似于 JDK7的 HashMap，它集成 ReentrantLock，是一把独占锁
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
         // 序列号
         private static final long serialVersionUID = 2249069246763182397L;
@@ -390,6 +390,10 @@ j2: 3
 解释：j1 永远等于 j2，不会进入死循环
 
 ##### Segment-put方法
+
+JDK7中ConcurrentHashMap的 put、remove、replace、clear 方法最终都会调用 Segment 中的对应方法
+
+Segment 继承了 ReentrantLock，是一把独占锁（下面就不重复说明了）
 
 ```java
     static final class Segment<K,V> extends ReentrantLock implements Serializable {
