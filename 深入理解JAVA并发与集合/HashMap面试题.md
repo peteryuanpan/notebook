@@ -421,11 +421,9 @@ main end
 
 ### JDK7与JDK8中HashMap的快速失败机制
 
-快速失败机制是HashMap中对数据安全和线程安全的一种防范机制
+快速失败机制是HashMap中对数据安全和线程安全的一种防范机制，在使用迭代器进行遍历、删除 或者 forEach等操作时，会进行 modCount != expectedModCount 校验，若 false，则会抛 ConcurrentModificationException。在JDK7与JDK8的HashMap源码中，只有两处对 expectedModCount 进行了 expectedModCount = modCount 赋值，一处是HashIterator的构造方法，一处是HashIterator的remove方法。因此多线程下，一个线程在迭代器遍历，另一个线程在remove或者put操作（会modCount++），会触发快速失败机制
 
-在上面的例子中，我们看到了 JDK8中HashMap1个线程put1个线程迭代器遍历，会抛 java.util.ConcurrentModificationException 异常
-
-来看 at java.util.HashMap$HashIterator.nextNode(HashMap.java:1445)
+在上面的例子中，我们看到了 JDK8中HashMap1个线程put1个线程迭代器遍历，会抛 java.util.ConcurrentModificationException 异常，来看 at java.util.HashMap$HashIterator.nextNode(HashMap.java:1445)
 
 ```java
     abstract class HashIterator {
@@ -507,8 +505,6 @@ end
             expectedModCount = modCount;
         }
 ```
-
-JDK7与JDK8的HashMap源码中，只有两处对 expectedModCount 进行了修正，一处是HashIterator的构造方法，一处是HashIterator的remove方法
 
 ### JDK7中ConcurrentHashMap与HashMap实现原理上的不同点
 
