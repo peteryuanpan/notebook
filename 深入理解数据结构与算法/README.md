@@ -39,7 +39,7 @@ P类问题、NP类问题、NPC问题
 |Leetcode|The World's Leading Online Programming Contest|https://leetcode-cn.com/|
 |LintCode|A Powerful Coding Training System|https://www.lintcode.com/|
 |UVA|UVA Online Judge|https://onlinejudge.org/index.php|
-|《程序员代码面试指南》|IT名企算法与数据结构题目最优解||
+|FromBook|《程序员代码面试指南》||
 
 ### 题目列表
 
