@@ -42,9 +42,7 @@ P类问题、NP类问题、NPC问题
 |UVA|UVA Online Judge|https://onlinejudge.org/index.php|
 |FromBook|《程序员代码面试指南》||
 
-### 题目列表
-
-以下是我的刷题笔记本，以Leetcode、lintcode为主，其他OnlineJudge为辅，记录下刷过的问题、源码、题解等
+### 刷题记录
 
 |序号|题意|题目|来源|大标签|小标签|题解|
 |--|--|--|--|--|--|--|
