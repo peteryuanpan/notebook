@@ -30,11 +30,7 @@ P类问题、NP类问题、NPC问题
 - KMP
 - AC自动机
 
-## 各大OnlineJudge题目
-
-以下是我的刷题笔记本，以Leetcode、lintcode为主，其他OnlineJudge为辅，记录下刷过的问题、源码、题解等
-
-### OnlineJudge及相关主页
+### OnlineJudge或书籍
 
 |名称|全称|主页|
 |--|--|--|
@@ -43,8 +39,11 @@ P类问题、NP类问题、NPC问题
 |Leetcode|The World's Leading Online Programming Contest|https://leetcode-cn.com/|
 |LintCode|A Powerful Coding Training System|https://www.lintcode.com/|
 |UVA|UVA Online Judge|https://onlinejudge.org/index.php|
+|《程序员代码面试指南》|IT名企算法与数据结构题目最优解||
 
 ### 题目列表
+
+以下是我的刷题笔记本，以Leetcode、lintcode为主，其他OnlineJudge为辅，记录下刷过的问题、源码、题解等
 
 |序号|题意|题目|来源|大标签|小标签|题解|
 |--|--|--|--|--|--|--|
@@ -69,6 +68,7 @@ P类问题、NP类问题、NPC问题
 |019|求数列中长度大于2的等差子序列个数|[problem446](Leetcode/problem446_求数列中长度大于2的等差子序列个数)|leetcode|动态规划|||
 |020|求数组的一个极大值|[problem162](Leetcode/problem162_求数组的一个极大值)|leetcode|白题|二分||
 |021|求指定条件下房子涂色的最小花费|[problem1473](Leetcode/problem1473_求指定条件下房子涂色的最小花费)|leetcode|动态规划|||
+|022|优雅的逆序一个栈|[problem1](FromBook/problem1_优雅的逆序一个栈)|frombook|数据结构|栈||
 
 ### 标签与模板
 
