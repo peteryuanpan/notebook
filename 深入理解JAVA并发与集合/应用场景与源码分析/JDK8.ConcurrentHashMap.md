@@ -6,7 +6,6 @@
 - [ConcurrentHashMap源码分析(1.8)](https://www.cnblogs.com/zerotomax/p/8687425.html)
 - [简书：深入浅出ConcurrentHashMap1.8](https://www.jianshu.com/p/c0642afe03e0)
 - [简书：深入分析ConcurrentHashMap1.8的扩容实现](https://www.jianshu.com/p/f6730d5784ad)
-- [简书：ConcurrentHashMap源码分析（JDK8） 扩容实现机制](https://www.jianshu.com/p/487d00afe6ca)
 
 ### 应用场景
 
