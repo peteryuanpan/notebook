@@ -28,7 +28,7 @@
 
 > In computer science, a collection or container is a grouping of some variable number of data items (possibly zero) that have some shared significance to the problem being solved and need to be operated upon together in some controlled fashion. A collection is a concept applicable to abstract data types, and does not prescribe a specific implementation as a concrete data structure. From https://en.wikipedia.org/wiki/Collection_(abstract_data_type)
 
-严格来说，JAVA中的集合是指 Collection 接口及实现类，比如 AbstractList的子类：ArrayList、LinkedList、Vector；AbstractQueue的子类：ArrayBlockingQueue、ConcurrentLinkedQueue 等，而 Map 接口及实现了类是不属于 Collection 的，比如 AbstractMap的子类：HashMap、ConcurrentHashMap。这里更强调的是数学定义中的集合，或者是容器，因此下文的源码分析中，会存在非 AbstractCollection 子类的情况
+严格来说，JAVA中的集合是指 Collection 接口及实现类，比如 AbstractList的子类：ArrayList、LinkedList、Vector；AbstractQueue的子类：ArrayBlockingQueue、ConcurrentLinkedQueue；AbstractSet的子类：HashSet、TreeSet 等，它们的共同父类都有 AbstractCollection，而 Map 接口及实现类是没有实现 Collection 的，比如 AbstractMap的子类：HashMap、ConcurrentHashMap。但这里更强调的是数学定义中的集合，或者是容器，因此下文的源码分析中，会存在非 AbstractCollection 子类的情况
 
 ### JAVA语言的水深
 
