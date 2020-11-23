@@ -230,7 +230,7 @@ hello
 
 解释：new Thread(futureTask).start();这句话表示本质上与前面2种方法一样，也是实现Runnable，new一个Thread(Runnable a)对象，执行start()方法，来完成创建、运行线程
 
-而不同的点是，FutureTask是实现了Runnable与Future接口，它是一个异步处理框架，通过get方法来异步获取线程执行结果，关于Future源码分析，可见[FutureTask](源码分析/FutureTask.md)
+而不同的点是，FutureTask是实现了Runnable与Future接口，它是一个异步处理框架，通过get方法来异步获取线程执行结果
 
 相比于前2种方法，本方法好处是可以获得一个任务的返回值
 
