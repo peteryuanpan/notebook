@@ -35,27 +35,31 @@
 
 #### 数据结构
 
+从数据结构中可以看出来，JDK8的ConcurrentHashMap比JDK7的多了很多属性，尤其是多了很多内部类，它们各有用途，但核心思想相关的属性或许不多
+
+
+
 ```java
 public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements ConcurrentMap<K,V>, Serializable {
-
+    // 序列号
     private static final long serialVersionUID = 7249069246763182397L;
-
+    // 数组最大长度
     private static final int MAXIMUM_CAPACITY = 1 << 30;
-    
+    // 数组默认长度，16
     private static final int DEFAULT_CAPACITY = 16;
-    
+    // TODO    
     static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
-    
+    // JDK7中保留下来的属性，无用途
     private static final int DEFAULT_CONCURRENCY_LEVEL = 16;
-    
+    // 默认扩容引子是 0.75
     private static final float LOAD_FACTOR = 0.75f;
-    
+    // 链表转红黑树的条件之一：链表长度大于等于8
     static final int TREEIFY_THRESHOLD = 8;
-    
+    // 红黑树转回链表的条件：链表长度小于等于6
     static final int UNTREEIFY_THRESHOLD = 6;
-    
+    // 链表转红黑树的条件之二：数组长度大于等于65
     static final int MIN_TREEIFY_CAPACITY = 64;
-    
+    // 与扩容有关系的参数
     private static final int MIN_TRANSFER_STRIDE = 16;
     
     private static int RESIZE_STAMP_BITS = 16;
