@@ -37,7 +37,18 @@
 
 从数据结构中可以看出来，JDK8的ConcurrentHashMap比JDK7的多了很多属性，尤其是多了很多内部类，它们各有用途，但核心思想相关的属性或许不多
 
-
+由于属性很多，下面列举出重要核心的属性
+- table，默认为null，初始化发生在第一次插入操作，默认大小为16的数组，用来存储Node节点数据，扩容时大小总是2的幂次方
+- nextTable，默认为null，扩容时新生成的数组，其大小为原数组的两倍
+- sizeCtl
+  - 默认为0，用来控制table的初始化和扩容操作，具体应用在后续会体现出来
+  - -1，代表table正在初始化
+  - -N，表示有N-1个线程正在进行扩容操作
+  - 其余情况
+     - 如果table未初始化，表示table需要初始化的大小。
+     - 如果table初始化完成，表示table的容量，默认是table大小的0.75倍，居然用这个公式算0.75（n - (n >>> 2)）
+- Node，保存key，value及key的hash值的数据结构，其中value和next都用volatile修饰，保证并发的可见性
+- ForwardingNode，一个特殊的Node节点，hash值为-1，其中存储nextTable的引用。只有table发生扩容的时候，ForwardingNode才会发挥作用，作为一个占位符放在table中表示当前节点为null或者已经被移动
 
 ```java
 public class ConcurrentHashMap<K,V> extends AbstractMap<K,V> implements ConcurrentMap<K,V>, Serializable {
