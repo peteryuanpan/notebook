@@ -12,8 +12,8 @@
   - [等待唤醒机制](#等待唤醒机制)
     - [虚假唤醒](#虚假唤醒)
     - [Object等待唤醒](#Object等待唤醒)
-    - [Thread等待唤醒](#Thread等待唤醒)
     - [LockSupport等待唤醒](#LockSupport等待唤醒)
+    - [Thread等待唤醒](#Thread等待唤醒)
   - [线程中断机制](#线程中断机制)
   - [并发基础概念](#并发基础概念)
     - [守护线程与用户线程](#守护线程与用户线程)
@@ -577,8 +577,8 @@ JVM底层启动线程详细图解（建议下载到本地打开查看更清晰�
 
 可以将等待唤醒机制分为三类
 - 基于Object类的等待唤醒
-- 基于Thread类的等待唤醒
 - 基于LockSupport类的等待唤醒
+- 基于Thread类的等待唤醒
 
 #### 虚假唤醒
 
@@ -886,93 +886,6 @@ threadA end waiting
 
 解释：notifyAll会唤醒该实例的当前等待集合中的所有线程
 
-#### Thread等待唤醒
-
-在Thread类中，也定义了一些方法，可以用于等待唤醒机制，实例方法有：join()、join(long)、join(long, int)，类方法有：sleep()
-
-总结一下，有那么几点
-- 1、join方法是实例方法，在threadA.join方法执行后，当前线程会进入等待状态（WAITING），等待threadA执行完毕，让出CPU时间片，不会释放监视器锁
-- 2、sleep方法是类方法，在sleep方法执行后，当前线程会进入有期限的等待状态（TIMED_WAITING），让出CPU时间片，不会释放监视器锁
-- 3、相比于join()方法，join(long)、join(long, int)是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
-- 4、join或者sleep方法执行后，其他线程中断了该线程，则该线程会抛出InterrupteException异常并返回
-
-关于1、2两点，来看一个例子
-
-```java
-package part1;
-
-public class ThreadJoinTest1 {
-
-    static Object obj = new Object();
-
-    public static void main(String[] args) {
-        Thread a = new Thread(() -> {
-            System.out.println(Thread.currentThread().getName() + " begin");
-            int b = 0;
-            for (int i = 0; i < 100000; i ++) {
-                b ++;
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            for (int i = 0; i < 100000; i ++) {
-                b ++;
-            }
-            System.out.println("b = " + b);
-        });
-
-        a.start();
-        try {
-            a.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(Thread.currentThread().getName() + " end");
-    }
-}
-```
-
-输出结果
-```
-Thread-0 begin
-b = 200000
-main end
-```
-
-代码改一下
-```java
-            try {
-                synchronized (obj) {
-                    Thread.sleep(1000);
-                }
-...
-        a.start();
-        try {
-            Thread.sleep(1000);
-            synchronized (obj) {
-                a.join();
-            }
-            synchronized (obj) {
-                System.out.println(Thread.currentThread().getName() + " print");
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-```
-
-输出结果
-```
-Thread-0 begin
-b = 200000
-main print
-main end
-```
-
-解释：无论执行多少次，输出结果都一样，Thread.sleep会让出时间片，Thread#join会等待对应线程执行完毕，但二者都不会释放监视器锁，也不需要先获取监视器锁才能执行
-
 #### LockSupport等待唤醒
 
 LockSupport中也定义了许多方法，可以用于等待唤醒机制，都是类方法，分别有：park()、park(Object)、parkNanos(long)、parkNanos(Object, long)、parkUntil(long)、parkUntil(Object, long)、unpark(Thread)
@@ -983,8 +896,9 @@ LockSupport中也定义了许多方法，可以用于等待唤醒机制，都是
 - 3、unpark(Thread)方法执行后，会给Thread a一个许可证，唤醒线程，线程会从之前的等待状态进入运行状态，获取CPU时间片
 - 4、unpark(Thread)方法执行后，会给Thread a一个许可证，这个许可证是有延迟效应的，即在执行park()方法不会让线程进入等待状态
 - 5、park(Object)方法执行后，除了执行与park()方法一样的效果外，还会执行setBlocker将object记录到线程内部，使用线程堆栈信息可以查看，因此是推荐的方法！
-- 6、相比于park方法，parkNanos、parkUntil会将线程进入TIMED_WATING状态，parkNanos是超时x秒后自动唤醒线程，parkUntil是时间戳到达deadline后自动唤醒线程
+- 6、相比于park方法，parkNanos、parkUntil会将线程进入TIMED_WATING状态，parkNanos是超时x秒后自动唤醒线程，parkUntil是uix时间戳到达deadline后自动唤醒线程
 - 7、park方法执行后，其他线程中断了该线程，该线程会返回，但不会抛InterruptedException异常！
+- 8、AQS实现的锁的lock、unlock方法，以及条件变量Condition的await、singal方法，都是基于LockSupport类的park、unpark方法来实现的
 
 关于2、3两点，来看一个例子
 
@@ -1205,6 +1119,94 @@ class Thread implements Runnable {
 ```
 
 可以看出，park(Object)方法比park()方法多出了setBlocker一步，而其内部实现是给Thread t的parkBlocker变量赋值（CAS方式实现），以便在打印堆栈时可以输出
+
+#### Thread等待唤醒
+
+在Thread类中，也定义了一些方法，可以用于等待唤醒机制，实例方法有：join()、join(long)、join(long, int)，类方法有：sleep()
+
+总结一下，有那么几点
+- 1、join方法是实例方法，在threadA.join方法执行后，当前线程会进入等待状态（WAITING），等待threadA执行完毕，让出CPU时间片，不会释放监视器锁
+- 2、sleep方法是类方法，在sleep方法执行后，当前线程会进入有期限的等待状态（TIMED_WAITING），让出CPU时间片，不会释放监视器锁
+- 3、相比于join()方法，join(long)、join(long, int)是将线程进入TIMED_WATING状态，即超时后会自动被唤醒
+- 4、join或者sleep方法执行后，其他线程中断了该线程，则该线程会抛出InterrupteException异常并返回
+- 5、Thread的等待唤醒机制，与Object、LockSupport有所不同，它并非让其他线程来唤醒，而是达到一定条件（比如休眠时间到、线程执行完毕）后自动唤醒
+
+关于1、2两点，来看一个例子
+
+```java
+package part1;
+
+public class ThreadJoinTest1 {
+
+    static Object obj = new Object();
+
+    public static void main(String[] args) {
+        Thread a = new Thread(() -> {
+            System.out.println(Thread.currentThread().getName() + " begin");
+            int b = 0;
+            for (int i = 0; i < 100000; i ++) {
+                b ++;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            for (int i = 0; i < 100000; i ++) {
+                b ++;
+            }
+            System.out.println("b = " + b);
+        });
+
+        a.start();
+        try {
+            a.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(Thread.currentThread().getName() + " end");
+    }
+}
+```
+
+输出结果
+```
+Thread-0 begin
+b = 200000
+main end
+```
+
+代码改一下
+```java
+            try {
+                synchronized (obj) {
+                    Thread.sleep(1000);
+                }
+...
+        a.start();
+        try {
+            Thread.sleep(1000);
+            synchronized (obj) {
+                a.join();
+            }
+            synchronized (obj) {
+                System.out.println(Thread.currentThread().getName() + " print");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+```
+
+输出结果
+```
+Thread-0 begin
+b = 200000
+main print
+main end
+```
+
+解释：无论执行多少次，输出结果都一样，Thread.sleep会让出时间片，Thread#join会等待对应线程执行完毕，但二者都不会释放监视器锁，也不需要先获取监视器锁才能执行
 
 ### 线程中断机制
 
