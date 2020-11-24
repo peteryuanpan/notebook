@@ -900,6 +900,8 @@ LockSupport中也定义了许多方法，可以用于等待唤醒机制，都是
 - 7、park方法执行后，其他线程中断了该线程，该线程会返回，但不会抛InterruptedException异常！
 - 8、AQS实现的锁的lock、unlock方法，以及条件变量Condition的await、singal方法，都是基于LockSupport类的park、unpark方法来实现的
 
+关于第8点，不妨放到AbstractQueuedSynchronizer、ReentrantLock源码分析中展开
+
 关于2、3两点，来看一个例子
 
 ```java
