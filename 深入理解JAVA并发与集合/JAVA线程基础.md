@@ -1208,16 +1208,16 @@ class Thread implements Runnable {
 
 ### 线程中断机制
 
-线程中断是一种线程间的协作模式，通过设置线程的中断标志并不能直接终止该线程的执行，而是被中断的线程根据中断状态自行处理
+线程中断是一种线程间优雅的协作模式，通过设置线程的中断标志并不能直接终止该线程的执行，而是被中断的线程根据中断状态自行处理
 
-Thread中有两个方法，两个是实例方法：public void interrupt()，public boolean isInterrupted()，一个是类方法：public static boolean interrupted()
+Thread中有三个方法，两个是实例方法：public void interrupt()，public boolean isInterrupted()，一个是类方法：public static boolean interrupted()
 
 总结下来，有这么几点
 - 1、interrupt方法执行后，会给线程设置中断标志，但仅仅是设置标志，不会中断线程，线程中需要使用isInterrupted或interrupted方法来检测中断标志
 - 2、interrupt方法执行后，如果线程已经因Object#wait、Thread#join、Thread.sleep方法而进入等待状态，线程会抛出InterruptedException异常，然后返回
 - 3、interrupt方法执行后，如果线程已经因LockSupport.park方法而进入等待状态，线程会返回，但不会抛出InterruptedException异常！
 - 4、isInterrupted方法执行后，会返回对应线程（不是当前线程）是否设置了中断标志，但不会清除中断标志！
-- 5、interrupted方法执行后，会返回当前线程（注意是当前线程）是否设置了中断标志，并清除中断标志
+- 5、interrupted方法执行后，会返回currentThread（注意是当前线程）是否设置了中断标志，并清除中断标志
 
 关于第1点，来看一个例子
 
