@@ -426,7 +426,7 @@ hello
     }
  ```
  
- 上面通过分析源码看出来ExecutorService本质上还是使用new Thread(Runnable a)来创建线程的，而运行线程的逻辑是如何的，这一块不妨放到线程池原理中展开
+ 上面通过分析源码看出来ExecutorService本质上还是使用new Thread(Runnable a)来创建线程的，而运行线程的逻辑是如何的，这一块不妨放到线程池源码分析中展开
 
 #### JVM启动线程
 
