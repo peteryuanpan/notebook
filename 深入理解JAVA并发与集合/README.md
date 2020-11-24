@@ -60,7 +60,8 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [Thread](应用场景与源码分析/Thread.md)
   - [ThreadLocal](应用场景与源码分析/ThreadLocal.md)
   - [FutureTask]
-  - [ReentrantLock]
+  - [AbstractQueuedSynchronizer](应用场景与源码分析/AbstractQueuedSynchronizer.md)
+  - [ReentrantLock](应用场景与源码分析/ReentrantLock.md)
   - [ReentrantReadWriteLock]
   - [Semaphore]
   - [CountDownLath]
