@@ -6,14 +6,15 @@
     - [jmap-Java内存映像工具](#jmap-Java内存映像工具)
     - [jhat-虚拟机堆转储快照分析工具](#jhat-虚拟机堆转储快照分析工具)
     - [jstack-Java堆栈跟踪工具](#jstack-Java堆栈跟踪工具)
-      - [分析哪个线程哪一行代码死循环了](#分析哪个线程哪一行代码死循环了)
   - [可视化故障处理工具](#可视化故障处理工具)
     - [JHSDB-基于服务性代理的调试工具](#JHSDB-基于服务性代理的调试工具)
     - [JConsole-Java监视与管理控制台](#JConsole-Java监视与管理控制台)
   - [生产环境中的故障处理工具](#生产环境中的故障处理工具)
     - [VisualVM-多合一故障处理工具](#VisualVM-多合一故障处理工具)
     - [Arthas-Alibaba开源的Java诊断工具](#Arthas-Alibaba开源的Java诊断工具)
-  - [性能调优案例](#性能调优案例)
+  - [性能调优记录](#性能调优记录)
+    - [常用调优命令](#常用调优命令)
+    - [分析哪个线程哪一行代码死循环了](#分析哪个线程哪一行代码死循环了)
     - [JAVA反射是否真的很慢](#JAVA反射是否真的很慢)
 
 # JVM性能调优
@@ -38,8 +39,6 @@
 
 #### jstack-Java堆栈跟踪工具
 
-##### 分析哪个线程哪一行代码死循环了
-
 ### 可视化故障处理工具
 
 #### JHSDB-基于服务性代理的调试工具
@@ -53,6 +52,55 @@
 #### Arthas-Alibaba开源的Java诊断工具
 
 ### 性能调优案例
+
+#### 常用调优命令
+
+java -XX:+PrintCommandLineFlags -version，查看JVM常用参数
+
+```
+-XX:InitialHeapSize=267373952 -XX:MaxHeapSize=4277983232 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
+java version "1.8.0_231"
+Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
+```
+
+java -XX:+PrintFlagsFinal -version，查看JVM主要参数
+
+```
+    uintx MarkStackSize                             = 4194304                             {product}
+    uintx MarkStackSizeMax                          = 536870912                           {product}
+    uintx MarkSweepAlwaysCompactCount               = 4                                   {product}
+    uintx MarkSweepDeadRatio                        = 1                                   {product}
+     intx MaxBCEAEstimateLevel                      = 5                                   {product}
+     intx MaxBCEAEstimateSize                       = 150                                 {product}
+    uintx MaxDirectMemorySize                       = 0                                   {product}
+     bool MaxFDLimit                                = true                                {product}
+    uintx MaxGCMinorPauseMillis                     = 4294967295                          {product}
+    uintx MaxGCPauseMillis                          = 4294967295                          {product}
+    uintx MaxHeapFreeRatio                          = 100                                 {manageable}
+    uintx MaxHeapSize                              := 4278190080                          {product}
+     intx MaxInlineLevel                            = 9                                   {product}
+     intx MaxInlineSize                             = 35                                  {product}
+     intx MaxJNILocalCapacity                       = 65536                               {product}
+     intx MaxJavaStackTraceDepth                    = 1024                                {product}
+     intx MaxJumpTableSize                          = 65000                               {C2 product}
+     intx MaxJumpTableSparseness                    = 5                                   {C2 product}
+     intx MaxLabelRootDepth                         = 1100                                {C2 product}
+     intx MaxLoopPad                                = 11                                  {C2 product}
+    uintx MaxMetaspaceExpansion                     = 5451776                             {product}
+    uintx MaxMetaspaceFreeRatio                     = 70                                  {product}
+    uintx MaxMetaspaceSize                          = 4294901760                          {product}
+    uintx MaxNewSize                               := 1426063360                          {product}
+     intx MaxNodeLimit                              = 75000                               {C2 product}
+
+...
+
+java version "1.8.0_231"
+Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
+```
+
+#### 分析哪个线程哪一行代码死循环了
 
 #### JAVA反射是否真的很慢
 
