@@ -7,7 +7,7 @@
     - [jhat-虚拟机堆转储快照分析工具](#jhat-虚拟机堆转储快照分析工具)
     - [jstack-Java堆栈跟踪工具](#jstack-Java堆栈跟踪工具)
   - [进阶故障处理工具](#进阶故障处理工具)
-    - [JHSDB-基于服务性代理的调试工具](#JHSDB-基于服务性代理的调试工具)
+    - [HSDB-基于服务性代理的调试工具](#HSDB-基于服务性代理的调试工具)
     - [JConsole-Java监视与管理控制台](#JConsole-Java监视与管理控制台)
     - [VisualVM-多合一故障处理工具](#VisualVM-多合一故障处理工具)
     - [Arthas-Alibaba开源的Java诊断工具](#Arthas-Alibaba开源的Java诊断工具)
@@ -15,7 +15,6 @@
     - [程序死循环和死锁问题排查](#程序死循环和死锁问题排查)
     - [CPU占用过高问题排查](#CPU占用过高问题排查)
     - [OOM异常问题排查](#OOM异常问题排查)
-    - [JAVA反射速度测试](#JAVA反射速度测试)
 
 # JVM性能调优
 
@@ -543,11 +542,13 @@ Thread：Monitor Ctrl-Break
 
 善于总结的朋友可以发现，这些更高级功能的工具，往往继承了前面多个基础故障处理工具的功能，比如 VisualVM 是同时具有 jps、jinfo、jmap、jhat、jstack 功能的
 
-#### JHSDB-基于服务性代理的调试工具
+#### HSDB-基于服务性代理的调试工具
 
-JHSDB是一款基于服务性代理（Serviceability Agent，SA）实现的进程外调试工具。服务性代理是HotSpot虚拟机中一组用于映射Java虚拟机运行信息的、主要基于Java语言（含少量JNI代码）实现的API集合
+HSDB是一款基于服务性代理（Serviceability Agent，SA）实现的进程外调试工具。服务性代理是HotSpot虚拟机中一组用于映射Java虚拟机运行信息的、主要基于Java语言（含少量JNI代码）实现的API集合
 
-启动JHSDB，打开cmd，cd 到 %JAVA_HOME$/lib 下，运行 java -cp sa-jdi.jar sun.jvm.hotspot.HSDB，会打开一个看似空白的界面
+HSDB能查看很多内存相关的数据信息，其中很多信息（比如klass、ArrayKlass）都是JVM源码中定义的数据结构
+
+启动HSDB，打开cmd，cd 到 %JAVA_HOME$/lib 下，运行 java -cp sa-jdi.jar sun.jvm.hotspot.HSDB，会打开一个看似空白的界面
 
 测试一段代码（让代码进入while循环）
 
@@ -569,8 +570,6 @@ public class TEST1 {
 
 ![image](https://user-images.githubusercontent.com/10209135/90361965-09a6e100-e092-11ea-8145-a3fbe7548039.png)
 
-HSDB能查看很多内存相关的数据信息，其中很多信息（比如klass、ArrayKlass）都是JVM源码中定义的数据结构
-
 下面贴一下不同的查询结果结果，具体查询过程就忽略了，可以自行研究或者查看文档
 
 ![image](https://user-images.githubusercontent.com/10209135/90362306-e466a280-e092-11ea-839c-0f6d1edaaa5a.png)
@@ -579,11 +578,29 @@ HSDB能查看很多内存相关的数据信息，其中很多信息（比如klas
 
 #### JConsole-Java监视与管理控制台
 
+JConsole，Java Monitoring and Management Console，是一款基于JMX（Java Manage-mentExtensions）的可视化监视、管理工具。它的主要功能是通过JMX的MBean（Managed Bean）对系统进行信息收集和参数动态调整
+
+Jconsole的功能性并不如（甚至远远不如）VisualVM，且界面比较陈旧、面板化，因此在这里并不打算对它进行过多介绍，只是提一下有这么一个工具
+
+在命令行中执行 jconsole，即可打开这个图形界面工具，其中之一界面如下
+
+![image](https://user-images.githubusercontent.com/10209135/100370616-80645a80-3041-11eb-8604-7478f0b35ed0.png)
+
 #### VisualVM-多合一故障处理工具
 
 VisualVM，All-in-One Java Troubleshooting Tool，是一款功能强大的运行监视和故障处理工具（带图形界面），作为一个合格的JAVA程序员，应熟悉之
 
 Oracle曾在VisualVM的软件说明中写上了“All-in-One”的字样，预示着它除了常规的运行监视、故障处理外，还将提供其他方面的能力，譬如性能分析（Profiling）。VisualVM的性能分析功能比起JProfiler、YourKit等专业且收费的Profiling工具都不遑多让。而且相比这些第三方工具，VisualVM还有一个很大的优点：不需要被监视的程序基于特殊Agent去运行，因此它的通用性很强，对应用程序实际性能的影响也较小，使得它可以直接应用在生产环境中。这个优点是JProfiler、YourKit等工具无法与之媲美的
+
+VisualVM 包含了所有基础故障处理工具的功能，且可视化
+- 显示虚拟机进程以及进程的配置、环境信息（jps、jinfo）
+- 监视程序应用的CPU、GC、堆、方法区以及线程的信息（jstat、jstack）
+- dump以及分析堆转储快照（jmap、jhat）
+- 方法级的程序运行性能分析，找出被调用最多、运行时间最长的方法
+- 离线程序快照；收集程序的运行时配置、线程dump、内存dump等信息建立一个快照，可以将快照发送开发者处进行 Bug 反馈
+- 结合其他 plugins 做到无限可能性 ...
+
+##### 启动VisualVM
 
 命令行执行 jvisualvm，点击左边 attch 到具体进程，可以得到如下结果
 
@@ -591,11 +608,15 @@ Oracle曾在VisualVM的软件说明中写上了“All-in-One”的字样，预�
 
 ![image](https://user-images.githubusercontent.com/10209135/100355624-0cb85280-302d-11eb-975e-f8ea194fad8d.png)
 
-jvisualvm 还可以用来分析dump文件（可以通过jmap生成）
+##### 生成及分析堆转储快照
+
+VisualVM 还可以用来分析dump文件（可以通过jmap生成）
 
 （左上角点击 文件 - 装入，导入dump文件，然后分析）
 
 ![image](https://user-images.githubusercontent.com/10209135/100319607-e1b50b00-2ffa-11eb-9873-400084f6223f.png)
+
+TODO
 
 #### Arthas-Alibaba开源的Java诊断工具
 
@@ -620,6 +641,3 @@ TODO
 如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GC Roots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息以及GC Roots引用链的信息，就可以比较准确地定位出泄漏代码的位置
 
 如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗
-
-#### JAVA反射速度测试
-
