@@ -13,7 +13,6 @@
     - [VisualVM-多合一故障处理工具](#VisualVM-多合一故障处理工具)
     - [Arthas-Alibaba开源的Java诊断工具](#Arthas-Alibaba开源的Java诊断工具)
   - [性能调优记录](#性能调优记录)
-    - [常用调优命令](#常用调优命令)
     - [程序死循环问题排查](#程序死循环问题排查)
     - [程序死锁问题排查](#程序死锁问题排查)
     - [CPU占用过高问题排查](#CPU占用过高问题排查)
@@ -35,7 +34,7 @@
 
 #### jps-虚拟机进程状况工具
 
-jps，JVM Process Status Tool，显示指定系统内所有的 Hotspot 虚拟机进程。查看源码：[Jps.java](https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/jdk/src/share/classes/sun/tools/jps/Jps.java)
+jps，JVM Process Status Tool，显示指定系统内所有的 Hotspot 虚拟机进程
 
 命令指南
 ```
@@ -125,7 +124,7 @@ Definitions:
 |-util pid|统计gc信息统计|
 |-printcompilation pid|当前VM执行的信息|
 
-以 -gc 为例子，先通过 jps 获取 pid，然后执行 jstat -gc <pid>
+以 -gc 为例子，先通过 jps 获取 pid，然后执行 jstat -gc < pid >，得到如下结果
 
 ```
 jstat -gc 16952
@@ -135,35 +134,112 @@ jstat -gc 16952
 
 #### jinfo-Java配置信息工具
 
-#### jmap-Java内存映像工具
+jinfo，Configuration Info for Java，作用是实时查看和调整虚拟机各项参数
 
-#### jhat-虚拟机堆转储快照分析工具
+命令指南
 
-#### jstack-Java堆栈跟踪工具
+```
+jinfo
+Usage:
+    jinfo [option] <pid>
+        (to connect to running process)
+    jinfo [option] <executable <core>
+        (to connect to a core file)
+    jinfo [option] [server_id@]<remote server IP or hostname>
+        (to connect to remote debug server)
 
-### 可视化故障处理工具
+where <option> is one of:
+    -flag <name>         to print the value of the named VM flag
+    -flag [+|-]<name>    to enable or disable the named VM flag
+    -flag <name>=<value> to set the named VM flag to the given value
+    -flags               to print VM flags
+    -sysprops            to print Java system properties
+    <no option>          to print both of the above
+    -h | -help           to print this help message
+```
 
-#### JHSDB-基于服务性代理的调试工具
+先通过 jps 获取 pid，然后执行 jinfo < pid >，得到如下结果
 
-#### JConsole-Java监视与管理控制台
+```
+jinfo 16952
+Attaching to process ID 16952, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.231-b11
+Java System Properties:
 
-### 生产环境中的故障处理工具
+java.runtime.name = Java(TM) SE Runtime Environment
+java.vm.version = 25.231-b11
+sun.boot.library.path = C:\Program Files\Java\jdk1.8.0_231\jre\bin
+java.vendor.url = http://java.oracle.com/
+java.vm.vendor = Oracle Corporation
+path.separator = ;
+file.encoding.pkg = sun.io
+java.vm.name = Java HotSpot(TM) 64-Bit Server VM
+sun.os.patch.level =
+sun.java.launcher = SUN_STANDARD
+user.script =
+user.country = CN
+user.dir = D:\workspace\luban-jvm-research
+java.vm.specification.name = Java Virtual Machine Specification
+java.runtime.version = 1.8.0_231-b11
+java.awt.graphicsenv = sun.awt.Win32GraphicsEnvironment
+os.arch = amd64
+java.endorsed.dirs = C:\Program Files\Java\jdk1.8.0_231\jre\lib\endorsed
+line.separator =
 
-#### VisualVM-多合一故障处理工具
+java.io.tmpdir = C:\Users\Admin\AppData\Local\Temp\
+java.vm.specification.vendor = Oracle Corporation
+user.variant =
+os.name = Windows 10
+sun.jnu.encoding = GBK
+java.library.path = C:\Program Files\Java\jdk1.8.0_231\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;D:\download\qshell-windows-x64-v2.4.1.exe;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;D:\qiniu\tools;D:\download\arthas-packaging-3.4.4-bin\;D:\ffmpeg\bin;D:\Git\cmd;C:\MinGW\bin;C:\Program Files\Java\jdk1.8.0_231\bin;D:\GnuWin32\bin;C:\Users\Admin\Desktop\plan\2020\gradle-5.5.1-bin\gradle-5.5.1\bin;C:\Program Files\MySQL\MySQL Server 8.0\bin;D:\download\v2ray-windows-64;D:\erl-23.1\bin;D:\RabbitMQ Server\rabbitmq_server-3.8.9\sbin;D:\download\Redis-x64-5.0.9;D:\nodejs\;D:\python2.7.18;C:\ProgramData\chocolatey\bin;C:\Program Files\dotnet\;C:\Users\Admin\AppData\Local\Microsoft\WindowsApps;;D:\Microsoft VS Code\bin;C:\Users\Admin\AppData\Roaming\npm;C:\Users\Admin\.dotnet\tools;.
+java.specification.name = Java Platform API Specification
+java.class.version = 52.0
+sun.management.compiler = HotSpot 64-Bit Tiered Compilers
+os.version = 10.0
+user.home = C:\Users\Admin
+user.timezone = Asia/Shanghai
+java.awt.printerjob = sun.awt.windows.WPrinterJob
+file.encoding = UTF-8
+java.specification.version = 1.8
+user.name = Admin
+java.class.path = C:\Program Files\Java\jdk1.8.0_231\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\deploy.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\access-bridge-64.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\cldrdata.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\dnsns.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\jaccess.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\jfxrt.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\localedata.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\nashorn.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\sunec.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\sunjce_provider.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\sunmscapi.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\sunpkcs11.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext\zipfs.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\javaws.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\jfxswt.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\management-agent.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\plugin.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\rt.jar;D:\workspace\luban-jvm-research\target\classes;C:\Users\Admin\.m2\repository\org\openjdk\jol\jol-core\0.10\jol-core-0.10.jar;C:\Users\Admin\.m2\repository\mysql\mysql-connector-java\8.0.20\mysql-connector-java-8.0.20.jar;C:\Users\Admin\.m2\repository\com\google\protobuf\protobuf-java\3.6.1\protobuf-java-3.6.1.jar;C:\Users\Admin\.m2\repository\cglib\cglib\2.2.2\cglib-2.2.2.jar;C:\Users\Admin\.m2\repository\asm\asm\3.3.1\asm-3.3.1.jar;D:\IntelliJ IDEA 2020.2.3\lib\idea_rt.jar
+java.vm.specification.version = 1.8
+sun.arch.data.model = 64
+sun.java.command = com.peter.jvm.example2.oom.HeapOOM
+java.home = C:\Program Files\Java\jdk1.8.0_231\jre
+user.language = zh
+java.specification.vendor = Oracle Corporation
+awt.toolkit = sun.awt.windows.WToolkit
+java.vm.info = mixed mode
+java.version = 1.8.0_231
+java.ext.dirs = C:\Program Files\Java\jdk1.8.0_231\jre\lib\ext;C:\Windows\Sun\Java\lib\ext
+sun.boot.class.path = C:\Program Files\Java\jdk1.8.0_231\jre\lib\resources.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\rt.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\jce.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.8.0_231\jre\lib\jfr.jar;C:\Program Files\Java\jdk1.8.0_231\jre\classes
+java.vendor = Oracle Corporation
+file.separator = \
+java.vendor.url.bug = http://bugreport.sun.com/bugreport/
+sun.io.unicode.encoding = UnicodeLittle
+sun.cpu.endian = little
+sun.desktop = windows
+sun.cpu.isalist = amd64
 
-TODO
+VM Flags:
+Non-default VM flags: -XX:CICompilerCount=3 -XX:+HeapDumpOnOutOfMemoryError -XX:InitialHeapSize=52428800 -XX:MaxHeapSize=52428800 -XX:MaxNewSize=17301504 -XX:MinHeapDeltaBytes=524288 -XX:NewSize=17301504 -XX:OldSize=35127296 -XX:+PrintGC -XX:+PrintGCDetails -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseFastUnorderedTimeStamps -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
+Command line:  -Xms50M -Xmx50M -XX:+HeapDumpOnOutOfMemoryError -verbose:gc -XX:+PrintGCDetails -javaagent:D:\IntelliJ IDEA 2020.2.3\lib\idea_rt.jar=56037:D:\IntelliJ IDEA 2020.2.3\bin -Dfile.encoding=UTF-8
+```
 
-安装插件VisualGC，完成后就可以查看VisualGC界面了，该界面对于分析非常有用
+同样的，还有其他办法也能达到 jinfo 的效果，比如 jps -v，得到如下结果
 
-![image](https://user-images.githubusercontent.com/10209135/100307198-37c88500-2fe0-11eb-9741-5d8f569b2039.png)
+```
+jps -v
+10536 Launcher -Xmx700m -Djava.awt.headless=true -Djava.endorsed.dirs="" -Djdt.compiler.useSingleThread=true -Dpreload.project.path=D:/workspace/luban-jvm-research -Dpreload.config.path=C:/Users/Admin/AppData/Roaming/JetBrains/IntelliJIdea2020.2/options -Dcompile.parallel=false -Drebuild.on.dependency.change=true -Dio.netty.initialSeedUniquifier=-4213499304903621881 -Dfile.encoding=GBK -Duser.language=zh -Duser.country=CN -Didea.paths.selector=IntelliJIdea2020.2 -Didea.home.path=D:\IntelliJ IDEA 2020.2.3 -Didea.config.path=C:\Users\Admin\AppData\Roaming\JetBrains\IntelliJIdea2020.2 -Didea.plugins.path=C:\Users\Admin\AppData\Roaming\JetBrains\IntelliJIdea2020.2\plugins -Djps.log.dir=C:/Users/Admin/AppData/Local/JetBrains/IntelliJIdea2020.2/log/build-log -Djps.fallback.jdk.home=D:/IntelliJ IDEA 2020.2.3/jbr -Djps.fallback.jdk.version=11.0.8 -Dio.netty.noUnsafe=true -Djava.io.tmpdir=C:/Users/Admin/AppData/Local/JetBrains/IntelliJIdea2020.2/compile-server/luban-jvm-research_3f84df24/_temp_ -Djps.backward.ref.index.builder=true
+16952 HeapOOM -Xms50M -Xmx50M -XX:+HeapDumpOnOutOfMemoryError -verbose:gc -XX:+PrintGCDetails -javaagent:D:\IntelliJ IDEA 2020.2.3\lib\idea_rt.jar=56037:D:\IntelliJ IDEA 2020.2.3\bin -Dfile.encoding=UTF-8
+2008 Jps -Dapplication.home=C:\Program Files\Java\jdk1.8.0_231 -Xms8m
+10876  exit -Xms128m -Xmx2039m -XX:ReservedCodeCacheSize=240m -XX:+UseConcMarkSweepGC -XX:SoftRefLRUPolicyMSPerMB=50 -ea -XX:CICompilerCount=2 -Dsun.io.useCanonPrefixCache=false -Djdk.http.auth.tunneling.disabledSchemes="" -XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow -Djdk.attach.allowAttachSelf=true -Dkotlinx.coroutines.debug=off -Djdk.module.illegalAccess.silent=true -javaagent:C:\Users\Public\.jetbrains\jetbrains-agent-v3.2.0.0f1f.69e=6e68f9eb,LFq51qqupnaiTNn39w6zATiOTxZI2JYuRJEBlzmUDv4zeeNlXhMgJZVb0q5QkLr+CIUrSuNB7ucifrGXawLB4qswPOXYG7+ItDNUR/9UkLTUWlnHLX07hnR1USOrWIjTmbytcIKEdaI6x0RskyotuItj84xxoSBP/iRBW2EHpOc -Djb.vmOptionsFile=C:\Users\Admin\AppData\Roaming\JetBrains\IntelliJIdea2020.2\idea64.exe.vmoptions -Djava.library.path=D:\IntelliJ IDEA 2020.2.3\jbr\\bin;D:\IntelliJ IDEA 2020.2.3\jbr\\bin\server -Didea.jre.check=true -Dide.native.launcher=true -Didea.vendor.name=JetBrains -Didea.paths.selector=IntelliJIdea2020.2 -XX:ErrorFile=C:\Users\Admin\java_error_in_idea_%p.log -XX:HeapDumpPath=C:
+```
 
-#### Arthas-Alibaba开源的Java诊断工具
-
-### 性能调优案例
-
-#### 常用调优命令
-
-java -XX:+PrintCommandLineFlags -version，查看JVM常用参数
+java -XX:+PrintCommandLineFlags -version，查看JVM常用参数，得到如下结果
 
 ```
 -XX:InitialHeapSize=267373952 -XX:MaxHeapSize=4277983232 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
@@ -172,7 +248,7 @@ Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
 Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
 ```
 
-java -XX:+PrintFlagsFinal -version，查看JVM主要参数
+java -XX:+PrintFlagsFinal -version，查看JVM主要参数，得到如下结果
 
 ```
     uintx MarkStackSize                             = 4194304                             {product}
@@ -207,6 +283,32 @@ java version "1.8.0_231"
 Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
 Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
 ```
+
+#### jmap-Java内存映像工具
+
+#### jhat-虚拟机堆转储快照分析工具
+
+#### jstack-Java堆栈跟踪工具
+
+### 可视化故障处理工具
+
+#### JHSDB-基于服务性代理的调试工具
+
+#### JConsole-Java监视与管理控制台
+
+### 生产环境中的故障处理工具
+
+#### VisualVM-多合一故障处理工具
+
+TODO
+
+安装插件VisualGC，完成后就可以查看VisualGC界面了，该界面对于分析非常有用
+
+![image](https://user-images.githubusercontent.com/10209135/100307198-37c88500-2fe0-11eb-9741-5d8f569b2039.png)
+
+#### Arthas-Alibaba开源的Java诊断工具
+
+### 性能调优案例
 
 #### 程序死循环问题排查
 
