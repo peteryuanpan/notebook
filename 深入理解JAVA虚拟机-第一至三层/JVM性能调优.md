@@ -37,7 +37,7 @@
 jps，JVM Process Status Tool，显示指定系统内所有的 Hotspot 虚拟机进程
 
 命令指南
-```
+```cmd
 jps -help
 usage: jps [-help]
        jps [-q] [-mlvV] [<hostid>]
@@ -72,7 +72,7 @@ C:\Users\Admin\AppData\Local\Temp\
 
 再查询jps命令，可以看出来是一一对应的
 
-```
+```cmd
 jps -l
 15976 sun.tools.jps.Jps
 10876
@@ -85,7 +85,7 @@ jstat，JVM Statistics Monitoring Tool，是用于监视虚拟机各种运行状
 
 命令指南
 
-```
+```cmd
 jstat
 invalid argument count
 Usage: jstat -help|-options
@@ -126,7 +126,7 @@ Definitions:
 
 以 -gc 为例子，先通过 jps 获取 pid，然后执行 jstat -gc < pid >，得到如下结果
 
-```
+```cmd
 jstat -gc 16952
  S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
 2048.0 2048.0  0.0    0.0   12800.0   5329.2   34304.0      0.0     4480.0 776.7  384.0   76.6       0    0.000   0      0.000    0.000
@@ -138,7 +138,7 @@ jinfo，Configuration Info for Java，作用是实时查看和调整虚拟机各
 
 命令指南
 
-```
+```cmd
 jinfo
 Usage:
     jinfo [option] <pid>
@@ -160,7 +160,7 @@ where <option> is one of:
 
 先通过 jps 获取 pid，然后执行 jinfo < pid >，得到如下结果
 
-```
+```cmd
 jinfo 16952
 Attaching to process ID 16952, please wait...
 Debugger attached successfully.
@@ -229,9 +229,18 @@ Non-default VM flags: -XX:CICompilerCount=3 -XX:+HeapDumpOnOutOfMemoryError -XX:
 Command line:  -Xms50M -Xmx50M -XX:+HeapDumpOnOutOfMemoryError -verbose:gc -XX:+PrintGCDetails -javaagent:D:\IntelliJ IDEA 2020.2.3\lib\idea_rt.jar=56037:D:\IntelliJ IDEA 2020.2.3\bin -Dfile.encoding=UTF-8
 ```
 
-同样的，还有其他办法也能达到 jinfo 的效果，比如 jps -v，得到如下结果
+可以通过 jinfo -flag +-name | name=value pid 来修改参数值
+
+可以通过 jinfo -flag name pid 来查看参数值，得到如下结果
 
 ```
+jinfo -flag MaxNewSize 16952
+-XX:MaxNewSize=17301504
+```
+
+同样的，还有其他办法也能达到 jinfo 的效果，比如 jps -v，得到如下结果
+
+```cmd
 jps -v
 10536 Launcher -Xmx700m -Djava.awt.headless=true -Djava.endorsed.dirs="" -Djdt.compiler.useSingleThread=true -Dpreload.project.path=D:/workspace/luban-jvm-research -Dpreload.config.path=C:/Users/Admin/AppData/Roaming/JetBrains/IntelliJIdea2020.2/options -Dcompile.parallel=false -Drebuild.on.dependency.change=true -Dio.netty.initialSeedUniquifier=-4213499304903621881 -Dfile.encoding=GBK -Duser.language=zh -Duser.country=CN -Didea.paths.selector=IntelliJIdea2020.2 -Didea.home.path=D:\IntelliJ IDEA 2020.2.3 -Didea.config.path=C:\Users\Admin\AppData\Roaming\JetBrains\IntelliJIdea2020.2 -Didea.plugins.path=C:\Users\Admin\AppData\Roaming\JetBrains\IntelliJIdea2020.2\plugins -Djps.log.dir=C:/Users/Admin/AppData/Local/JetBrains/IntelliJIdea2020.2/log/build-log -Djps.fallback.jdk.home=D:/IntelliJ IDEA 2020.2.3/jbr -Djps.fallback.jdk.version=11.0.8 -Dio.netty.noUnsafe=true -Djava.io.tmpdir=C:/Users/Admin/AppData/Local/JetBrains/IntelliJIdea2020.2/compile-server/luban-jvm-research_3f84df24/_temp_ -Djps.backward.ref.index.builder=true
 16952 HeapOOM -Xms50M -Xmx50M -XX:+HeapDumpOnOutOfMemoryError -verbose:gc -XX:+PrintGCDetails -javaagent:D:\IntelliJ IDEA 2020.2.3\lib\idea_rt.jar=56037:D:\IntelliJ IDEA 2020.2.3\bin -Dfile.encoding=UTF-8
@@ -241,7 +250,7 @@ jps -v
 
 java -XX:+PrintCommandLineFlags -version，查看JVM常用参数，得到如下结果
 
-```
+```cmd
 -XX:InitialHeapSize=267373952 -XX:MaxHeapSize=4277983232 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
 java version "1.8.0_231"
 Java(TM) SE Runtime Environment (build 1.8.0_231-b11)
@@ -250,7 +259,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
 
 java -XX:+PrintFlagsFinal -version，查看JVM主要参数，得到如下结果
 
-```
+```cmd
     uintx MarkStackSize                             = 4194304                             {product}
     uintx MarkStackSizeMax                          = 536870912                           {product}
     uintx MarkSweepAlwaysCompactCount               = 4                                   {product}
