@@ -39,17 +39,17 @@
 
 jps，JVM Process Status Tool，显示指定系统内所有的 Hotspot 虚拟机进程。查看源码：[Jps.java](https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/jdk/src/share/classes/sun/tools/jps/Jps.java)
 
-参数
-- -m：输出Java进程的ID + main函数所在类的名词 + 传递给main函数的参数
-- -l：输出Java进程的ID + main函数所在类的全限定名（包名 + 类名）
-- -v：输出Java进程的ID + main函数所在类的名称 + 传递给JVM的参数（可通过此方式快速查看JVM参数是否设置成功）
+命令指南
+```
+jps -help
+usage: jps [-help]
+       jps [-q] [-mlvV] [<hostid>]
 
-![image](https://user-images.githubusercontent.com/10209135/100350818-6d439180-3025-11eb-8e4b-cc74dd85c04d.png)
+Definitions:
+    <hostid>:      <hostname>[:<port>]
+```
 
-
-思考两个问题：（1）jps结果如何来的，（2）为何有时 kill 杀死了进程，jps结果中还有
-
-通过如下方法可以打印本地电脑上 jps 命令输出的本地文件
+通过如下方法可以打印本地电脑上 jps 命令输出的本地 hsperfdata 文件所在文件夹
 
 ```java
 package jtools;
@@ -69,21 +69,49 @@ public class JPSTempFile {
 C:\Users\Admin\AppData\Local\Temp\
 ```
 
-查看本地文件该路径
+最终路径 = 输出结果 + "hsperfdata_<Username>"（我这里是Admin）
 
 ![image](https://user-images.githubusercontent.com/10209135/100350483-ef7f8600-3024-11eb-96ee-d0e93d7191cc.png)
 
-再查询jps命令
+再查询jps命令，可以看出来是一一对应的
+
 ```
-D:\workspace\luban-jvm-research>jps -l
+jps -l
 15976 sun.tools.jps.Jps
 10876
 5692 org.jetbrains.jps.cmdline.Launcher
 ```
 
-可以看出来是一一对应的，这就回答了上面的问题（2）。至于问题（1），是因为非正常退出进程，临时文件没有删除
-
 #### jstat-虚拟机统计信息监视工具
+
+jstat，JVM Statistics Monitoring Tool，是用于监视虚拟机各种运行状态信息的命令行工具。它可以显示本地或者远程虚拟机进程中 类加载、内存、垃圾收集、JIT编译 等运行数据
+
+命令指南
+
+```
+jstat
+invalid argument count
+Usage: jstat -help|-options
+       jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]
+
+Definitions:
+  <option>      An option reported by the -options option
+  <vmid>        Virtual Machine Identifier. A vmid takes the following form:
+                     <lvmid>[@<hostname>[:<port>]]
+                Where <lvmid> is the local vm identifier for the target
+                Java virtual machine, typically a process id; <hostname> is
+                the name of the host running the target Java virtual machine;
+                and <port> is the port number for the rmiregistry on the
+                target host. See the jvmstat documentation for a more complete
+                description of the Virtual Machine Identifier.
+  <lines>       Number of samples between header lines.
+  <interval>    Sampling interval. The following forms are allowed:
+                    <n>["ms"|"s"]
+                Where <n> is an integer and the suffix specifies the units as
+                milliseconds("ms") or seconds("s"). The default units are "ms".
+  <count>       Number of samples to take before terminating.
+  -J<flag>      Pass <flag> directly to the runtime system.
+```
 
 #### jinfo-Java配置信息工具
 
