@@ -600,7 +600,7 @@ VisualVM 包含了所有基础故障处理工具的功能，且可视化
 - 离线程序快照；收集程序的运行时配置、线程dump、内存dump等信息建立一个快照，可以将快照发送开发者处进行 Bug 反馈
 - 结合其他 plugins 做到无限可能性 ...
 
-##### 启动VisualVM
+##### 启动VisualVM及VisualGC插件
 
 命令行执行 jvisualvm，点击左边 attch 到具体进程，可以得到如下结果
 
@@ -614,9 +614,31 @@ VisualVM 还可以用来分析dump文件（可以通过jmap生成）
 
 （左上角点击 文件 - 装入，导入dump文件，然后分析）
 
-![image](https://user-images.githubusercontent.com/10209135/100319607-e1b50b00-2ffa-11eb-9873-400084f6223f.png)
+VisualVM 还支持对正在运行的线程生成堆转储快照、线程堆栈快照
 
-TODO
+（左边点击一个具体线程，左上角点击 应用程序 - 堆Dump 或者 线程Dump）
+
+下面是堆Dump的一个分析界面，它其中除了支持显示 概要、类、实例数 等详细信息外，还有一个OQL控制台功能，可以使用 sql 语句来查询堆中对象
+
+![image](https://user-images.githubusercontent.com/10209135/100372246-ef42b300-3043-11eb-904d-2af924a86f8b.png)
+
+##### 分析程序性能
+
+VisualVM提供了程序运行期间方法级的CPU执行时间分析以及内存分析，以用于在业务分析中找到最有价值的调优方法或对象
+
+如果是CPU分析，将会统计出每个方法的执行次数、执行耗时
+
+（左边点击一个具体线程，点击Profiler - CPU，运行一段时间后点击停止）
+
+![image](https://user-images.githubusercontent.com/10209135/100373593-fa96de00-3045-11eb-80d1-a4fc972bf7d6.png)
+
+如果是内存分析，则会统计每个方法关联的对象数以及这些对象所占的空间
+
+（左边点击一个具体线程，点击Profiler - 内存，运行一段时间后点击停止）
+
+![image](https://user-images.githubusercontent.com/10209135/100373663-1306f880-3046-11eb-9ec1-3bf71d9cc890.png)
+
+##### BTrace动态日志跟踪
 
 #### Arthas-Alibaba开源的Java诊断工具
 
