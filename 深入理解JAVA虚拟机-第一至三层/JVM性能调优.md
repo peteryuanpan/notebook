@@ -27,7 +27,7 @@
 
 ### 基础故障处理工具
 
-安装了JAVA后，在 %JAVA_HOME%/bin/ 下存在这些工具，它们是JDK内部自带的工具，用于问题排查和分析
+安装了JAVA后，在 %JAVA_HOME%/bin/ 下存在许多工具，它们是JDK内部自带的工具，用于问题排查和分析
 
 ![image](https://user-images.githubusercontent.com/10209135/100350164-6ff1b700-3024-11eb-8870-e471ba1adf13.png)
 
