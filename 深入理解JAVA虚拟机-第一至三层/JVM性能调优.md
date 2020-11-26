@@ -12,8 +12,7 @@
     - [VisualVM-多合一故障处理工具](#VisualVM-多合一故障处理工具)
     - [Arthas-Alibaba开源的Java诊断工具](#Arthas-Alibaba开源的Java诊断工具)
   - [性能调优记录](#性能调优记录)
-    - [程序死循环问题排查](#程序死循环问题排查)
-    - [程序死锁问题排查](#程序死锁问题排查)
+    - [程序死循环和死锁问题排查](#程序死循环和死锁问题排查)
     - [CPU占用过高问题排查](#CPU占用过高问题排查)
     - [OOM异常问题排查](#OOM异常问题排查)
     - [JAVA反射速度测试](#JAVA反射速度测试)
@@ -303,7 +302,8 @@ jmap，Memory Map for Java，用于生成堆转储快照（一般称为 heapdump
 - Linux系统下，通过 kill -3 命令发送进程退出信号“吓唬”一下虚拟机，也能拿到 dump 文件
 
 命令指南
-```
+
+```cmd
 jmap
 Usage:
     jmap [option] <pid>
@@ -337,7 +337,7 @@ where <option> is one of:
 
 通过 jps 拿到 pid，执行 jmap -dump:format=b,file=1.bin < pid >，得到如下结果
 
-```
+```cmd
 jmap -dump:format=b,file=1.bin 16868
 Dumping heap to C:\Users\Admin\1.bin ...
 Heap dump file created
@@ -355,7 +355,7 @@ jhat，JVM Heap Analysis Tool，与 jmap 搭配使用，来分析 jmap 生成的
 
 通过 jmap 生成 1.bin 这样的 dump 文件，执行 jhat 1.bin，得到如下结果
 
-```
+```cmd
 jhat 1.bin
 Reading from 1.bin...
 Dump file created Thu Nov 26 21:57:13 CST 2020
@@ -375,6 +375,167 @@ Server is ready.
 ![image](https://user-images.githubusercontent.com/10209135/100362563-8bfe5400-3036-11eb-81a0-b47a6300a4ab.png)
 
 #### jstack-Java堆栈跟踪工具
+
+jstack，Stack Trace for Java，用于生成虚拟机当前时刻的线程快照（一般称为 threaddump 或者 javacore 文件）
+
+线程快照就是当前虚拟机每一条线程正在执行的方法堆栈的集合，生成快照的主要目的是定位线程出现长时间停顿的原因，如线程死锁、死循环、请求外部资源导致的长时间等待等
+
+命令指南
+
+```cmd
+jstack
+Usage:
+    jstack [-l] <pid>
+        (to connect to running process)
+    jstack -F [-m] [-l] <pid>
+        (to connect to a hung process)
+    jstack [-m] [-l] <executable> <core>
+        (to connect to a core file)
+    jstack [-m] [-l] [server_id@]<remote server IP or hostname>
+        (to connect to a remote debug server)
+
+Options:
+    -F  to force a thread dump. Use when jstack <pid> does not respond (process is hung)
+    -m  to print both java and native frames (mixed mode)
+    -l  long listing. Prints additional information about locks
+    -h or -help to print this help message
+```
+
+通过 jps 获取到 pid，执行 jstack < pid >
+
+```cmd
+jstack 16044
+2020-11-26 22:43:05
+Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.231-b11 mixed mode):
+
+"Service Thread" #10 daemon prio=9 os_prio=0 tid=0x00000000156ad800 nid=0x41ac runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C1 CompilerThread2" #9 daemon prio=9 os_prio=2 tid=0x0000000015612800 nid=0x3650 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread1" #8 daemon prio=9 os_prio=2 tid=0x0000000015610800 nid=0x4580 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"C2 CompilerThread0" #7 daemon prio=9 os_prio=2 tid=0x0000000015610000 nid=0x46d0 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Monitor Ctrl-Break" #6 daemon prio=5 os_prio=0 tid=0x0000000015609000 nid=0x4588 runnable [0x0000000015c3e000]
+   java.lang.Thread.State: RUNNABLE
+        at java.net.SocketInputStream.socketRead0(Native Method)
+        at java.net.SocketInputStream.socketRead(SocketInputStream.java:116)
+        at java.net.SocketInputStream.read(SocketInputStream.java:171)
+        at java.net.SocketInputStream.read(SocketInputStream.java:141)
+        at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:284)
+        at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:326)
+        at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:178)
+        - locked <0x00000000ff112c00> (a java.io.InputStreamReader)
+        at java.io.InputStreamReader.read(InputStreamReader.java:184)
+        at java.io.BufferedReader.fill(BufferedReader.java:161)
+        at java.io.BufferedReader.readLine(BufferedReader.java:324)
+        - locked <0x00000000ff112c00> (a java.io.InputStreamReader)
+        at java.io.BufferedReader.readLine(BufferedReader.java:389)
+        at com.intellij.rt.execution.application.AppMainV2$1.run(AppMainV2.java:61)
+
+"Attach Listener" #5 daemon prio=5 os_prio=2 tid=0x0000000013bc2000 nid=0x4190 waiting on condition [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Signal Dispatcher" #4 daemon prio=9 os_prio=2 tid=0x0000000015593000 nid=0x3dd4 runnable [0x0000000000000000]
+   java.lang.Thread.State: RUNNABLE
+
+"Finalizer" #3 daemon prio=8 os_prio=1 tid=0x000000000367d800 nid=0x3ca8 in Object.wait() [0x000000001553f000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000fef88ed8> (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)
+        - locked <0x00000000fef88ed8> (a java.lang.ref.ReferenceQueue$Lock)
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:165)
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:216)
+
+"Reference Handler" #2 daemon prio=10 os_prio=2 tid=0x0000000013b9c000 nid=0x4424 in Object.wait() [0x000000001543f000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x00000000fef86c00> (a java.lang.ref.Reference$Lock)
+        at java.lang.Object.wait(Object.java:502)
+        at java.lang.ref.Reference.tryHandlePending(Reference.java:191)
+        - locked <0x00000000fef86c00> (a java.lang.ref.Reference$Lock)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:153)
+
+"main" #1 prio=5 os_prio=0 tid=0x0000000003583800 nid=0x31f4 waiting on condition [0x000000000338f000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+        at java.lang.Thread.sleep(Native Method)
+        at com.peter.jvm.example2.oom.HeapOOM.main(HeapOOM.java:12)
+
+"VM Thread" os_prio=2 tid=0x0000000013b78000 nid=0x19a0 runnable
+
+"GC task thread#0 (ParallelGC)" os_prio=0 tid=0x0000000003599000 nid=0x4354 runnable
+
+"GC task thread#1 (ParallelGC)" os_prio=0 tid=0x000000000359a800 nid=0x45dc runnable
+
+"GC task thread#2 (ParallelGC)" os_prio=0 tid=0x000000000359c000 nid=0x3448 runnable
+
+"GC task thread#3 (ParallelGC)" os_prio=0 tid=0x000000000359e800 nid=0x46dc runnable
+
+"GC task thread#4 (ParallelGC)" os_prio=0 tid=0x00000000035a0800 nid=0x4610 runnable
+
+"GC task thread#5 (ParallelGC)" os_prio=0 tid=0x00000000035a2000 nid=0x1180 runnable
+
+"VM Periodic Task Thread" os_prio=2 tid=0x00000000156e9000 nid=0x3794 waiting on condition
+
+JNI global references: 12
+```
+
+同样的，还可以通过 Thread.getAllStackTraces 来打印出如 jstack 一样的堆栈输出信息
+
+```java
+package jtools;
+
+import java.util.Map;
+
+public class JStackTest {
+
+    public static void main(String[] args) {
+        for (Map.Entry<Thread, StackTraceElement[]> stackTrace : Thread.getAllStackTraces().entrySet()) {
+            Thread thread = stackTrace.getKey();
+            System.out.println("\nThread：" + thread.getName() + "\n");
+            StackTraceElement[] stack = stackTrace.getValue();
+            for (StackTraceElement element : stack) {
+                System.out.println("\t" + element + "\t");
+            }
+        }
+    }
+}
+```
+
+输出结果
+```
+Thread：main
+
+	java.lang.Thread.dumpThreads(Native Method)	
+	java.lang.Thread.getAllStackTraces(Thread.java:1610)	
+	jtools.JStackTest.main(JStackTest.java:8)
+  
+Thread：Reference Handler
+
+	java.lang.Object.wait(Native Method)	
+	java.lang.Object.wait(Object.java:502)	
+	java.lang.ref.Reference.tryHandlePending(Reference.java:191)	
+	java.lang.ref.Reference$ReferenceHandler.run(Reference.java:153)	
+  
+Thread：Finalizer
+
+	java.lang.Object.wait(Native Method)	
+	java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:144)	
+	java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:165)	
+	java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:216)	
+
+Thread：Monitor Ctrl-Break
+
+	java.net.Socket.setImpl(Socket.java:520)	
+	java.net.Socket.<init>(Socket.java:441)	
+	java.net.Socket.<init>(Socket.java:228)	
+	com.intellij.rt.execution.application.AppMainV2$1.run(AppMainV2.java:56)	
+```
 
 ### 进阶故障处理工具
 
@@ -412,9 +573,7 @@ TODO
 
 ### 性能调优记录
 
-#### 程序死循环问题排查
-
-#### 程序死锁问题排查
+#### 程序死循环和死锁问题排查
 
 #### CPU占用过高问题排查
 
