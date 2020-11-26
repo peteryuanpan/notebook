@@ -309,13 +309,29 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
 
 #### VisualVM-多合一故障处理工具
 
-TODO
+VisualVM，All-in-One Java Troubleshooting Tool，是功能最强大的运行监视和故障处理程序之一，曾经在很长一段时间内是Oracle官方主力发展的虚拟机故障处理工具
 
-安装插件VisualGC，完成后就可以查看VisualGC界面了，该界面对于分析非常有用
+Oracle曾在VisualVM的软件说明中写上了“All-in-One”的字样，预示着它除了常规的运行监视、故障处理外，还将提供其他方面的能力，譬如性能分析（Profiling）。VisualVM的性能分析功能比起JProfiler、YourKit等专业且收费的Profiling工具都不遑多让。而且相比这些第三方工具，VisualVM还有一个很大的优点：不需要被监视的程序基于特殊Agent去运行，因此它的通用性很强，对应用程序实际性能的影响也较小，使得它可以直接应用在生产环境中。这个优点是JProfiler、YourKit等工具无法与之媲美的
 
-![image](https://user-images.githubusercontent.com/10209135/100307198-37c88500-2fe0-11eb-9741-5d8f569b2039.png)
+命令行执行 jvisualvm，可以得到如下结果
+
+（需要安装插件VisualGC，左上角点击工具 - 插件 - 可用插件 - VisualGC，点击安装，完成后就可以点击VisualGC界面了，该界面对于分析非常有用）
+
+![image](https://user-images.githubusercontent.com/10209135/100355624-0cb85280-302d-11eb-975e-f8ea194fad8d.png)
+
+jvisualvm 还可以用来分析日志
+
+（左上角点击 文件，装入，导入日志，然后分析）
+
+![image](https://user-images.githubusercontent.com/10209135/100319607-e1b50b00-2ffa-11eb-9873-400084f6223f.png)
+
+这里的日志是通过VM参数 -XX:+HeapDumpOnOutOfMemoryError 打印的，会打印到 project 所在目录下。另外，通过寒泉子 https://memory.console.perfma.com/ ，也可以上传日志后进行分析
 
 #### Arthas-Alibaba开源的Java诊断工具
+
+Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas.aliyun.com/zh-cn/ ，github：https://github.com/alibaba/arthas
+
+TODO
 
 ### 性能调优案例
 
