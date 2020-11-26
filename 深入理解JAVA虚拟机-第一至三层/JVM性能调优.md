@@ -485,7 +485,7 @@ Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.231-b11 mixed mode):
 JNI global references: 12
 ```
 
-同样的，还可以通过 Thread.getAllStackTraces 来打印出如 jstack 一样的堆栈输出信息
+同样的，还可以通过 Thread.getAllStackTraces 来打印出如 jstack 一样的堆栈输出信息（Returns a map of stack traces for all live threads.）
 
 ```java
 package jtools;
@@ -544,6 +544,38 @@ Thread：Monitor Ctrl-Break
 善于总结的朋友可以发现，这些更高级功能的工具，往往继承了前面多个基础故障处理工具的功能，比如 VisualVM 是同时具有 jps、jinfo、jmap、jhat、jstack 功能的
 
 #### JHSDB-基于服务性代理的调试工具
+
+JHSDB是一款基于服务性代理（Serviceability Agent，SA）实现的进程外调试工具。服务性代理是HotSpot虚拟机中一组用于映射Java虚拟机运行信息的、主要基于Java语言（含少量JNI代码）实现的API集合
+
+启动JHSDB，打开cmd，cd 到 %JAVA_HOME$/lib 下，运行 java -cp sa-jdi.jar sun.jvm.hotspot.HSDB，会打开一个看似空白的界面
+
+测试一段代码（让代码进入while循环）
+
+```java
+package com.luban.ziya.peter;
+
+public class TEST1 {
+    public static void main(String[] args) {
+        while(true);
+    }
+}
+```
+
+通过 jps 查看进程ID（这里是5996），在 HSDB 界面左上角点击File > Attach to Hotspot process，输入5996，点击OK或回车
+
+![image](https://user-images.githubusercontent.com/10209135/90361871-d6fce880-e091-11ea-85f8-6a3890caa34c.png)
+
+这样就 attch 进入了一个进程，得到如下结果
+
+![image](https://user-images.githubusercontent.com/10209135/90361965-09a6e100-e092-11ea-8145-a3fbe7548039.png)
+
+HSDB能查看很多内存相关的数据信息，其中很多信息（比如klass、ArrayKlass）都是JVM源码中定义的数据结构
+
+下面贴一下不同的查询结果结果，具体查询过程就忽略了，可以自行研究或者查看文档
+
+![image](https://user-images.githubusercontent.com/10209135/90362306-e466a280-e092-11ea-839c-0f6d1edaaa5a.png)
+
+![image](https://user-images.githubusercontent.com/10209135/90372437-00724000-e0a3-11ea-814c-d2a4edce114c.png)
 
 #### JConsole-Java监视与管理控制台
 
