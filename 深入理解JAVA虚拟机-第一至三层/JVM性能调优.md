@@ -29,11 +29,9 @@
 
 安装了JAVA后，在 %JAVA_HOME%/bin/ 下存在许多工具，它们是JDK内部自带的工具，用于问题排查和分析
 
-![image](https://user-images.githubusercontent.com/10209135/100352674-505c8d80-3028-11eb-809e-90fce04409af.png)
-
 这些工具的源码都在 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/tree/master/jdk/src/share/classes/sun/tools ，都是开源的，且是JAVA代码
 
-![image](https://user-images.githubusercontent.com/10209135/100351120-e347f880-3025-11eb-8cfa-542ec13afa42.png)
+![image](https://user-images.githubusercontent.com/10209135/100352674-505c8d80-3028-11eb-809e-90fce04409af.png)
 
 #### jps-虚拟机进程状况工具
 
