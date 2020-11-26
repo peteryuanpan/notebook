@@ -82,7 +82,7 @@ jps -l
 
 #### jstat-虚拟机统计信息监视工具
 
-jstat，JVM Statistics Monitoring Tool，是用于监视虚拟机各种运行状态信息的命令行工具。它可以显示本地或者远程虚拟机进程中 类加载、内存、垃圾收集、JIT编译 等运行数据
+jstat，JVM Statistics Monitoring Tool，是用于监视虚拟机各种运行状态信息的命令行工具。它可以显示本地或者远程虚拟机进程中 类加载、内存、垃圾收集、JIT编译 等运行数据。jstat 可以理解为 jconsole、jvisualvm 图形界面工具的命令行版本
 
 命令指南
 
@@ -109,6 +109,28 @@ Definitions:
                 milliseconds("ms") or seconds("s"). The default units are "ms".
   <count>       Number of samples to take before terminating.
   -J<flag>      Pass <flag> directly to the runtime system.
+```
+
+|命令|解释|
+|--|--|
+|jstat -class pid|显示加载class的数量，及所占空间等信息|
+|jstat -compiler pid|显示VM实时编译的数量等信息|
+|jstat -gc pid|可以显示gc的信息，查看gc的次数，及时间|其中最后五项，分别是young gc的次数，young gc的时间，full gc的次数，full gc的时间，gc的总时间|
+|jstat -gccapacity|可以显示，VM内存中三代（young,old,perm）对象的使用和占用大小，如：PGCMN显示的是最小perm的内存使用量，PGCMX显示的是perm的内存最大使用量，PGC是当前新生成的perm内存占用量，PC是但前perm内存占用量|其他的可以根据这个类推， OC是old内纯的占用量|
+|jstat -gcnew pid|new对象的信息|
+|jstat -gcnewcapacity pid|new对象的信息及其占用量|
+|jstat -gcold pid|old对象的信息|
+|jstat -gcoldcapacity pid|old对象的信息及其占用量|
+|jstat -gcpermcapacity pid| perm对象的信息及其占用量|
+|jstat -util pid|统计gc信息统计|
+|jstat -printcompilation pid|当前VM执行的信息|
+
+以 -gc 为例子，先通过 jps 获取 pid，然后执行 jstat -gc <pid>
+
+```
+jstat -gc 16952
+ S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT
+2048.0 2048.0  0.0    0.0   12800.0   5329.2   34304.0      0.0     4480.0 776.7  384.0   76.6       0    0.000   0      0.000    0.000
 ```
 
 #### jinfo-Java配置信息工具
