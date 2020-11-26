@@ -309,7 +309,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
 
 #### VisualVM-多合一故障处理工具
 
-VisualVM，All-in-One Java Troubleshooting Tool，是功能最强大的运行监视和故障处理程序之一，是一款带图形界面的非常有用的工具，作为一个合格的JAVA程序员，应熟悉之
+VisualVM，All-in-One Java Troubleshooting Tool，是一款功能强大的运行监视和故障处理工具（带图形界面），作为一个合格的JAVA程序员，应熟悉之
 
 Oracle曾在VisualVM的软件说明中写上了“All-in-One”的字样，预示着它除了常规的运行监视、故障处理外，还将提供其他方面的能力，譬如性能分析（Profiling）。VisualVM的性能分析功能比起JProfiler、YourKit等专业且收费的Profiling工具都不遑多让。而且相比这些第三方工具，VisualVM还有一个很大的优点：不需要被监视的程序基于特殊Agent去运行，因此它的通用性很强，对应用程序实际性能的影响也较小，使得它可以直接应用在生产环境中。这个优点是JProfiler、YourKit等工具无法与之媲美的
 
