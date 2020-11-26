@@ -31,13 +31,13 @@
 
 ![image](https://user-images.githubusercontent.com/10209135/100350164-6ff1b700-3024-11eb-8870-e471ba1adf13.png)
 
-这些工具的源码都在 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/tree/master/jdk/src/share/classes/sun/tools 中，都是JAVA代码，开源的，打开其中一份文件（比如jps/Jps.java），能看到其中有 main 函数
+这些工具的源码都在 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/tree/master/jdk/src/share/classes/sun/tools 中，都是JAVA代码
 
 ![image](https://user-images.githubusercontent.com/10209135/100351120-e347f880-3025-11eb-8cfa-542ec13afa42.png)
 
 #### jps-虚拟机进程状况工具
 
-jps，JVM Process Status Tool，显示指定系统内所有的 Hotspot 虚拟机进程
+jps，JVM Process Status Tool，显示指定系统内所有的 Hotspot 虚拟机进程。查看源码：[Jps.java](https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/blob/master/jdk/src/share/classes/sun/tools/jps/Jps.java)
 
 参数
 - -m：输出Java进程的ID + main函数所在类的名词 + 传递给main函数的参数
