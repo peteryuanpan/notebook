@@ -49,6 +49,12 @@
 
 #### VisualVM-多合一故障处理工具
 
+TODO
+
+安装插件VisualGC，完成后就可以查看VisualGC界面了，该界面对于分析非常有用
+
+![image](https://user-images.githubusercontent.com/10209135/100307198-37c88500-2fe0-11eb-9741-5d8f569b2039.png)
+
 #### Arthas-Alibaba开源的Java诊断工具
 
 ### 性能调优案例
