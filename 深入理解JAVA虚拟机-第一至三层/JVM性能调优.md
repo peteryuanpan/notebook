@@ -6,17 +6,17 @@
     - [jmap-Java内存映像工具](#jmap-Java内存映像工具)
     - [jhat-虚拟机堆转储快照分析工具](#jhat-虚拟机堆转储快照分析工具)
     - [jstack-Java堆栈跟踪工具](#jstack-Java堆栈跟踪工具)
-  - [可视化故障处理工具](#可视化故障处理工具)
+  - [进阶故障处理工具](#进阶故障处理工具)
     - [JHSDB-基于服务性代理的调试工具](#JHSDB-基于服务性代理的调试工具)
     - [JConsole-Java监视与管理控制台](#JConsole-Java监视与管理控制台)
-  - [生产环境中的故障处理工具](#生产环境中的故障处理工具)
     - [VisualVM-多合一故障处理工具](#VisualVM-多合一故障处理工具)
     - [Arthas-Alibaba开源的Java诊断工具](#Arthas-Alibaba开源的Java诊断工具)
   - [性能调优记录](#性能调优记录)
     - [程序死循环问题排查](#程序死循环问题排查)
     - [程序死锁问题排查](#程序死锁问题排查)
     - [CPU占用过高问题排查](#CPU占用过高问题排查)
-    - [JAVA反射是否真的很慢](#JAVA反射是否真的很慢)
+    - [OOM异常问题排查](#OOM异常问题排查)
+    - [JAVA反射速度测试](#JAVA反射速度测试)
 
 # JVM性能调优
 
@@ -158,7 +158,7 @@ where <option> is one of:
     -h | -help           to print this help message
 ```
 
-先通过 jps 获取 pid，然后执行 jinfo < pid >，得到如下结果
+先通过 jps 获取 pid，执行 jinfo < pid >，得到如下结果
 
 ```cmd
 jinfo 16952
@@ -295,17 +295,96 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
 
 #### jmap-Java内存映像工具
 
+jmap，Memory Map for Java，用于生成堆转储快照（一般称为 heapdump 或 dump 文件）
+
+还有其他办法也能生成 dump 文件
+- 通过参数 +XX:+HeapDumpOnOutOfMemoryError，让虚拟机在OOM异常出现之后自动生成 dump 文件
+- 通过参数 -XX:+HeapDumpOnCtrlBeak，可以使用 ctrl + break 键让虚拟机生成 dump 文件
+- Linux系统下，通过 kill -3 命令发送进程退出信号“吓唬”一下虚拟机，也能拿到 dump 文件
+
+命令指南
+```
+jmap
+Usage:
+    jmap [option] <pid>
+        (to connect to running process)
+    jmap [option] <executable <core>
+        (to connect to a core file)
+    jmap [option] [server_id@]<remote server IP or hostname>
+        (to connect to remote debug server)
+
+where <option> is one of:
+    <none>               to print same info as Solaris pmap
+    -heap                to print java heap summary
+    -histo[:live]        to print histogram of java object heap; if the "live"
+                         suboption is specified, only count live objects
+    -clstats             to print class loader statistics
+    -finalizerinfo       to print information on objects awaiting finalization
+    -dump:<dump-options> to dump java heap in hprof binary format
+                         dump-options:
+                           live         dump only live objects; if not specified,
+                                        all objects in the heap are dumped.
+                           format=b     binary format
+                           file=<file>  dump heap to <file>
+                         Example: jmap -dump:live,format=b,file=heap.bin <pid>
+    -F                   force. Use with -dump:<dump-options> <pid> or -histo
+                         to force a heap dump or histogram when <pid> does not
+                         respond. The "live" suboption is not supported
+                         in this mode.
+    -h | -help           to print this help message
+    -J<flag>             to pass <flag> directly to the runtime system
+```
+
+通过 jps 拿到 pid，执行 jmap -dump:format=b,file=1.bin < pid >，得到如下结果
+
+```
+jmap -dump:format=b,file=1.bin 16868
+Dumping heap to C:\Users\Admin\1.bin ...
+Heap dump file created
+```
+
+会在执行目录下生成一份 1.bin 二进制文件，该文件可以从 jvisualvm 工具中导入进行分析，还可以通过寒泉子 https://memory.console.perfma.com/ 上传 dump 文件来进行分析
+
+值得一提的是，jmap 有不少功能在 Windows 平台下是受限的，能使用 -dump、-histo 参数，而 -finalizerinfo、-heap、-permstat、-F 等参数都只能在 Linux / Solairs 平台下使用
+
 #### jhat-虚拟机堆转储快照分析工具
+
+jhat，JVM Heap Analysis Tool，与 jmap 搭配使用，来分析 jmap 生成的堆转储快照。jhat 内置了一个微型的 HTTP/HTML 服务器，生成 dump 文件的分析结果后，可以在浏览器中查看
+
+但这个工具基本已经是“鸡肋”了，原因有二，一是一般不会在生产服务器上进行分析，而是导出到其他机器上，那么就没必要一定使用 jhat 了，二是 jhat 分析功能比较简陋，后面介绍的 VisualVM 会比它功能强大许多
+
+通过 jmap 生成 1.bin 这样的 dump 文件，执行 jhat 1.bin，得到如下结果
+
+```
+jhat 1.bin
+Reading from 1.bin...
+Dump file created Thu Nov 26 21:57:13 CST 2020
+Snapshot read, resolving...
+Resolving 87056 objects...
+Chasing references, expect 17 dots.................
+Eliminating duplicate references.................
+Snapshot resolved.
+Started HTTP server on port 7000
+Server is ready.
+```
+
+浏览器中访问 http://localhost:7000/ ，得到如下结果
+
+（看到这样的HTML界面，还支持点击跳转，有没有一种很原始的感觉? 这应该是早期，或许是20世纪90年代，JAVA程序员的一种原始的调试方法）
+
+![image](https://user-images.githubusercontent.com/10209135/100362563-8bfe5400-3036-11eb-81a0-b47a6300a4ab.png)
 
 #### jstack-Java堆栈跟踪工具
 
-### 可视化故障处理工具
+### 进阶故障处理工具
+
+上面介绍完了基于命令行的基础故障处理工具，下面是更高级的故障处理工具，除了 Arthas 外，JHSDB、JConsole、VisualVM 都具有图形界面功能
+
+善于总结的朋友可以发现，这些更高级功能的工具，往往继承了前面多个基础故障处理工具的功能，比如 VisualVM 是同时具有 jps、jinfo、jmap、jhat、jstack 功能的
 
 #### JHSDB-基于服务性代理的调试工具
 
 #### JConsole-Java监视与管理控制台
-
-### 生产环境中的故障处理工具
 
 #### VisualVM-多合一故障处理工具
 
@@ -313,15 +392,15 @@ VisualVM，All-in-One Java Troubleshooting Tool，是一款功能强大的运行
 
 Oracle曾在VisualVM的软件说明中写上了“All-in-One”的字样，预示着它除了常规的运行监视、故障处理外，还将提供其他方面的能力，譬如性能分析（Profiling）。VisualVM的性能分析功能比起JProfiler、YourKit等专业且收费的Profiling工具都不遑多让。而且相比这些第三方工具，VisualVM还有一个很大的优点：不需要被监视的程序基于特殊Agent去运行，因此它的通用性很强，对应用程序实际性能的影响也较小，使得它可以直接应用在生产环境中。这个优点是JProfiler、YourKit等工具无法与之媲美的
 
-命令行执行 jvisualvm，可以得到如下结果
+命令行执行 jvisualvm，点击左边 attch 到具体进程，可以得到如下结果
 
 （需要安装插件VisualGC，左上角点击工具 - 插件 - 可用插件 - VisualGC，点击安装，完成后就可以点击VisualGC界面了，该界面对于分析非常有用）
 
 ![image](https://user-images.githubusercontent.com/10209135/100355624-0cb85280-302d-11eb-975e-f8ea194fad8d.png)
 
-jvisualvm 还可以用来分析日志。这里的日志是通过VM参数 -XX:+HeapDumpOnOutOfMemoryError 打印的，会打印到 project 所在目录下。另外，通过寒泉子 https://memory.console.perfma.com/ ，也可以上传日志后进行分析
+jvisualvm 还可以用来分析dump文件（可以通过jmap生成）
 
-（左上角点击 文件，装入，导入日志，然后分析）
+（左上角点击 文件 - 装入，导入dump文件，然后分析）
 
 ![image](https://user-images.githubusercontent.com/10209135/100319607-e1b50b00-2ffa-11eb-9873-400084f6223f.png)
 
@@ -331,7 +410,7 @@ Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas
 
 TODO
 
-### 性能调优案例
+### 性能调优记录
 
 #### 程序死循环问题排查
 
@@ -339,5 +418,17 @@ TODO
 
 #### CPU占用过高问题排查
 
-#### JAVA反射是否真的很慢
+#### OOM异常问题排查
+
+参考《深入理解JAVA虚拟机》第二版2.4.1
+
+通过参数 -XX:+HeapDumpOnOutOfMemoryError 可以让虚拟机出现内存溢出异常（java.lang.OutOfMemoryError）时，Dump出当前的内存堆转储快照以便事后进行分析
+
+要解决这个区域的异常，一般的手段是先通过内存映像分析工具（如Eclipse Memory Analyzer、VisualVM）对Dump出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是先分清楚是出现了 内存泄漏（Memory Leak）还是内存溢出（Memory Overflow）
+
+如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GC Roots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息以及GC Roots引用链的信息，就可以比较准确地定位出泄漏代码的位置
+
+如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗
+
+#### JAVA反射速度测试
 
