@@ -27,7 +27,59 @@
 
 ### 基础故障处理工具
 
+安装了JAVA后，在 %JAVA_HOME%/bin/ 下存在这些工具，它们是JDK内部自带的工具，用于问题排查和分析
+
+![image](https://user-images.githubusercontent.com/10209135/100350164-6ff1b700-3024-11eb-8870-e471ba1adf13.png)
+
+这些工具的源码都在 https://github.com/peteryuanpan/openjdk-8u40-source-code-mirror/tree/master/jdk/src/share/classes/sun/tools 中，都是JAVA代码，开源的，打开其中一份文件（比如jps/Jps.java），能看到其中有 main 函数
+
 #### jps-虚拟机进程状况工具
+
+jps，JVM Process Status Tool，显示指定系统内所有的 Hotspot 虚拟机进程
+
+参数
+- -m：输出Java进程的ID + main函数所在类的名词 + 传递给main函数的参数
+- -l：输出Java进程的ID + main函数所在类的全限定名（包名 + 类名）
+- -v：输出Java进程的ID + main函数所在类的名称 + 传递给JVM的参数（可通过此方式快速查看JVM参数是否设置成功）
+
+![image](https://user-images.githubusercontent.com/10209135/100350818-6d439180-3025-11eb-8e4b-cc74dd85c04d.png)
+
+
+思考两个问题：（1）jps结果如何来的，（2）为何有时 kill 杀死了进程，jps结果中还有
+
+通过如下方法可以打印本地电脑上 jps 命令输出的本地文件
+
+```java
+package jtools;
+
+import sun.misc.VMSupport;
+
+public class JPSTempFile {
+
+    public static void main(String[] args) {
+        System.out.println(VMSupport.getVMTemporaryDirectory());
+    }
+}
+```
+
+输出结果
+```
+C:\Users\Admin\AppData\Local\Temp\
+```
+
+查看本地文件该路径
+
+![image](https://user-images.githubusercontent.com/10209135/100350483-ef7f8600-3024-11eb-96ee-d0e93d7191cc.png)
+
+再查询jps命令
+```
+D:\workspace\luban-jvm-research>jps -l
+15976 sun.tools.jps.Jps
+10876
+5692 org.jetbrains.jps.cmdline.Launcher
+```
+
+可以看出来是一一对应的，这就回答了上面的问题（2）。至于问题（1），是因为非正常退出进程，临时文件没有删除
 
 #### jstat-虚拟机统计信息监视工具
 
