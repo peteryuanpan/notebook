@@ -115,8 +115,8 @@ Definitions:
 |--|--|
 |-class pid|显示加载class的数量，及所占空间等信息|
 |-compiler pid|显示VM实时编译的数量等信息|
-|-gc pid|可以显示gc的信息，查看gc的次数，及时间|其中最后五项，分别是young gc的次数，young gc的时间，full gc的次数，full gc的时间，gc的总时间|
-|-gccapacity|可以显示，VM内存中三代（young,old,perm）对象的使用和占用大小，如：PGCMN显示的是最小perm的内存使用量，PGCMX显示的是perm的内存最大使用量，PGC是当前新生成的perm内存占用量，PC是但前perm内存占用量|其他的可以根据这个类推， OC是old内纯的占用量|
+|-gc pid|可以显示gc的信息，查看gc的次数，及时间|
+|-gccapacity|可以显示VM内存中三代（young,old,perm）对象的使用和占用大小|
 |-gcnew pid|new对象的信息|
 |-gcnewcapacity pid|new对象的信息及其占用量|
 |-gcold pid|old对象的信息|
