@@ -614,6 +614,17 @@ Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas
 
 由于许多线上业务都不会带有图形界面，只能用命令行，那么使用 VisualVM 分析需要远程连接，服务端需要开新端口，存在风险安全问题，而 Arthas 可以支持命令行层面的调试，但功能强大，完全不逊色于 VisualVM。总体来说，Arthas 使用起来要稍微复杂一些，毕竟需要输入许多参数，有些命令如 sc、stack，要求输入 class-pattern、method-pattern、field-pattern，在这一点上不如 VisualVM 方便，但支持的功能点更精细化
 
+简单举例Arthas的功能
+- sc、sm：列举所有被JVM加载的类和方法
+- classloader：列举所有类加载器名称，实例个数，类加载次数
+- jad：反编译类文件为JAVA代码（确认代码是否发布成功）
+- getstatic：获取类变量详细信息
+- thread：打印线程信息，线程堆栈信息
+- jvm：打印JVM详细参数
+- dashboard：间隔输出监控信息，包含线程状态，线程占CPU比率，各区域内存使用情况、运行时参数
+- heapdump：生成堆转储快照（dumpw文件）
+- 还有很多linux式命令，如kepmap、cls、history、cat、echo、pwd、grep、tee、stop
+
 Windows上使用方法
 - 通过 jps 获取 pid，执行 as < pid >，得到如下结果
 ```cmd
