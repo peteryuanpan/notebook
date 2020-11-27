@@ -681,6 +681,7 @@ VisualVM
 - 执行jvisualvm
 - 安装插件Threads inspector
 - 点击具体线程，可以查到堆栈信息
+
 ![image](https://user-images.githubusercontent.com/10209135/100405630-f5b24880-309e-11eb-821d-97a82a215e98.png)
 
 
@@ -688,9 +689,11 @@ Arthas
 - 通过jps查到pid
 - 执行as < pid >，登陆 localhost
 - thread，查到运行中的所有线程
+
 ![image](https://user-images.githubusercontent.com/10209135/100405787-488c0000-309f-11eb-83ad-31537a640870.png)
 
 - thread 1，可以查到对应线程ID的堆栈信息
+
 ![image](https://user-images.githubusercontent.com/10209135/100405752-3742f380-309f-11eb-939e-6c8a8cdfbf91.png)
 
 #### 程序死锁问题排查
@@ -759,15 +762,18 @@ Found one Java-level deadlock:
 VisualVM
 - 执行jvisualvm
 - 点击线程，可以看到“检测到死锁！”字眼
+
 ![image](https://user-images.githubusercontent.com/10209135/100403802-c8fc3200-309a-11eb-8c5c-7125ec58f025.png)
 
 - 点击线程Dump生成快照，可以查到堆栈信息
+
 ![image](https://user-images.githubusercontent.com/10209135/100403851-ec26e180-309a-11eb-88d0-f05e606a1055.png)
 
 Arthas
 - 通过jps查到pid
 - 执行as < pid >，登陆 localhost
 - thread -b，可以检测死锁
+
 ![image](https://user-images.githubusercontent.com/10209135/100404838-52146880-309d-11eb-82b5-e0926154ad78.png)
 
 #### CPU占用过高问题排查
