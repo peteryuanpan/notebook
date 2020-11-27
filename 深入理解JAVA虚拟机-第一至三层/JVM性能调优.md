@@ -841,9 +841,12 @@ Arthas
 VisualVM
 - 如果是CPU分析，将会统计出每个方法的执行次数、执行耗时
 - （左边点击一个具体线程，点击Profiler - CPU，运行一段时间后点击停止）
+
 ![image](https://user-images.githubusercontent.com/10209135/100373593-fa96de00-3045-11eb-80d1-a4fc972bf7d6.png)
+
 - 如果是内存分析，则会统计每个方法关联的对象数以及这些对象所占的空间
 - （左边点击一个具体线程，点击Profiler - 内存，运行一段时间后点击停止）
+
 ![image](https://user-images.githubusercontent.com/10209135/100373663-1306f880-3046-11eb-9ec1-3bf71d9cc890.png)
 
 #### 线上业务动态日志跟踪
