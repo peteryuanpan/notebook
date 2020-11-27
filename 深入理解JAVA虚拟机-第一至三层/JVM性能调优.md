@@ -617,7 +617,7 @@ Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas
 由于许多线上业务都不会带有图形界面，只能用命令行，那么使用 VisualVM 分析需要远程连接，服务端需要开新端口，存在风险安全问题，而 Arthas 可以支持命令行层面的调试，但功能强大，完全不逊色于 VisualVM
 
 通过 jps 获取 pid，执行 as < pid >，得到如下结果
-```
+```cmd
 as 7524
 JAVA_HOME: C:\Program Files\Java\jdk1.8.0_231
 telnet port: 3658
@@ -637,6 +637,60 @@ Try to visit http://127.0.0.1:8563 to connecto arthas server.
 
 #### 程序死循环问题排查
 
+测试代码
+
+```java
+package thread;
+
+public class DeadLoop {
+
+    public static void main(String[] args) {
+        test(0);
+    }
+
+    static void test(int x) {
+        if (x == 10) {
+            while (true);
+        }
+        test(x + 1);
+    }
+}
+```
+
+jstack
+- 通过jps查到pid
+- 执行jstack pid
+```cmd
+"main" #1 prio=5 os_prio=0 tid=0x0000000002af3800 nid=0x2fe0 runnable [0x00000000025ef000]
+   java.lang.Thread.State: RUNNABLE
+        at thread.DeadLoop.test(DeadLoop.java:11)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.main(DeadLoop.java:6)
+```
+
+VisualVM
+- 执行jvisualvm
+- 安装插件Threads inspector
+- 点击具体线程，可以查到堆栈信息
+![image](https://user-images.githubusercontent.com/10209135/100405630-f5b24880-309e-11eb-821d-97a82a215e98.png)
+
+
+Arthas
+- 通过jps查到pid
+- 执行as < pid >，登陆 localhost
+- thread，查到运行中的所有线程
+![image](https://user-images.githubusercontent.com/10209135/100405787-488c0000-309f-11eb-83ad-31537a640870.png)
+- thread 1，可以查到对应线程ID的堆栈信息
+![image](https://user-images.githubusercontent.com/10209135/100405752-3742f380-309f-11eb-939e-6c8a8cdfbf91.png)
 
 #### 程序死锁问题排查
 
@@ -690,7 +744,7 @@ threadB进入b同步块，执行中...
 jstack
 - 通过jps查到pid
 - 执行jstack pid
-```
+```cmd
 Found one Java-level deadlock:
 =============================
 "threadB":
@@ -705,12 +759,14 @@ VisualVM
 - 执行jvisualvm
 - 点击线程，可以看到“检测到死锁！”字眼
 ![image](https://user-images.githubusercontent.com/10209135/100403802-c8fc3200-309a-11eb-8c5c-7125ec58f025.png)
-- 点击点成Dump可以生成快照
-- 可以找到与jstack一样的堆栈信息
+- 点击线程Dump生成快照，可以查到堆栈信息
 ![image](https://user-images.githubusercontent.com/10209135/100403851-ec26e180-309a-11eb-88d0-f05e606a1055.png)
 
 Arthas
-- 
+- 通过jps查到pid
+- 执行as < pid >，登陆 localhost
+- thread -b，可以检测死锁
+![image](https://user-images.githubusercontent.com/10209135/100404838-52146880-309d-11eb-82b5-e0926154ad78.png)
 
 #### CPU占用过高问题排查
 
