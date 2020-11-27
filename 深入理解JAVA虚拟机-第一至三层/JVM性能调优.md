@@ -14,10 +14,8 @@
   - [性能调优记录](#性能调优记录)
     - [程序死循环问题排查](#程序死循环问题排查)
     - [程序死锁问题排查](#程序死锁问题排查)
-    - [CPU占用过高问题排查](#CPU占用过高问题排查)
     - [OOM异常问题排查](#OOM异常问题排查)
     - [分析堆Dump及线程Dump](#分析堆Dump及线程Dump)
-    - [找出占CPU最多的方法及对象](#找出占CPU最多的方法及对象)
     - [线上业务动态日志跟踪](#线上业务动态日志跟踪)
 
 # JVM性能调优
@@ -651,10 +649,7 @@ public class DeadLoop {
     }
 
     static void test(int x) {
-        if (x == 10) {
-            while (true);
-        }
-        test(x + 1);
+        while (true);
     }
 }
 ```
@@ -662,40 +657,36 @@ public class DeadLoop {
 jstack
 - 通过jps查到pid
 - 执行jstack pid
+- 找到正在运行不停的线程，怀疑可能是死循环线程
 ```cmd
-"main" #1 prio=5 os_prio=0 tid=0x0000000002af3800 nid=0x2fe0 runnable [0x00000000025ef000]
+"main" #1 prio=5 os_prio=0 tid=0x00000000035b3800 nid=0x4788 runnable [0x00000000033af000]
    java.lang.Thread.State: RUNNABLE
-        at thread.DeadLoop.test(DeadLoop.java:11)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
-        at thread.DeadLoop.test(DeadLoop.java:13)
+        at thread.DeadLoop.test(DeadLoop.java:10)
         at thread.DeadLoop.main(DeadLoop.java:6)
 ```
 
 VisualVM
 - 执行jvisualvm
-- 安装插件Threads inspector
-- 点击具体线程，可以查到堆栈信息
+- 左侧点击具体线程，点击抽样器，点击CPU，进行分析，过段时间后点击停止
+- 可以看到CPU占用最多的线程，这里是 main
 
-![image](https://user-images.githubusercontent.com/10209135/100405630-f5b24880-309e-11eb-821d-97a82a215e98.png)
+![image](https://user-images.githubusercontent.com/10209135/100446536-f1f7e380-30e9-11eb-97f6-53595c9824c0.png)
+
+- 点击线程，点击线程Dump，可以看到 main 线程的堆栈信息，然后查看具体业务代码
+
+![image](https://user-images.githubusercontent.com/10209135/100446863-83675580-30ea-11eb-965e-65d1eeda9a6c.png)
+
 
 Arthas
 - 通过jps查到pid
 - 执行as < pid >，登陆 localhost
-- thread，查到运行中的所有线程
+- 执行dashboard，可以看到main线程占CPU100%
 
-![image](https://user-images.githubusercontent.com/10209135/100405787-488c0000-309f-11eb-83ad-31537a640870.png)
+![image](https://user-images.githubusercontent.com/10209135/100447286-4780c000-30eb-11eb-9e04-e61bdebbf0be.png)
 
-- thread 1，可以查到对应线程ID的堆栈信息
+- main线程的ID为1，执行 thread 1，可以看到线程堆栈信息，然后查看具体业务代码
 
-![image](https://user-images.githubusercontent.com/10209135/100405752-3742f380-309f-11eb-939e-6c8a8cdfbf91.png)
+![image](https://user-images.githubusercontent.com/10209135/100447395-7bf47c00-30eb-11eb-9d8c-aeceb2ce1bb4.png)
 
 #### 程序死锁问题排查
 
@@ -779,25 +770,6 @@ Arthas
 
 ![image](https://user-images.githubusercontent.com/10209135/100404838-52146880-309d-11eb-82b5-e0926154ad78.png)
 
-#### CPU占用过高问题排查
-
-这是一道经典的面试问题
-
-解决思路（Linux上）
-- top，查到占CPU最高的进程ID
-
-![image](https://user-images.githubusercontent.com/10209135/100406162-378fbe80-30a0-11eb-9552-5f99e2c210e7.png)
-
-- top -H -p < 进程ID >，查到进程中占CPU最高的线程ID
-
-![image](https://user-images.githubusercontent.com/10209135/100406216-57bf7d80-30a0-11eb-931d-7c42bb557597.png)
-
-- 将线程ID从十进制转十六进制
-
-![image](https://user-images.githubusercontent.com/10209135/100406329-84739500-30a0-11eb-89a3-ebf4600df07d.png)
-
-- jstack 进程ID | grep 十六进制线程ID -A 30，查看线程堆栈，可定位到哪一行代码导致的
-
 #### OOM异常问题排查
 
 参考《深入理解JAVA虚拟机》第二版2.4.1
@@ -835,21 +807,6 @@ Arthas
 ![image](https://user-images.githubusercontent.com/10209135/100407576-b5a19480-30a3-11eb-95d7-dcf4db686a1a.png)
 
 - 然后通过VisualVM进行分析（Arthas不支持分析dump文件，参考：https://github.com/alibaba/arthas/issues/806）
-
-#### 找出占CPU最多的方法及对象
-
-解决问题：进行方法级别的统计分析，查看那个方法执行次数很多（占CPU），那个对象占内存很多
-
-VisualVM
-- 如果是CPU分析，将会统计出每个方法的执行次数、执行耗时
-- （左边点击一个具体线程，点击Profiler - CPU，运行一段时间后点击停止）
-
-![image](https://user-images.githubusercontent.com/10209135/100373593-fa96de00-3045-11eb-80d1-a4fc972bf7d6.png)
-
-- 如果是内存分析，则会统计每个方法关联的对象数以及这些对象所占的空间
-- （左边点击一个具体线程，点击Profiler - 内存，运行一段时间后点击停止）
-
-![image](https://user-images.githubusercontent.com/10209135/100373663-1306f880-3046-11eb-9ec1-3bf71d9cc890.png)
 
 #### 线上业务动态日志跟踪
 
