@@ -18,7 +18,7 @@
     - [OOM异常问题排查](#OOM异常问题排查)
     - [分析堆Dump及线程Dump](#分析堆Dump及线程Dump)
     - [找出占CPU最多的方法及对象](#找出占CPU最多的方法及对象)
-    - [线上业务添加日志跟踪](#线上业务添加日志跟踪)
+    - [线上业务动态日志跟踪](#线上业务动态日志跟踪)
 
 # JVM性能调优
 
@@ -612,13 +612,14 @@ VisualVM 包含了所有基础故障处理工具的功能，且可视化
 
 #### Arthas-Alibaba开源的Java诊断工具
 
-Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas.aliyun.com/zh-cn/ （附带安装文档），github：https://github.com/alibaba/arthas
+Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas.aliyun.com/zh-cn/ （附带安装文档），关于 Arthas 如何使用，各命令参数的含义等，建议直接查看中文文档
 
-由于许多线上业务都不会带有图形界面，只能用命令行，那么使用 VisualVM 分析需要远程连接，服务端需要开新端口，存在风险安全问题，而 Arthas 可以支持命令行层面的调试，但功能强大，完全不逊色于 VisualVM。总体来说，Arthas 使用起来要稍微复杂一些，毕竟需要输入许多参数，有些命令如 sc、stack，要求输入 class-pattern、method-pattern，在这一点上不如 VisualVM 方便，但支持的功能点更精细化
+由于许多线上业务都不会带有图形界面，只能用命令行，那么使用 VisualVM 分析需要远程连接，服务端需要开新端口，存在风险安全问题，而 Arthas 可以支持命令行层面的调试，但功能强大，完全不逊色于 VisualVM。总体来说，Arthas 使用起来要稍微复杂一些，毕竟需要输入许多参数，有些命令如 sc、stack，要求输入 class-pattern、method-pattern、field-pattern，在这一点上不如 VisualVM 方便，但支持的功能点更精细化
 
-通过 jps 获取 pid，执行 as < pid >，得到如下结果
+Windows上使用方法
+- 通过 jps 获取 pid，执行 as < pid >，得到如下结果
 ```cmd
-as 7524
+as 13872
 JAVA_HOME: C:\Program Files\Java\jdk1.8.0_231
 telnet port: 3658
 http port: 8563
@@ -626,22 +627,9 @@ INFO: Could not find files for the given pattern(s).
 telnet wasn't found, please google how to install telnet under windows.
 Try to visit http://127.0.0.1:8563 to connecto arthas server.
 ```
-
-浏览器访问 http://127.0.0.1:8563 ，可以打开一个命令行界面，输入help，得到如下结果
+- 浏览器访问 http://127.0.0.1:8563 ，可以打开一个命令行界面，输入help，得到如下结果
 
 ![image](https://user-images.githubusercontent.com/10209135/100407826-6f006a00-30a4-11eb-8764-2f80358c3e9d.png)
-
-Arthas常用命令（参考：https://blog.csdn.net/localhost01/article/details/83422905 ）
-- thread，可直接查看线程的cpu占用比
-- redefine，加载外部class文件到应用程序中（VisualVM没有这个功能，插件市场貌似也没有找到相关插件）
-- monitor，监测方法调用次数、成功次数、失败次数、平均RT等
-- watch tt，观测方法执行的前、后、结束、异常、耗时过大时，入参（入参属性深度可调）、返回值、异常，支持实时监测每次方法执行和方法的所有调用执行。
-- jad，反编译class文件（不再需要从jar解压出来，再使用jad工具反编译了）
-- sc sm，快速搜索类和方法信息
-- getstatic，查看类静态变量（VisualVM只能看实例属性）
-- sysprop，修改系统属性
-- trace，查看方法调用树耗时，VisualVM也可以看，不过VisualVM感觉更像是从全局来找某个线程的某个方法耗时，而Arthas可直接定位到某个方法进行观测，并且支持设置条件打印，如耗时超过某值、入参是某值时等等。
-- stack，查看方法的所有调用树路径，同样，VisualVM其实也能看，不过仍然感觉是全局找局部，而Arthas是局部方法直接定位，也同样支持设置条件，当耗时超过某值等才输出调用该方法的所有调用路径。
 
 ### 性能调优记录
 
@@ -858,8 +846,51 @@ VisualVM
 - （左边点击一个具体线程，点击Profiler - 内存，运行一段时间后点击停止）
 ![image](https://user-images.githubusercontent.com/10209135/100373663-1306f880-3046-11eb-9ec1-3bf71d9cc890.png)
 
-#### 线上业务添加日志跟踪
+#### 线上业务动态日志跟踪
 
-解决问题：遇到问题无法在线上 debug，在测试环境又不好复现，重新添加日志再 debug 又非常麻烦，要支持线上业务动态地添加日志，不需要修改源代码重新发布
+解决问题：经常遇到程序出现问题，但排查错误的一些必要信息，譬如方法参数、返回值等，在开发时没有打印到日志中，以至于不得不停掉服务，通过调试增量来加入日志代码以解决问题。当遇到生产环境服务无法随便停止时，缺一两句日志导致排错进行不下去是一件非常郁闷的事情。需要一种能动态添加日志跟踪的功能，类似于Spring AOP切面
 
-TODO
+假设有这么一段代码
+```java
+package thread;
+
+public class DeadLoop {
+
+    public static void main(String[] args) {
+        test(0);
+    }
+
+    static void test(int x) {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        test(x + 1);
+    }
+}
+```
+
+VisualVM
+- 安装BTrace
+- 左侧点击具体线程，右键选择框里点击Trace application...
+- 在代码框中输入以下代码
+```java
+/* BTrace Script Template */
+import com.sun.btrace.annotations.*;
+import static com.sun.btrace.BTraceUtils.*;
+
+@BTrace
+public class TracingScript {
+	/* put your code here */
+    @OnMethod(
+        clazz="thread.DeadLoop", method="test"
+    )
+    public static void func(@Self thread.DeadLoop instance, int x) {
+        println(strcat("方法参数：", str(x)));
+    }
+}
+```
+- 点击start，可以看到以下输出，能打印出方法参数
+![image](https://user-images.githubusercontent.com/10209135/100411396-9e1ad980-30ac-11eb-8ba6-60794175f417.png)
+- 如果方法是有类型的返回，比如 int类型，则@OnMethod中添加location=@Location(Kind.RETURN)，func参数中添加@Return int result
