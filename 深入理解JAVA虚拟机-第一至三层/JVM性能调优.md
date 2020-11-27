@@ -12,9 +12,13 @@
     - [VisualVM-多合一故障处理工具](#VisualVM-多合一故障处理工具)
     - [Arthas-Alibaba开源的Java诊断工具](#Arthas-Alibaba开源的Java诊断工具)
   - [性能调优记录](#性能调优记录)
-    - [程序死循环和死锁问题排查](#程序死循环和死锁问题排查)
+    - [程序死循环问题排查](#程序死循环问题排查)
+    - [程序死锁问题排查](#程序死锁问题排查)
     - [CPU占用过高问题排查](#CPU占用过高问题排查)
     - [OOM异常问题排查](#OOM异常问题排查)
+    - [分析堆Dump及线程Dump](#分析堆Dump及线程Dump)
+    - [找出占CPU最多的方法及对象](#找出占CPU最多的方法及对象)
+    - [线上业务添加日志跟踪](#线上业务添加日志跟踪)
 
 # JVM性能调优
 
@@ -595,12 +599,10 @@ Oracle曾在VisualVM的软件说明中写上了“All-in-One”的字样，预�
 VisualVM 包含了所有基础故障处理工具的功能，且可视化
 - 显示虚拟机进程以及进程的配置、环境信息（jps、jinfo）
 - 监视程序应用的CPU、GC、堆、方法区以及线程的信息（jstat、jstack）
-- dump以及分析堆转储快照（jmap、jhat）
+- 生成及分析堆转储快照（jmap、jhat）
 - 方法级的程序运行性能分析，找出被调用最多、运行时间最长的方法
 - 离线程序快照；收集程序的运行时配置、线程dump、内存dump等信息建立一个快照，可以将快照发送开发者处进行 Bug 反馈
 - 结合其他 plugins 做到无限可能性 ...
-
-##### 启动VisualVM及VisualGC插件
 
 命令行执行 jvisualvm，点击左边 attch 到具体进程，可以得到如下结果
 
@@ -608,51 +610,107 @@ VisualVM 包含了所有基础故障处理工具的功能，且可视化
 
 ![image](https://user-images.githubusercontent.com/10209135/100355624-0cb85280-302d-11eb-975e-f8ea194fad8d.png)
 
-##### 生成及分析堆转储快照
-
-VisualVM 还可以用来分析dump文件（可以通过jmap生成）
-
-（左上角点击 文件 - 装入，导入dump文件，然后分析）
-
-VisualVM 还支持对正在运行的线程生成堆转储快照、线程堆栈快照
-
-（左边点击一个具体线程，左上角点击 应用程序 - 堆Dump 或者 线程Dump）
-
-下面是堆Dump的一个分析界面，它其中除了支持显示 概要、类、实例数 等详细信息外，还有一个OQL控制台功能，可以使用 sql 语句来查询堆中对象
-
-![image](https://user-images.githubusercontent.com/10209135/100372246-ef42b300-3043-11eb-904d-2af924a86f8b.png)
-
-##### 分析程序性能
-
-VisualVM提供了程序运行期间方法级的CPU执行时间分析以及内存分析，以用于在业务分析中找到最有价值的调优方法或对象
-
-如果是CPU分析，将会统计出每个方法的执行次数、执行耗时
-
-（左边点击一个具体线程，点击Profiler - CPU，运行一段时间后点击停止）
-
-![image](https://user-images.githubusercontent.com/10209135/100373593-fa96de00-3045-11eb-80d1-a4fc972bf7d6.png)
-
-如果是内存分析，则会统计每个方法关联的对象数以及这些对象所占的空间
-
-（左边点击一个具体线程，点击Profiler - 内存，运行一段时间后点击停止）
-
-![image](https://user-images.githubusercontent.com/10209135/100373663-1306f880-3046-11eb-9ec1-3bf71d9cc890.png)
-
-##### BTrace动态日志跟踪
-
-TODO
-
 #### Arthas-Alibaba开源的Java诊断工具
 
-Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas.aliyun.com/zh-cn/ ，github：https://github.com/alibaba/arthas
+Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas.aliyun.com/zh-cn/ （附带安装文档），github：https://github.com/alibaba/arthas
 
-TODO
+由于许多线上业务都不会带有图形界面，只能用命令行，那么使用 VisualVM 分析需要远程连接，服务端需要开新端口，存在风险安全问题，而 Arthas 可以支持命令行层面的调试，但功能强大，完全不逊色于 VisualVM
+
+通过 jps 获取 pid，执行 as < pid >，得到如下结果
+```
+as 7524
+JAVA_HOME: C:\Program Files\Java\jdk1.8.0_231
+telnet port: 3658
+http port: 8563
+INFO: Could not find files for the given pattern(s).
+telnet wasn't found, please google how to install telnet under windows.
+Try to visit http://127.0.0.1:8563 to connecto arthas server.
+```
+
+浏览器访问 http://127.0.0.1:8563 ，得到如下结果
+
+![image](https://user-images.githubusercontent.com/10209135/100404096-8424cb00-309b-11eb-9d0b-3e051bb93de3.png)
 
 ### 性能调优记录
 
-#### 程序死循环和死锁问题排查
+下面主要从多个角度做下性能调优记录，有一些是大神们总结的宝贵经验，有一些是面试常见问题，同时会探索 VisualVM 和 Arthas 可否支持这个具体的功能，若可以，就记录下来
 
-TODO
+#### 程序死循环问题排查
+
+
+#### 程序死锁问题排查
+
+测试代码
+
+```java
+package thread;
+
+public class DeadThread {
+
+    private static String a = "a";
+    private static String b = "b";
+
+    public static void main(String[] args) {
+        Thread threadA = new Thread(() -> {
+            synchronized (a) {
+                System.out.println("threadA进入a同步块，执行中...");
+                try {
+                    Thread.sleep(2000);
+                    synchronized (b) {
+                        System.out.println("threadA进入b同步块，执行中...");
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "threadA");
+
+        Thread threadB = new Thread(() -> {
+           synchronized (b) {
+               System.out.println("threadB进入b同步块，执行中...");
+               synchronized (a) {
+                   System.out.println("threadB进入a同步块，执行中...");
+               }
+           }
+        }, "threadB");
+
+        threadA.start();
+        threadB.start();
+    }
+}
+```
+
+输出结果（死锁状态）
+```
+threadA进入a同步块，执行中...
+threadB进入b同步块，执行中...
+...
+```
+
+jstack
+- 通过jps查到pid
+- 执行jstack pid
+```
+Found one Java-level deadlock:
+=============================
+"threadB":
+  waiting to lock monitor 0x00000000031cb738 (object 0x000000076b16d6a0, a java.lang.String),
+  which is held by "threadA"
+"threadA":
+  waiting to lock monitor 0x00000000031ce078 (object 0x000000076b16d6d0, a java.lang.String),
+  which is held by "threadB"
+```
+
+VisualVM
+- 执行jvisualvm
+- 点击线程，可以看到“检测到死锁！”字眼
+![image](https://user-images.githubusercontent.com/10209135/100403802-c8fc3200-309a-11eb-8c5c-7125ec58f025.png)
+- 点击点成Dump可以生成快照
+- 可以找到与jstack一样的堆栈信息
+![image](https://user-images.githubusercontent.com/10209135/100403851-ec26e180-309a-11eb-88d0-f05e606a1055.png)
+
+Arthas
+- 
 
 #### CPU占用过高问题排查
 
@@ -669,3 +727,33 @@ TODO
 如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GC Roots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息以及GC Roots引用链的信息，就可以比较准确地定位出泄漏代码的位置
 
 如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗
+
+##### 分析堆Dump及线程Dump
+
+解决问题：在线生成堆Dump和线程Dump进行分析，若可以，支持导入dump文件进行分析
+
+VisualVM
+- 可以用来分析dump文件（可以通过jmap生成）
+- （左上角点击 文件 - 装入，导入dump文件，然后分析）
+- 还支持对正在运行的线程生成堆转储快照、线程堆栈快照
+- （左边点击一个具体线程，左上角点击 应用程序 - 堆Dump 或者 线程Dump）
+- 下面是堆Dump的一个分析界面，它其中除了支持显示 概要、类、实例数 等详细信息外，还有一个OQL控制台功能，可以使用 sql 语句来查询堆中对象
+![image](https://user-images.githubusercontent.com/10209135/100372246-ef42b300-3043-11eb-904d-2af924a86f8b.png)
+
+##### 找出占CPU最多的方法及对象
+
+解决问题：进行方法级别的统计分析，查看那个方法执行次数很多（占CPU），那个对象占内存很多
+
+VisualVM
+- 如果是CPU分析，将会统计出每个方法的执行次数、执行耗时
+- （左边点击一个具体线程，点击Profiler - CPU，运行一段时间后点击停止）
+![image](https://user-images.githubusercontent.com/10209135/100373593-fa96de00-3045-11eb-80d1-a4fc972bf7d6.png)
+- 如果是内存分析，则会统计每个方法关联的对象数以及这些对象所占的空间
+- （左边点击一个具体线程，点击Profiler - 内存，运行一段时间后点击停止）
+![image](https://user-images.githubusercontent.com/10209135/100373663-1306f880-3046-11eb-9ec1-3bf71d9cc890.png)
+
+##### 线上业务添加日志跟踪
+
+解决问题：遇到问题无法在线上 debug，在测试环境又不好复现，重新添加日志再 debug 又非常麻烦，要支持线上业务动态地添加日志，不需要修改源代码重新发布
+
+TODO
