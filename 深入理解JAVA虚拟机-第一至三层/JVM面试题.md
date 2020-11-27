@@ -21,7 +21,11 @@ JAVA代码通过JAVAC编译器编译成class文件，虚拟机运行时通过类
 
 ### 什么情况下需要破坏双亲委派模型
 
-TODO
+ClassLoader 类中的 loadClass 方法负责进行类加载，其中的关键逻辑是，如果存在父类加载器，优先交给父类加载器加载，若加载失败，则交由 findClass 方法加载，这就是双拼委派模型的实现
+
+双亲委派模型是对系统关键类的保护机制，防止JDK中的类被子类加载器给加载了，它应当就只能被启动类加载器加载
+
+而有些场景下，需要让父类加载器去加载非它管辖范围内的类时，就需要打破双亲委派了，比如 java.sql.DriverManager 是由启动类加载器管辖的，但各厂商对 java.sql.Driver 有不同的实现类，此时启动类加载器就需要委托应用程序类加载器加载实现类了，这就破坏了双亲委派模型。这里具体代码可见 DriverManager 类的 getConnection、isDriverAllowed 方法
 
 ### GCRoots的作用以及哪些引用可以作为GCRoots
 
@@ -83,5 +87,5 @@ JVM调优经验基本可以等价于GC调优经验，试想，如果GC堆能稳�
 - 将线程ID从十进制转十六进制
 - jstack 进程ID | grep 十六进制线程ID -A 30，查看线程堆栈，可定位到哪一行代码导致的
 
-死循环、死锁问题，都可以用 VisualVM、Arthas 来分析
+CPU占用过高、死循环、死锁问题，都可以用 VisualVM、Arthas 来分析
 
