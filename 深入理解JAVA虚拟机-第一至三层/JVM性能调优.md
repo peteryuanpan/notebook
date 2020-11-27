@@ -637,6 +637,8 @@ Try to visit http://127.0.0.1:8563 to connecto arthas server.
 
 #### 程序死循环问题排查
 
+解决问题：程序卡主不动了，可能出现死循环，要检测出来
+
 测试代码
 
 ```java
@@ -697,6 +699,8 @@ Arthas
 ![image](https://user-images.githubusercontent.com/10209135/100405752-3742f380-309f-11eb-939e-6c8a8cdfbf91.png)
 
 #### 程序死锁问题排查
+
+解决问题：程序卡主不动了，可能出现死锁，要检测出来
 
 测试代码
 
@@ -778,7 +782,22 @@ Arthas
 
 #### CPU占用过高问题排查
 
-TODO
+这是一道经典的面试问题
+
+解决思路（Linux上）
+- top，查到占CPU最高的进程ID
+
+![image](https://user-images.githubusercontent.com/10209135/100406162-378fbe80-30a0-11eb-9552-5f99e2c210e7.png)
+
+- top -H -p < 进程ID >，查到进程中占CPU最高的线程ID
+
+![image](https://user-images.githubusercontent.com/10209135/100406216-57bf7d80-30a0-11eb-931d-7c42bb557597.png)
+
+- 将线程ID从十进制转十六进制
+
+![image](https://user-images.githubusercontent.com/10209135/100406329-84739500-30a0-11eb-89a3-ebf4600df07d.png)
+
+- jstack 进程ID | grep （线程ID，十六进制） -A 30，查看线程堆栈，可定位到哪一行代码导致的
 
 #### OOM异常问题排查
 
@@ -792,7 +811,7 @@ TODO
 
 如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗
 
-##### 分析堆Dump及线程Dump
+#### 分析堆Dump及线程Dump
 
 解决问题：在线生成堆Dump和线程Dump进行分析，若可以，支持导入dump文件进行分析
 
@@ -804,7 +823,7 @@ VisualVM
 - 下面是堆Dump的一个分析界面，它其中除了支持显示 概要、类、实例数 等详细信息外，还有一个OQL控制台功能，可以使用 sql 语句来查询堆中对象
 ![image](https://user-images.githubusercontent.com/10209135/100372246-ef42b300-3043-11eb-904d-2af924a86f8b.png)
 
-##### 找出占CPU最多的方法及对象
+#### 找出占CPU最多的方法及对象
 
 解决问题：进行方法级别的统计分析，查看那个方法执行次数很多（占CPU），那个对象占内存很多
 
@@ -816,7 +835,7 @@ VisualVM
 - （左边点击一个具体线程，点击Profiler - 内存，运行一段时间后点击停止）
 ![image](https://user-images.githubusercontent.com/10209135/100373663-1306f880-3046-11eb-9ec1-3bf71d9cc890.png)
 
-##### 线上业务添加日志跟踪
+#### 线上业务添加日志跟踪
 
 解决问题：遇到问题无法在线上 debug，在测试环境又不好复现，重新添加日志再 debug 又非常麻烦，要支持线上业务动态地添加日志，不需要修改源代码重新发布
 
