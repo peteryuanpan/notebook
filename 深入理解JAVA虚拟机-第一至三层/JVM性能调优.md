@@ -879,7 +879,6 @@ VisualVM
 - 左侧点击具体线程，右键选择框里点击Trace application...
 - 在代码框中输入以下代码
 ```java
-/* BTrace Script Template */
 import com.sun.btrace.annotations.*;
 import static com.sun.btrace.BTraceUtils.*;
 
