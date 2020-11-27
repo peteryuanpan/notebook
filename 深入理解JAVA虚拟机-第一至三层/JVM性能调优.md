@@ -614,7 +614,7 @@ VisualVM 包含了所有基础故障处理工具的功能，且可视化
 
 Alibaba 开源的工具，Java应用诊断利器，中文文档：https://arthas.aliyun.com/zh-cn/ （附带安装文档），github：https://github.com/alibaba/arthas
 
-由于许多线上业务都不会带有图形界面，只能用命令行，那么使用 VisualVM 分析需要远程连接，服务端需要开新端口，存在风险安全问题，而 Arthas 可以支持命令行层面的调试，但功能强大，完全不逊色于 VisualVM
+由于许多线上业务都不会带有图形界面，只能用命令行，那么使用 VisualVM 分析需要远程连接，服务端需要开新端口，存在风险安全问题，而 Arthas 可以支持命令行层面的调试，但功能强大，完全不逊色于 VisualVM。总体来说，Arthas 使用起来要稍微复杂一些，毕竟需要输入许多参数，有些命令如 sc、stack，要求输入 class-pattern、method-pattern，在这一点上不如 VisualVM 方便，但支持的功能点更精细化
 
 通过 jps 获取 pid，执行 as < pid >，得到如下结果
 ```cmd
@@ -627,9 +627,21 @@ telnet wasn't found, please google how to install telnet under windows.
 Try to visit http://127.0.0.1:8563 to connecto arthas server.
 ```
 
-浏览器访问 http://127.0.0.1:8563 ，得到如下结果
+浏览器访问 http://127.0.0.1:8563 ，可以打开一个命令行界面，输入help，得到如下结果
 
-![image](https://user-images.githubusercontent.com/10209135/100404096-8424cb00-309b-11eb-9d0b-3e051bb93de3.png)
+![image](https://user-images.githubusercontent.com/10209135/100407826-6f006a00-30a4-11eb-8764-2f80358c3e9d.png)
+
+Arthas常用命令（参考：https://blog.csdn.net/localhost01/article/details/83422905 ）
+- thread，可直接查看线程的cpu占用比
+- redefine，加载外部class文件到应用程序中（VisualVM没有这个功能，插件市场貌似也没有找到相关插件）
+- monitor，监测方法调用次数、成功次数、失败次数、平均RT等
+- watch tt，观测方法执行的前、后、结束、异常、耗时过大时，入参（入参属性深度可调）、返回值、异常，支持实时监测每次方法执行和方法的所有调用执行。
+- jad，反编译class文件（不再需要从jar解压出来，再使用jad工具反编译了）
+- sc sm，快速搜索类和方法信息
+- getstatic，查看类静态变量（VisualVM只能看实例属性）
+- sysprop，修改系统属性
+- trace，查看方法调用树耗时，VisualVM也可以看，不过VisualVM感觉更像是从全局来找某个线程的某个方法耗时，而Arthas可直接定位到某个方法进行观测，并且支持设置条件打印，如耗时超过某值、入参是某值时等等。
+- stack，查看方法的所有调用树路径，同样，VisualVM其实也能看，不过仍然感觉是全局找局部，而Arthas是局部方法直接定位，也同样支持设置条件，当耗时超过某值等才输出调用该方法的所有调用路径。
 
 ### 性能调优记录
 
@@ -685,7 +697,6 @@ VisualVM
 - 点击具体线程，可以查到堆栈信息
 
 ![image](https://user-images.githubusercontent.com/10209135/100405630-f5b24880-309e-11eb-821d-97a82a215e98.png)
-
 
 Arthas
 - 通过jps查到pid
@@ -821,7 +832,19 @@ VisualVM
 - 还支持对正在运行的线程生成堆转储快照、线程堆栈快照
 - （左边点击一个具体线程，左上角点击 应用程序 - 堆Dump 或者 线程Dump）
 - 下面是堆Dump的一个分析界面，它其中除了支持显示 概要、类、实例数 等详细信息外，还有一个OQL控制台功能，可以使用 sql 语句来查询堆中对象
+
 ![image](https://user-images.githubusercontent.com/10209135/100372246-ef42b300-3043-11eb-904d-2af924a86f8b.png)
+
+Arthas
+- heapdump命令指南
+
+![image](https://user-images.githubusercontent.com/10209135/100407109-82aad100-30a2-11eb-912a-05f8d2bc95b5.png)
+
+- 执行heapdump C:\Users\Admin\Desktop\1.hprof，会生成一份文件在桌面
+
+![image](https://user-images.githubusercontent.com/10209135/100407576-b5a19480-30a3-11eb-95d7-dcf4db686a1a.png)
+
+- 然后通过VisualVM进行分析（Arthas不支持分析dump文件，参考：https://github.com/alibaba/arthas/issues/806）
 
 #### 找出占CPU最多的方法及对象
 
