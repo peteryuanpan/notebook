@@ -797,7 +797,7 @@ Arthas
 
 ![image](https://user-images.githubusercontent.com/10209135/100406329-84739500-30a0-11eb-89a3-ebf4600df07d.png)
 
-- jstack 进程ID | grep （线程ID，十六进制） -A 30，查看线程堆栈，可定位到哪一行代码导致的
+- jstack 进程ID | grep 十六进制线程ID -A 30，查看线程堆栈，可定位到哪一行代码导致的
 
 #### OOM异常问题排查
 
