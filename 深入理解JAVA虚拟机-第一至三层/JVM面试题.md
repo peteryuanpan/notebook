@@ -71,10 +71,14 @@ JVM调优经验基本可以等价于GC调优经验，试想，如果GC堆能稳�
 
 这是一道经典的面试问题
 
-解决办法（Linux）
+解决办法思路：（1）查到占CPU高的进程和线程ID（2）通过线程堆栈工具查找堆栈日志（3）分析业务代码
+
+关于（1），可以用 VisualVM、Arthas，而 Linux 上还可以用 top 命令
+
+关于（2），可以用 jstack、VisualVM、Arthas
+
+以Linux上举例
 - top，查到占CPU最高的进程ID
 - top -H -p < 进程ID >，查到进程中占CPU最高的线程ID
 - 将线程ID从十进制转十六进制
 - jstack 进程ID | grep 十六进制线程ID -A 30，查看线程堆栈，可定位到哪一行代码导致的
-
-查找占CPU最高的工具有不少，Linux上用top命令，Windows上可以用VisualVM
