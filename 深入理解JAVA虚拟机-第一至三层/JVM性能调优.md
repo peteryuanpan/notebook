@@ -882,7 +882,6 @@ import static com.sun.btrace.BTraceUtils.*;
 
 @BTrace
 public class TracingScript {
-	/* put your code here */
     @OnMethod(
         clazz="thread.DeadLoop", method="test"
     )
@@ -893,4 +892,5 @@ public class TracingScript {
 ```
 - （如果方法是有类型的返回，比如 int类型，则@OnMethod中添加location=@Location(Kind.RETURN)，func参数中添加@Return int result）
 - 点击start，可以看到以下输出，能打印出方法参数
+
 ![image](https://user-images.githubusercontent.com/10209135/100411396-9e1ad980-30ac-11eb-8ba6-60794175f417.png)
