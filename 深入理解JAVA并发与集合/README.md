@@ -56,29 +56,10 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 ### 文章目录
 
 #### 第0章：应用场景与源码分析
-- 并发部分
-  - [Thread](应用场景与源码分析/Thread.md)
-  - [ThreadLocal](应用场景与源码分析/ThreadLocal.md)
-  - [FutureTask]
-  - [AbstractQueuedSynchronizer](应用场景与源码分析/AbstractQueuedSynchronizer.md)
-  - [ReentrantLock](应用场景与源码分析/ReentrantLock.md)
-  - [ReentrantReadWriteLock]
-  - [Semaphore]
-  - [CountDownLath]
-  - [CyclicBarrier]
-  - [ThreadPoolExecutor](应用场景与源码分析/ThreadPoolExecutor.md)
-  - [ForkJoinPool]
-- 集合部分
-  - [Vector]
-  - [ArrayList]
-  - [LinkedList]
-  - [CopyOnWriteArrayList]
-  - [Hashtable]
-  - [HashMap](应用场景与源码分析/HashMap.md)
-  - [TreeMap]
-  - [LinkedHashMap]
-  - [JDK7.ConcurrentHashMap](应用场景与源码分析/JDK7.ConcurrentHashMap.md)
-  - [JDK8.ConcurrentHashMap](应用场景与源码分析/JDK8.ConcurrentHashMap.md)
+- [ThreadPoolExecutor](应用场景与源码分析/ThreadPoolExecutor.md)
+- [HashMap](应用场景与源码分析/HashMap.md)
+- [JDK7.ConcurrentHashMap](应用场景与源码分析/JDK7.ConcurrentHashMap.md)
+- [JDK8.ConcurrentHashMap](应用场景与源码分析/JDK8.ConcurrentHashMap.md)
 
 #### 第1章：JAVA线程基础
 - [JAVA线程基础](JAVA线程基础.md)
@@ -120,7 +101,24 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - TODO
 
 #### 第5章：集合面试题
-- [List面试题](List面试题.md)
+- [集合面试题](集合面试题.md)
   - TODO
 - [HashMap面试题](HashMap面试题.md)
-  - TODO
+  - [JDK7与JDK8中HashMap实现原理上的不同点](HashMap面试题.md#JDK7与JDK8中HashMap实现原理上的不同点)
+  - [JDK8中HashMap数组长度为何是2的幂次方](HashMap面试题.md#JDK8中HashMap数组长度为何是2的幂次方)
+  - [JDK8中HashMap数组什么时候扩容](HashMap面试题.md#JDK8中HashMap数组什么时候扩容)
+  - [JDK8中HashMap为什么要使用红黑树](HashMap面试题.md#JDK8中HashMap为什么要使用红黑树)
+  - [JDK8中HashMap什么时候将链表转化为红黑树](HashMap面试题.md#JDK8中HashMap什么时候将链表转化为红黑树)
+  - [JDK8中HashMap及TreeMap的红黑树实现原理](HashMap面试题.md#JDK8中HashMap及TreeMap的红黑树实现原理)
+  - [JDK7中HashMap2个线程resize时循环链表问题](HashMap面试题.md#JDK7中HashMap2个线程resize时循环链表问题)
+  - [JDK8中HashMap2个线程同时put会发生什么](HashMap面试题.md#JDK8中HashMap2个线程同时put会发生什么)
+  - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](HashMap面试题.md#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
+  - [JDK7与JDK8中HashMap的快速失败机制](HashMap面试题.md#JDK7与JDK8中HashMap的快速失败机制)
+  - [JDK7中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK7中ConcurrentHashMap与HashMap实现原理上的不同点)
+  - [JDK8中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中ConcurrentHashMap与HashMap实现原理上的不同点)
+  - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](HashMap面试题.md#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
+  - [JDK8中ConcurrentHashMap为何不使用JDK7中的分段锁思想了](HashMap面试题.md#JDK8中ConcurrentHashMap为何不使用JDK7中的分段锁思想了)
+  - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](HashMap面试题.md#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
+  - [JDK8中Hashtable与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中Hashtable与HashMap实现原理上的不同点)
+  - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
+  
