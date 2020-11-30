@@ -62,7 +62,7 @@
   + [第4章：设计模式面试题](深入理解设计模式#第4章设计模式面试题)
 </details>
 
-<details open>
+<details close>
     <summary>深入理解数据结构与算法</summary>
 
 + 前言
