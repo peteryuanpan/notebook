@@ -117,7 +117,6 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [JDK7中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK7中ConcurrentHashMap与HashMap实现原理上的不同点)
   - [JDK8中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中ConcurrentHashMap与HashMap实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](HashMap面试题.md#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
-  - [JDK8中ConcurrentHashMap为何不使用JDK7中的分段锁思想了](HashMap面试题.md#JDK8中ConcurrentHashMap为何不使用JDK7中的分段锁思想了)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](HashMap面试题.md#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
   - [JDK8中Hashtable与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
