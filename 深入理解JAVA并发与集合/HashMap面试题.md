@@ -12,7 +12,6 @@
   - [JDK7中ConcurrentHashMap与HashMap实现原理上的不同点](#JDK7中ConcurrentHashMap与HashMap实现原理上的不同点)
   - [JDK8中ConcurrentHashMap与HashMap实现原理上的不同点](#JDK8中ConcurrentHashMap与HashMap实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
-  - [JDK8中ConcurrentHashMap为何不使用JDK7中的分段锁思想了](#JDK8中ConcurrentHashMap为何不使用JDK7中的分段锁思想了)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
   - [JDK8中Hashtable与HashMap实现原理上的不同点](#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
@@ -519,10 +518,6 @@ TODO
 从不同方面来看
 
 要涉及到扩容
-
-### JDK8中ConcurrentHashMap为何不使用JDK7中的分段锁思想了
-
-TODO
 
 ### JDK7与JDK8中ConcurrentHashMap的安全失败机制
 
