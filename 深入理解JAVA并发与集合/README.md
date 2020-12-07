@@ -120,4 +120,4 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](HashMap面试题.md#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
   - [JDK8中Hashtable与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
-  
+  - [JDK8中HashMap如何实现序列化与反序列化](HashMap面试题.md#JDK8中HashMap如何实现序列化与反序列化)  
