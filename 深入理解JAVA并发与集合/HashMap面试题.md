@@ -31,6 +31,7 @@
 - [HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
 - [简书：为什么HashMap线程不安全](https://www.jianshu.com/p/e2f75c8cce01)
 - [掘金：快速失败机制&失败安全机制](https://juejin.im/post/6844904046617182215)
+- [知乎：为什么HashMap要自己实现writeObject和readObject方法？](https://zhuanlan.zhihu.com/p/84533476)
 
 ### 前提声明（重要！！）
 
