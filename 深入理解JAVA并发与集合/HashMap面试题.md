@@ -536,4 +536,4 @@ TODO
 
 ### JDK8中HashMap如何实现序列化与反序列化
 
-TODO
+transient，readObject，writeObject，ObjectInputStream，ObjectOutputStream
