@@ -14,8 +14,8 @@
   - [性能调优记录](#性能调优记录)
     - [程序死循环问题排查](#程序死循环问题排查)
     - [程序死锁问题排查](#程序死锁问题排查)
+    - [生成与分析Dump文件](#生成与分析Dump文件)
     - [OOM异常问题排查](#OOM异常问题排查)
-    - [分析堆Dump及线程Dump](#分析堆Dump及线程Dump)
     - [线上业务动态日志跟踪](#线上业务动态日志跟踪)
 
 # JVM性能调优
@@ -781,21 +781,7 @@ Arthas
 
 ![image](https://user-images.githubusercontent.com/10209135/100404838-52146880-309d-11eb-82b5-e0926154ad78.png)
 
-#### OOM异常问题排查
-
-参考《深入理解JAVA虚拟机》第二版2.4.1
-
-通过参数 -XX:+HeapDumpOnOutOfMemoryError 可以让虚拟机出现内存溢出异常（java.lang.OutOfMemoryError）时，Dump出当前的内存堆转储快照以便事后进行分析
-
-要解决这个区域的异常，一般的手段是先通过内存映像分析工具（如Eclipse Memory Analyzer、VisualVM）对Dump出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是先分清楚是出现了 内存泄漏（Memory Leak）还是内存溢出（Memory Overflow）
-
-如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GC Roots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息以及GC Roots引用链的信息，就可以比较准确地定位出泄漏代码的位置
-
-如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗
-
-TODO：模拟一次
-
-#### 分析堆Dump及线程Dump
+#### 生成与分析Dump文件
 
 解决问题：在线生成堆Dump和线程Dump进行分析，若可以，支持导入dump文件进行分析
 
@@ -818,6 +804,20 @@ Arthas
 ![image](https://user-images.githubusercontent.com/10209135/100407576-b5a19480-30a3-11eb-95d7-dcf4db686a1a.png)
 
 - 然后通过VisualVM进行分析（Arthas不支持分析dump文件，参考：https://github.com/alibaba/arthas/issues/806）
+
+#### OOM异常问题排查
+
+参考《深入理解JAVA虚拟机》第二版2.4.1
+
+通过参数 -XX:+HeapDumpOnOutOfMemoryError 可以让虚拟机出现内存溢出异常（java.lang.OutOfMemoryError）时，Dump出当前的内存堆转储快照以便事后进行分析
+
+要解决这个区域的异常，一般的手段是先通过内存映像分析工具（如Eclipse Memory Analyzer、VisualVM）对Dump出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是先分清楚是出现了 内存泄漏（Memory Leak）还是内存溢出（Memory Overflow）
+
+如果是内存泄漏，可进一步通过工具查看泄漏对象到GC Roots的引用链。于是就能找到泄漏对象是通过怎样的路径与GC Roots相关联并导致垃圾收集器无法自动回收它们的。掌握了泄漏对象的类型信息以及GC Roots引用链的信息，就可以比较准确地定位出泄漏代码的位置
+
+如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗
+
+TODO：模拟一次
 
 #### 线上业务动态日志跟踪
 
