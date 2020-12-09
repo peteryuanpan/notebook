@@ -304,4 +304,7 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 - [JVM面试题](JVM面试题.md)
   - TODO
 - [字符串常量池](字符串常量池.md)
-  - TODO
+  - [字符串常量池的内存模型](字符串常量池.md#字符串常量池的内存模型)
+  - [字符串常量的动态链接](字符串常量池.md#字符串常量的动态链接)
+  - [String与StringBuilder与StringBuffer](字符串常量池.md#String与StringBuilder与StringBuffer)
+  - [字符串笔试题](字符串常量池.md#字符串笔试题)
