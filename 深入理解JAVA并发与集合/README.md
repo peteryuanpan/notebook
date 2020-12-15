@@ -71,7 +71,7 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 ### 项目成果
 
-并发日志下载工具：[https://github.com/peteryuanpan/qlogfetch2]
+并发日志下载工具：https://github.com/peteryuanpan/qlogfetch2
 
 ### 文章目录
 
