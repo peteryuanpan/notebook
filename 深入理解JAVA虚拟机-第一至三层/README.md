@@ -308,3 +308,17 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [字符串常量的动态链接](字符串常量池.md#字符串常量的动态链接)
   - [String与StringBuilder与StringBuffer](字符串常量池.md#String与StringBuilder与StringBuffer)
   - [字符串笔试题](字符串常量池.md#字符串笔试题)
+
+### 思维导图
+
+#### 类加载机制
+
+![image](思维导图/类加载机制.png)
+
+#### 运行时数据区域
+
+![image](思维导图/运行时数据区域.png)
+
+#### 垃圾收集机制
+
+TODO
