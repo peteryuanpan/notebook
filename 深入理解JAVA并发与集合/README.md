@@ -30,7 +30,7 @@
 
 本文部分内容来自鲁班学院的课程，感谢老师们以及同学们对我的帮助，这里尤其感谢一下fox老师，您的课是讲得真好！
 
-参考的书籍：《深入理解JAVA虚拟机》、《JAVA并发编程之美》、《JAVA并发编程实战》
+参考的书籍：《深入理解JAVA虚拟机》、《JAVA并发编程之美》
 
 参考的优秀博文：[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)、[深入浅出JAVA多线程](http://concurrent.redspider.group/)
 
