@@ -32,7 +32,7 @@
 
 参考的书籍：《深入理解JAVA虚拟机》、《JAVA并发编程之美》、《JAVA并发编程实战》
 
-参考的优秀博文：[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)
+参考的优秀博文：[Snailclimb/JavaGuide](https://github.com/Snailclimb/JavaGuide)、[深入浅出JAVA多线程](http://concurrent.redspider.group/)
 
 ### 并发与集合的定义
 
