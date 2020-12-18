@@ -13,7 +13,6 @@
   - [JDK8中ConcurrentHashMap与HashMap实现原理上的不同点](#JDK8中ConcurrentHashMap与HashMap实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
-  - [JDK8中Hashtable与HashMap实现原理上的不同点](#JDK8中Hashtable与HashMap实现原理上的不同点)
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
   - [JDK8中HashMap如何实现序列化与反序列化](#JDK8中HashMap如何实现序列化与反序列化)
   
@@ -526,10 +525,6 @@ TODO
 TODO
 
 还有，JDK8中ConcurrentHashMap的CounterCell?
-
-### JDK8中Hashtable与HashMap实现原理上的不同点
-
-TODO
 
 ### JDK8中LinkedHashMap与HashMap实现原理上的不同点
 
