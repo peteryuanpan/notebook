@@ -4,7 +4,7 @@
 - [如何学习并发与集合](#如何学习并发与集合)
 - [项目成果](#项目成果)
 - [文章目录](#文章目录)
-  - [第0章：应用场景与源码分析](#第0章应用场景与源码分析)
+  - [第0章：源码分析](#第0章源码分析)
   - [第1章：JAVA线程基础](#第1章java线程基础)
   - [第2章：并发三大特性](#第2章并发三大特性)
   - [第3章：并发面试题](#第3章并发面试题)
@@ -74,11 +74,11 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 
 ### 文章目录
 
-#### 第0章：应用场景与源码分析
-- [ThreadPoolExecutor](应用场景与源码分析/ThreadPoolExecutor.md)
-- [HashMap](应用场景与源码分析/HashMap.md)
-- [JDK7.ConcurrentHashMap](应用场景与源码分析/JDK7.ConcurrentHashMap.md)
-- [JDK8.ConcurrentHashMap](应用场景与源码分析/JDK8.ConcurrentHashMap.md)
+#### 第0章：源码分析
+- [ThreadPoolExecutor](源码分析/ThreadPoolExecutor.md)
+- [HashMap](源码分析/HashMap.md)
+- [JDK7.ConcurrentHashMap](源码分析/JDK7.ConcurrentHashMap.md)
+- [JDK8.ConcurrentHashMap](源码分析/JDK8.ConcurrentHashMap.md)
 
 #### 第1章：JAVA线程基础
 - [JAVA线程基础](JAVA线程基础.md)
