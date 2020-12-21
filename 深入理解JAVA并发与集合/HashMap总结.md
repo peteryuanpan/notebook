@@ -9,11 +9,8 @@
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
   - [JDK7与JDK8中HashMap的快速失败机制](#JDK7与JDK8中HashMap的快速失败机制)
-  - [JDK7中ConcurrentHashMap与HashMap实现原理上的不同点](#JDK7中ConcurrentHashMap与HashMap实现原理上的不同点)
-  - [JDK8中ConcurrentHashMap与HashMap实现原理上的不同点](#JDK8中ConcurrentHashMap与HashMap实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
-  - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
   - [JDK8中HashMap如何实现序列化与反序列化](#JDK8中HashMap如何实现序列化与反序列化)
   
 # HashMap总结
@@ -506,14 +503,6 @@ end
         }
 ```
 
-### JDK7中ConcurrentHashMap与HashMap实现原理上的不同点
-
-TODO
-
-### JDK8中ConcurrentHashMap与HashMap实现原理上的不同点
-
-TODO
-
 ### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点
 
 从不同方面来看
@@ -525,10 +514,6 @@ TODO
 TODO
 
 还有，JDK8中ConcurrentHashMap的CounterCell?
-
-### JDK8中LinkedHashMap与HashMap实现原理上的不同点
-
-TODO
 
 ### JDK8中HashMap如何实现序列化与反序列化
 
