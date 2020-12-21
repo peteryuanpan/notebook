@@ -142,11 +142,8 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [JDK8中HashMap2个线程同时put会发生什么](HashMap总结.md#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](HashMap总结.md#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
   - [JDK7与JDK8中HashMap的快速失败机制](HashMap总结.md#JDK7与JDK8中HashMap的快速失败机制)
-  - [JDK7中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap总结.md#JDK7中ConcurrentHashMap与HashMap实现原理上的不同点)
-  - [JDK8中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap总结.md#JDK8中ConcurrentHashMap与HashMap实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](HashMap总结.md#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](HashMap总结.md#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
-  - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](HashMap总结.md#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
   - [JDK8中HashMap如何实现序列化与反序列化](HashMap总结.md#JDK8中HashMap如何实现序列化与反序列化)
 
 ### 思维导图
