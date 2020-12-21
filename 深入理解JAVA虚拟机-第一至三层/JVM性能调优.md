@@ -17,6 +17,8 @@
     - [生成与分析Dump文件](#生成与分析Dump文件)
     - [OOM异常问题排查](#OOM异常问题排查)
     - [线上业务日志切面](#线上业务日志切面)
+    - [CPU占用过高问题排查](#CPU占用过高问题排查)
+    - [亿级流量系统调优案例](#亿级流量系统调优案例)
 
 # JVM性能调优
 
@@ -866,3 +868,27 @@ public class TracingScript {
 - 点击start，可以看到以下输出，能打印出方法参数
 
 ![image](https://user-images.githubusercontent.com/10209135/100411396-9e1ad980-30ac-11eb-8ba6-60794175f417.png)
+
+### CPU占用过高问题排查
+
+这是一道经典的面试问题
+
+解决办法思路：（1）查到占CPU高的进程和线程ID（2）通过线程堆栈工具查找堆栈日志（3）分析业务代码
+
+关于（1），可以用 VisualVM、Arthas，而 Linux 上还可以用 top 命令
+
+关于（2），可以用 jstack、VisualVM、Arthas
+
+以Linux上举例
+- top，查到占CPU最高的进程ID
+- top -H -p < 进程ID >，查到进程中占CPU最高的线程ID
+- 将线程ID从十进制转十六进制
+- jstack 进程ID | grep 十六进制线程ID -A 30，查看线程堆栈，可定位到哪一行代码导致的
+
+CPU占用过高、死循环、死锁问题，都可以用 VisualVM、Arthas 来分析
+
+### 亿级流量系统调优案例
+
+参考：https://github.com/peteryuanpan/notebook/issues/84
+
+TODO
