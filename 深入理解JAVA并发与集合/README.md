@@ -42,8 +42,6 @@
 
 > In computer science, a collection or container is a grouping of some variable number of data items (possibly zero) that have some shared significance to the problem being solved and need to be operated upon together in some controlled fashion. A collection is a concept applicable to abstract data types, and does not prescribe a specific implementation as a concrete data structure. From https://en.wikipedia.org/wiki/Collection_(abstract_data_type)
 
-严格来说，JAVA中的集合是指 Collection 接口及实现类，比如 AbstractList的子类：ArrayList、LinkedList、Vector；AbstractQueue的子类：ArrayBlockingQueue、ConcurrentLinkedQueue；AbstractSet的子类：HashSet、TreeSet 等，它们的共同父类都有 AbstractCollection，而许多 Map 接口及实现类是没有实现 Collection 的，比如 AbstractMap的子类：HashMap、ConcurrentHashMap。但这里更强调的是数学定义中的集合，或者是容器，因此下文的源码分析中，会存在非 AbstractCollection 子类的情况
-
 ### JAVA语言的水深
 
 JAVA这潭大湖，从上往下，一共有7层（人为定义的）
@@ -108,8 +106,8 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
 - [并发三大特性](并发三大特性.md)
   - TODO
 
-#### 第3章：并发总结
-- [并发总结](并发总结.md)
+#### 第3章：并发与集合总结
+- [并发与集合总结](并发与集合总结.md)
   - [进程与线程的区别是什么](并发总结.md#进程与线程的区别是什么)
   - [线程与线程之间通信有哪些方式](并发总结.md#线程与线程之间通信有哪些方式)
   - [进程与进程之间通信有哪些方式](并发总结.md#进程与进程之间通信有哪些方式)
@@ -126,27 +124,6 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [线程池可解决的问题及适用的场景](并发总结.md#线程池可解决的问题及适用的场景)
   - [线程池为何能做到线程复用](并发总结.md#线程池为何能做到线程复用)
   - [说一下线程池中重要的参数及含义](并发总结.md#说一下线程池中重要的参数及含义)
-
-#### 第4章：集合面试题
-- [集合面试题](集合面试题.md)
-  - TODO
-- [HashMap面试题](HashMap面试题.md)
-  - [JDK7与JDK8中HashMap实现原理上的不同点](HashMap面试题.md#JDK7与JDK8中HashMap实现原理上的不同点)
-  - [JDK8中HashMap数组长度为何是2的幂次方](HashMap面试题.md#JDK8中HashMap数组长度为何是2的幂次方)
-  - [JDK8中HashMap数组什么时候扩容](HashMap面试题.md#JDK8中HashMap数组什么时候扩容)
-  - [JDK8中HashMap为什么要使用红黑树](HashMap面试题.md#JDK8中HashMap为什么要使用红黑树)
-  - [JDK8中HashMap什么时候将链表转化为红黑树](HashMap面试题.md#JDK8中HashMap什么时候将链表转化为红黑树)
-  - [JDK8中HashMap及TreeMap的红黑树实现原理](HashMap面试题.md#JDK8中HashMap及TreeMap的红黑树实现原理)
-  - [JDK7中HashMap2个线程resize时循环链表问题](HashMap面试题.md#JDK7中HashMap2个线程resize时循环链表问题)
-  - [JDK8中HashMap2个线程同时put会发生什么](HashMap面试题.md#JDK8中HashMap2个线程同时put会发生什么)
-  - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](HashMap面试题.md#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
-  - [JDK7与JDK8中HashMap的快速失败机制](HashMap面试题.md#JDK7与JDK8中HashMap的快速失败机制)
-  - [JDK7中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK7中ConcurrentHashMap与HashMap实现原理上的不同点)
-  - [JDK8中ConcurrentHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中ConcurrentHashMap与HashMap实现原理上的不同点)
-  - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](HashMap面试题.md#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
-  - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](HashMap面试题.md#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
-  - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](HashMap面试题.md#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
-  - [JDK8中HashMap如何实现序列化与反序列化](HashMap面试题.md#JDK8中HashMap如何实现序列化与反序列化)  
 
 ### 思维导图
 
