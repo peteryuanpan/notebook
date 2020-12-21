@@ -1,4 +1,4 @@
-- [HashMap专题](#HashMap专题)
+- [HashMap总结](#HashMap总结)
   - [JDK7与JDK8中HashMap实现原理上的不同点](#JDK7与JDK8中HashMap实现原理上的不同点)
   - [JDK8中HashMap数组长度为何是2的幂次方](#JDK8中HashMap数组长度为何是2的幂次方)
   - [JDK8中HashMap数组什么时候扩容](#JDK8中HashMap数组什么时候扩容)
@@ -16,7 +16,7 @@
   - [JDK8中LinkedHashMap与HashMap实现原理上的不同点](#JDK8中LinkedHashMap与HashMap实现原理上的不同点)
   - [JDK8中HashMap如何实现序列化与反序列化](#JDK8中HashMap如何实现序列化与反序列化)
   
-# HashMap专题
+# HashMap总结
 
 参考
 - [HashMap源码分析](应用场景与源码分析/HashMap.md)
