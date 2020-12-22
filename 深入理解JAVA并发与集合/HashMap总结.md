@@ -12,7 +12,6 @@
   - [JDK7与JDK8中HashMap的快速失败机制](#JDK7与JDK8中HashMap的快速失败机制)
   - [JDK7中ConcurrentHashMap如何保证线程安全](#JDK7中ConcurrentHashMap如何保证线程安全)
   - [JDK8中ConcurrentHashMap如何保证线程安全](#JDK8中ConcurrentHashMap如何保证线程安全)
-  - [JDK8中ConcurrentHashMap如何进行扩容](#JDK8中ConcurrentHashMap如何进行扩容)
   - [JDK8中ConcurrentHashMap的CounterCell有什么作用](#JDK8中ConcurrentHashMap的CounterCell有什么作用)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
   
@@ -521,7 +520,9 @@ end
 
 Segment继承了ReentrantLock，每个Segment可以理解为一个小HashMap，其结构与JDK7的HashMap一致，有HashEntry[] table、int count、int threshold等属性
 
-当put、remove、replace等修改操作时，会先计算当前元素属于哪个Segment，然后使用ReentrantLock进行最多64次tryLock，若失败则进入AQS的同步队列，因此多个线程是可以并发操作不同Segment，但对于同一个Segment操作是阻塞的
+当put、remove、replace等修改操作时，会先计算当前元素属于哪个Segment，然后使用ReentrantLock进行最多64次tryLock，若失败则进入AQS的同步队列，因此多个线程是可以并发修改不同Segment，但对于同一个Segment的修改操作是阻塞的
+
+一个线程对一个Segment的修改操作与JDK7中HashMap基本一致
 
 由于扩容操作是在put过程中判断进行的，因此多个线程对同一个Segment中HashEntry[] table的扩容操作也是阻塞的，可以保证线程安全
 
@@ -529,8 +530,26 @@ get操作不会阻塞，由于Segment中HashEntry[] table是由volatile修饰的
 
 ### JDK8中ConcurrentHashMap如何保证线程安全
 
-### JDK8中ConcurrentHashMap如何进行扩容
+JDK8中没有JDK7中的Segment数组来分段了，但同样也有分段思想，它是通过 synchronized + CAS 来保证线程安全的
+
+内部结构继承了JDK8的HashMap，同样有Node[] table，每个Node是一个链表，当链表长度大于等于8且table长度大于等于64时，会转为红黑树
+
+当put、remove、replace等修改操作时，会先计算元素的位置index（index=hash&(length-1)），然后对该Node对象加synchronized锁，以此保证线程安全，因此多个线程是可以并发修改不同位置的table的，但对于同一个位置的修改是阻塞的
+
+内部有个属性volatile int sizeCtl，用于表示状态，大于0表示当前容量，等于-1表示正在初始化，等于-N表示有N-1个线程正在进行扩容
+
+当一个线程进行扩容时，会逐一对每个Node对象加synchronized锁，以此保证线程安全，然后与JDK8中HashMap一样，会生成一个低位链表和一个高位链表，插入到新table数组中，但是不会直接替换旧table数组，而是将旧Node替换为ForwardingNode
+
+ForwardingNode与新table数组有关联，如果其他线程访问到了ForwardingNode节点，若是put等修改操作，会调用helpTransfer方法帮助之前的线程扩容，若是get查询操作，会会调用ForwardingNode的find方法，去nextTable里面查找相关元素
 
 ### JDK8中ConcurrentHashMap的CounterCell有什么作用
 
+CounterCell是用来统计ConcurrentHashMap中所有元素个数的，在统计ConcurentHashMap时，不能直接对ConcurrentHashMap对象进行加锁然后再去统计，因为这样会影响ConcurrentHashMap的put等操作的效率
+
+在JDK8的实现中使用了CounterCell+baseCount来辅助进行统计，baseCount是ConcurrentHashMap中的一个属性，某个线程在调用ConcurrentHashMap对象的put操作时，会先通过CAS去修改baseCount的值，如果CAS修改成功，就计数成功，如果CAS修改失败，则会从CounterCell数组中随机选出一个CounterCell对象，然后利用CAS去修改CounterCell对象中的值，因为存在CounterCell数组，所以，当某个线程想要计数时，先尝试通过CAS去修改baseCount的值，如果没有修改成功，则从CounterCell数组中随机取出来一个CounterCell对象进行CAS计数，这样在计数时提高了效率
+
+所以ConcurrentHashMap在统计元素个数时，就是baseCount加上所有CountCeller中的value值，所得的和就是所有的元素个数
+
 ### JDK7与JDK8中ConcurrentHashMap的安全失败机制
+
+TODO
