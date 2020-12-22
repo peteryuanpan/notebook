@@ -5,6 +5,7 @@
   - [JDK8中HashMap为什么要使用红黑树](#JDK8中HashMap为什么要使用红黑树)
   - [JDK8中HashMap什么时候将链表转化为红黑树](#JDK8中HashMap什么时候将链表转化为红黑树)
   - [JDK8中HashMap及TreeMap的红黑树实现原理](#JDK8中HashMap及TreeMap的红黑树实现原理)
+  - [JDK8中HashMap如何实现序列化与反序列化](#JDK8中HashMap如何实现序列化与反序列化)
   - [JDK7中HashMap2个线程resize时循环链表问题](#JDK7中HashMap2个线程resize时循环链表问题)
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
@@ -14,7 +15,6 @@
   - [JDK8中ConcurrentHashMap如何进行扩容](#JDK8中ConcurrentHashMap如何进行扩容)
   - [JDK8中ConcurrentHashMap的CounterCell有什么作用](#JDK8中ConcurrentHashMap的CounterCell有什么作用)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
-  - [JDK8中HashMap如何实现序列化与反序列化](#JDK8中HashMap如何实现序列化与反序列化)
   
 # HashMap总结
 
@@ -29,6 +29,7 @@
 - [ConcurrentHashMap相关面试题](https://www.yuque.com/books/share/9f4576fb-9aa9-4965-abf3-b3a36433faa6/biiid7)
 - [HashMap的7种遍历方式与性能分析](https://mp.weixin.qq.com/s/Zz6mofCtmYpABDL1ap04ow)
 - [为什么HashMap线程不安全](https://www.jianshu.com/p/e2f75c8cce01)
+- [ConcurrentHashMap源码分析（JDK8）扩容实现机制](https://www.jianshu.com/p/487d00afe6ca)
 - [快速失败机制&失败安全机制](https://juejin.im/post/6844904046617182215)
 - [为什么HashMap要自己实现writeObject和readObject方法](https://zhuanlan.zhihu.com/p/84533476)
 
@@ -85,6 +86,12 @@ JDK7中数组+链表的实现方式，可能造成一个链表过长，而查询
 TODO
 
 如何理解红黑树内部维护了一个双向链表?
+
+### JDK8中HashMap如何实现序列化与反序列化
+
+参考：https://github.com/peteryuanpan/notebook/issues/112#issuecomment-739977521
+
+transient，readObject，writeObject，ObjectInputStream，ObjectOutputStream
 
 ### JDK7中HashMap2个线程resize时循环链表问题
 
@@ -515,9 +522,3 @@ end
 ### JDK8中ConcurrentHashMap的CounterCell有什么作用
 
 ### JDK7与JDK8中ConcurrentHashMap的安全失败机制
-
-### JDK8中HashMap如何实现序列化与反序列化
-
-参考：https://github.com/peteryuanpan/notebook/issues/112#issuecomment-739977521
-
-transient，readObject，writeObject，ObjectInputStream，ObjectOutputStream
