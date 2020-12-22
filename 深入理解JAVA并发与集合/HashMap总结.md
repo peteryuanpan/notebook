@@ -9,7 +9,10 @@
   - [JDK8中HashMap2个线程同时put会发生什么](#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
   - [JDK7与JDK8中HashMap的快速失败机制](#JDK7与JDK8中HashMap的快速失败机制)
-  - [JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点](#JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点)
+  - [JDK7中ConcurrentHashMap如何保证线程安全](#JDK7中ConcurrentHashMap如何保证线程安全)
+  - [JDK8中ConcurrentHashMap如何保证线程安全](#JDK8中ConcurrentHashMap如何保证线程安全)
+  - [JDK8中ConcurrentHashMap如何进行扩容](#JDK8中ConcurrentHashMap如何进行扩容)
+  - [JDK8中ConcurrentHashMap的CounterCell有什么作用](#JDK8中ConcurrentHashMap的CounterCell有什么作用)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
   - [JDK8中HashMap如何实现序列化与反序列化](#JDK8中HashMap如何实现序列化与反序列化)
   
@@ -503,17 +506,15 @@ end
         }
 ```
 
-### JDK7与JDK8中ConcurrentHashMap保证线程安全实现原理上的不同点
+### JDK7中ConcurrentHashMap如何保证线程安全
 
-从不同方面来看
+### JDK8中ConcurrentHashMap如何保证线程安全
 
-要涉及到扩容
+### JDK8中ConcurrentHashMap如何进行扩容
+
+### JDK8中ConcurrentHashMap的CounterCell有什么作用
 
 ### JDK7与JDK8中ConcurrentHashMap的安全失败机制
-
-TODO
-
-还有，JDK8中ConcurrentHashMap的CounterCell?
 
 ### JDK8中HashMap如何实现序列化与反序列化
 
