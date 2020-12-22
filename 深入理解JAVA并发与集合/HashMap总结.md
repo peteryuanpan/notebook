@@ -515,11 +515,11 @@ end
 
 ### JDK7中ConcurrentHashMap如何保证线程安全
 
+是通过ReentrantLock + CAS + 分段思想来保证线程安全的
+
 内部有一个Segment[]数组，数组的长度表示ConcurrencyLevel，且初始化之后就不可变，默认为16
 
-每个Segment可以理解为一个小HashMap，其结构与JDK7的HashMap一致，有HashEntry[] table、int count、int threshold等属性
-
-Segment继承了ReentrantLock，以此来保证线程安全
+Segment继承了ReentrantLock，每个Segment可以理解为一个小HashMap，其结构与JDK7的HashMap一致，有HashEntry[] table、int count、int threshold等属性
 
 当put、remove、replace等修改操作时，会先计算当前元素属于哪个Segment，然后使用ReentrantLock进行最多64次tryLock，若失败则进入AQS的同步队列，因此多个线程是可以并发操作不同Segment，但对于同一个Segment操作是阻塞的
 
