@@ -138,6 +138,7 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [JDK8中HashMap为什么要使用红黑树](HashMap总结.md#JDK8中HashMap为什么要使用红黑树)
   - [JDK8中HashMap什么时候将链表转化为红黑树](HashMap总结.md#JDK8中HashMap什么时候将链表转化为红黑树)
   - [JDK8中HashMap及TreeMap的红黑树实现原理](HashMap总结.md#JDK8中HashMap及TreeMap的红黑树实现原理)
+  - [JDK8中HashMap如何实现序列化与反序列化](HashMap总结.md#JDK8中HashMap如何实现序列化与反序列化)
   - [JDK7中HashMap2个线程resize时循环链表问题](HashMap总结.md#JDK7中HashMap2个线程resize时循环链表问题)
   - [JDK8中HashMap2个线程同时put会发生什么](HashMap总结.md#JDK8中HashMap2个线程同时put会发生什么)
   - [JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么](HashMap总结.md#JDK8中HashMap1个线程put1个线程迭代器遍历会发生什么)
@@ -147,7 +148,6 @@ JAVA这潭大湖，从上往下，一共有7层（人为定义的）
   - [JDK8中ConcurrentHashMap如何进行扩容](HashMap总结.md#JDK8中ConcurrentHashMap如何进行扩容)
   - [JDK8中ConcurrentHashMap的CounterCell有什么作用](HashMap总结.md#JDK8中ConcurrentHashMap的CounterCell有什么作用)
   - [JDK7与JDK8中ConcurrentHashMap的安全失败机制](HashMap总结.md#JDK7与JDK8中ConcurrentHashMap的安全失败机制)
-  - [JDK8中HashMap如何实现序列化与反序列化](HashMap总结.md#JDK8中HashMap如何实现序列化与反序列化)
 
 ### 思维导图
 
