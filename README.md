@@ -11,7 +11,7 @@
 ### 笔记导读
 
 <details close>
-    <summary>深入理解JAVA虚拟机-第一至三层</summary>
+    <summary>深入理解JAVA虚拟机</summary>
 
 + 前言
 + JAVA虚拟机的定义
