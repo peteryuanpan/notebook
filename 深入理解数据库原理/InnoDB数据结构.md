@@ -15,8 +15,6 @@
 
 ### 参数文件
 
-3.1 参数文件
-
 当MySQL实例启动时，数据库会先去读一个配置参数文件，用来寻找数据库的各种文件所在位置以及指定某些初始化参数，这些参数通常定义了某种内存结构有多大等
 
 用户只需通过命令 mysql --help | findStr my.cnf 来寻找即可
@@ -27,7 +25,7 @@ mysql --help | findStr my.cnf
 C:\Windows\my.ini C:\Windows\my.cnf C:\my.ini C:\my.cnf D:\mysql-5.7.30-winx64\my.ini D:\mysql-5.7.30-winx64\my.cnf
 ```
 
-查看D:\mysql-5.7.30-winx64\my.cnf
+查看 D:\mysql-5.7.30-winx64\my.cnf
 
 ```
 [client]
@@ -42,9 +40,7 @@ default-storage-engine=MYISAM
 sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 ```
 
-3.1.1 什么是参数
-
-查看innodb_buffer_pool_size参数（键值对）
+SHOW VARIABLES 可查看所有参数，SHOW VARIABLES LIKE "" 可查看指定参数
 
 ```
 mysql> SHOW VARIABLES LIKE "innodb_buffer%";
@@ -65,9 +61,9 @@ mysql> SHOW VARIABLES LIKE "innodb_buffer%";
 10 rows in set, 1 warning (0.00 sec)
 ```
 
-3.1.2 参数类型
+静态参数不可修改，动态参数可通过 SET [GLOBAL|SESSION] X=Y 修改
 
-静态参数不可修改，动态参数可通过 SET X=Y 修改，但是通过 SET 方式修改后，再下一次实例启动时参数还会恢复为上一次的默认值，要想一直生效需要去改配置参数文件
+但是通过 SET 方式修改后，再下一次实例启动时参数还会恢复为上一次的默认值，要想一直生效需要去改配置参数文件
 
 静态参数例子
 
@@ -104,11 +100,9 @@ mysql> show variables like "long_query_time";
 
 ### 日志文件
 
-3.2 日志文件
-
 日志文件有4种：错误日志（error log）、二进制日志（bin log）、慢查询日志（show query log）、查询日志（log）
 
-#### 错误日志文件
+#### 错误日志
 
 当出现MySQL数据库不能正常启动时，第一个必须查找的文件应该就是错误日志文件，该文件记录了错误信息，能很好的指导用户发现问题
 
@@ -137,4 +131,48 @@ mysql> SHOW VARIABLES LIKE "log_error";
 ```
 
 #### 慢查询文件
+
+书中对这一块进行了大量的描述，主要都是针对DBA如何定位慢查询日志的基础知识，这里不做过多描述，只简单记录一些参数的含义
+
+slow_query_log 默认为OFF，设置为ON后，会默认将查询时间（单位ms）大于 long_query_time 的日志打印到 slow_query_log_file 中
+
+```
+mysql> show variables like "slow_query_log";
++----------------+-------+
+| Variable_name  | Value |
++----------------+-------+
+| slow_query_log | OFF   |
++----------------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> show variables like "slow_query_log_file";
++---------------------+-----------------------------------------------------+
+| Variable_name       | Value                                               |
++---------------------+-----------------------------------------------------+
+| slow_query_log_file | D:\mysql-5.7.30-winx64\data\PS2019PQMJKMWO-slow.log |
++---------------------+-----------------------------------------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> show variables like "long_query_time";
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 10.000000 |
++-----------------+-----------+
+1 row in set, 1 warning (0.00 sec)
+```
+
+尝试SET GLOBAL slow_query_log=ON; 并执行一条长SQL语句，查看 D:\mysql-5.7.30-winx64\data\PS2019PQMJKMWO-slow.log
+
+```
+MySQL, Version: 5.7.30 (MySQL Community Server (GPL)). started with:
+TCP Port: 3306, Named Pipe: MySQL
+Time                 Id Command    Argument
+# Time: 2020-12-23T07:55:13.425415Z
+# User@Host: root[root] @ localhost [127.0.0.1]  Id:     7
+# Query_time: 10.661718  Lock_time: 0.000081 Rows_sent: 10000  Rows_examined: 33831
+use peter;
+SET timestamp=1608710113;
+SELECT t1.b,t1.c,t2.b,t2.c FROM t1 LEFT JOIN t2 ON t1.b = t2.b AND t1.c = t2.c LIMIT 10000;
+```
 
