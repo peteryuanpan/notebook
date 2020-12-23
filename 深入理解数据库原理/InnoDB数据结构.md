@@ -6,38 +6,162 @@
 ### 文件类型
 
 分析构成MySQL数据库和InnoDB存储引擎表的各种类型文件，有这些
-- 参数文件：
-- 日志文件：
-- sokcet文件：
-- pid文件：
-- MySQL表结构文件：
-- 存储引擎文件：
+- 参数文件
+- 日志文件
+- sokcet文件
+- pid文件
+- MySQL表结构文件
+- 存储引擎文件
+- 重做日志文件
 
 ### 参数文件
 
 当MySQL实例启动时，数据库会先去读一个配置参数文件，用来寻找数据库的各种文件所在位置以及指定某些初始化参数，这些参数通常定义了某种内存结构有多大等
 
-用户只需通过命令 mysql --help | findStr my.cnf 来寻找即可
+用户只需通过命令 mysql --help | grep my.cnf 来寻找即可
 
 ```
-mysql --help | findStr my.cnf
+mysql --help | grep my.cnf
                       order of preference, my.cnf, $MYSQL_TCP_PORT,
-C:\Windows\my.ini C:\Windows\my.cnf C:\my.ini C:\my.cnf D:\mysql-5.7.30-winx64\my.ini D:\mysql-5.7.30-winx64\my.cnf
+/etc/my.cnf /etc/mysql/my.cnf ~/.my.cnf
 ```
 
-查看 D:\mysql-5.7.30-winx64\my.cnf
+查看 /etc/mysql/my.cnf
 
 ```
-[client]
-port=3306
-default-character-set=utf8
-[mysqld] 
-basedir=D:\mysql-5.7.30-winx64
-datadir=D:\mysql-5.7.30-winx64\data
-port=3306
-character_set_server=utf8
-default-storage-engine=MYISAM
-sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
+cat /etc/mysql/my.cnf
+#
+# The MySQL database server configuration file.
+#
+# You can copy this to one of:
+# - "/etc/mysql/my.cnf" to set global options,
+# - "~/.my.cnf" to set user-specific options.
+#
+# One can use all long options that the program supports.
+# Run program with --help to get a list of available options and with
+# --print-defaults to see which it would actually understand and use.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+#
+# * IMPORTANT: Additional settings that can override those from this file!
+#   The files must end with '.cnf', otherwise they'll be ignored.
+#
+
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/mysql.conf.d/
+```
+
+查看 /etc/mysql/mysql.conf.d/mysqld.cnf
+
+```
+cat /etc/mysql/mysql.conf.d/mysqld.cnf
+#
+# The MySQL database server configuration file.
+#
+# You can copy this to one of:
+# - "/etc/mysql/my.cnf" to set global options,
+# - "~/.my.cnf" to set user-specific options.
+#
+# One can use all long options that the program supports.
+# Run program with --help to get a list of available options and with
+# --print-defaults to see which it would actually understand and use.
+#
+# For explanations see
+# http://dev.mysql.com/doc/mysql/en/server-system-variables.html
+
+# This will be passed to all mysql clients
+# It has been reported that passwords should be enclosed with ticks/quotes
+# escpecially if they contain "#" chars...
+# Remember to edit /etc/mysql/debian.cnf when changing the socket location.
+
+# Here is entries for some specific programs
+# The following values assume you have at least 32M ram
+
+[mysqld_safe]
+socket          = /var/run/mysqld/mysqld.sock
+nice            = 0
+
+[mysqld]
+#
+# * Basic Settings
+#
+user            = mysql
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+port            = 3306
+basedir         = /usr
+datadir         = /var/lib/mysql
+tmpdir          = /tmp
+lc-messages-dir = /usr/share/mysql
+skip-external-locking
+#
+# Instead of skip-networking the default is now to listen only on
+# localhost which is more compatible and is not less secure.
+# bind-address          = 127.0.0.1
+#
+# * Fine Tuning
+#
+key_buffer_size         = 16M
+max_allowed_packet      = 16M
+thread_stack            = 192K
+thread_cache_size       = 8
+# This replaces the startup script and checks MyISAM tables if needed
+# the first time they are touched
+myisam-recover-options  = BACKUP
+#max_connections        = 100
+#table_open_cache       = 64
+#thread_concurrency     = 10
+#
+# * Query Cache Configuration
+#
+query_cache_limit       = 1M
+query_cache_size        = 16M
+#
+# * Logging and Replication
+#
+# Both location gets rotated by the cronjob.
+# Be aware that this log type is a performance killer.
+# As of 5.1 you can enable the log at runtime!
+#general_log_file        = /var/log/mysql/mysql.log
+#general_log             = 1
+#
+# Error log - should be very few entries.
+#
+log_error = /var/log/mysql/error.log
+#
+# Here you can see queries with especially long duration
+#slow_query_log         = 1
+#slow_query_log_file    = /var/log/mysql/mysql-slow.log
+#long_query_time = 2
+#log-queries-not-using-indexes
+#
+# The following can be used as easy to replay backup logs or for replication.
+# note: if you are setting up a replication slave, see README.Debian about
+#       other settings you may need to change.
+#server-id              = 1
+#log_bin                        = /var/log/mysql/mysql-bin.log
+expire_logs_days        = 10
+max_binlog_size   = 100M
+#binlog_do_db           = include_database_name
+#binlog_ignore_db       = include_database_name
+#
+# * InnoDB
+#
+# InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
+# Read the manual for more InnoDB related options. There are many!
+#
+# * Security Features
+#
+# Read the manual, too, if you want chroot!
+# chroot = /var/lib/mysql/
+#
+# For generating SSL certificates I recommend the OpenSSL GUI "tinyca".
+#
+# ssl-ca=/etc/mysql/cacert.pem
+# ssl-cert=/etc/mysql/server-cert.pem
+# ssl-key=/etc/mysql/server-key.pem
 ```
 
 SHOW VARIABLES 可查看所有参数，SHOW VARIABLES LIKE "" 可查看指定参数
@@ -110,12 +234,12 @@ mysql> show variables like "long_query_time";
 
 ```
 mysql> SHOW VARIABLES LIKE "log_error";
-+---------------+------------------------------------------------+
-| Variable_name | Value                                          |
-+---------------+------------------------------------------------+
-| log_error     | D:\mysql-5.7.30-winx64\data\PS2019PQMJKMWO.err |
-+---------------+------------------------------------------------+
-1 row in set, 1 warning (0.00 sec)
++---------------+--------------------------+
+| Variable_name | Value                    |
++---------------+--------------------------+
+| log_error     | /var/log/mysql/error.log |
++---------------+--------------------------+
+1 row in set (0.00 sec)
 ```
 
 查看这份文件
@@ -152,12 +276,12 @@ mysql> show variables like "slow_query_log";
 1 row in set, 1 warning (0.00 sec)
 
 mysql> show variables like "slow_query_log_file";
-+---------------------+-----------------------------------------------------+
-| Variable_name       | Value                                               |
-+---------------------+-----------------------------------------------------+
-| slow_query_log_file | D:\mysql-5.7.30-winx64\data\PS2019PQMJKMWO-slow.log |
-+---------------------+-----------------------------------------------------+
-1 row in set, 1 warning (0.00 sec)
++---------------------+---------------------------------------+
+| Variable_name       | Value                                 |
++---------------------+---------------------------------------+
+| slow_query_log_file | /var/lib/mysql/VM-8-6-ubuntu-slow.log |
++---------------------+---------------------------------------+
+1 row in set (0.00 sec)
 
 mysql> show variables like "log_output";
 +---------------+-------+
@@ -206,9 +330,86 @@ SET timestamp=1608710113;
 SELECT t1.b,t1.c,t2.b,t2.c FROM t1 LEFT JOIN t2 ON t1.b = t2.b AND t1.c = t2.c LIMIT 10000;
 ```
 
-### 表结构定义文件
-
 ### InnoDB存储引擎文件
 
-### 重做日志文件
+来到 /var/lib/mysql，查看有如下文件，其中mysql、performance_schema、peter、sys都是文件夹，这些文件夹名字与数据库名字是一一对应的
+
+```
+/var/lib/mysql# ls -l
+total 122944
+-rw-r----- 1 mysql mysql       56 Dec 23 17:52 auto.cnf
+-rw------- 1 mysql mysql     1676 Dec 23 17:52 ca-key.pem
+-rw-r--r-- 1 mysql mysql     1112 Dec 23 17:52 ca.pem
+-rw-r--r-- 1 mysql mysql     1112 Dec 23 17:52 client-cert.pem
+-rw------- 1 mysql mysql     1680 Dec 23 17:52 client-key.pem
+-rw-r--r-- 1 root  root         0 Dec 23 17:52 debian-5.7.flag
+-rw-r----- 1 mysql mysql      342 Dec 23 18:05 ib_buffer_pool
+-rw-r----- 1 mysql mysql 12582912 Dec 23 18:12 ibdata1
+-rw-r----- 1 mysql mysql 50331648 Dec 23 18:12 ib_logfile0
+-rw-r----- 1 mysql mysql 50331648 Dec 23 17:52 ib_logfile1
+-rw-r----- 1 mysql mysql 12582912 Dec 23 18:15 ibtmp1
+drwxr-x--- 2 mysql mysql     4096 Dec 23 17:52 mysql
+drwxr-x--- 2 mysql mysql     4096 Dec 23 17:52 performance_schema
+drwxr-x--- 2 mysql mysql     4096 Dec 23 18:12 peter
+-rw------- 1 mysql mysql     1680 Dec 23 17:52 private_key.pem
+-rw-r--r-- 1 mysql mysql      452 Dec 23 17:52 public_key.pem
+-rw-r--r-- 1 mysql mysql     1112 Dec 23 17:52 server-cert.pem
+-rw------- 1 mysql mysql     1676 Dec 23 17:52 server-key.pem
+drwxr-x--- 2 mysql mysql    12288 Dec 23 17:52 sys
+```
+
+查看所有数据库
+
+```
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| peter              |
+| sys                |
++--------------------+
+5 rows in set (0.00 sec)
+```
+
+比如 peter 文件夹，它也是一个数据库名字（我创建的），文件夹中存储着关键数据信息
+
+```
+/var/lib/mysql/peter# ls -l
+total 220
+-rw-r----- 1 mysql mysql    65 Dec 23 18:08 db.opt
+-rw-r----- 1 mysql mysql  8674 Dec 23 18:11 t1.frm
+-rw-r----- 1 mysql mysql 98304 Dec 23 18:11 t1.ibd
+-rw-r----- 1 mysql mysql  8674 Dec 23 18:12 t2.frm
+-rw-r----- 1 mysql mysql 98304 Dec 23 18:12 t2.ibd
+```
+
+查看 peter 数据库的表
+
+```
+mysql> show tables in peter;
++-----------------+
+| Tables_in_peter |
++-----------------+
+| t1              |
+| t2              |
++-----------------+
+2 rows in set (0.00 sec)
+```
+
+文件 t1.xxx，t2.xxx 中 t1、t2 对应着表的名称
+
+.frm 是表结构定义文件，它记录了该表的表结构定义
+
+.ibd 是表空间文件，它存储每张表的数据、索引、插入缓冲Bitmap页
+
+值得一提的是，每张表中信息并非全部存储于它的表空间，还有一些是存储在共享表空间文件中的
+
+在/var/lib/mysql/下，还有一些重要文件
+
+ibdata1 是共享表空间文件，它存储回滚信息、插入缓冲索引页、系统事务信息、二次写缓冲等
+
+ib_logfile0 与 ib_logfile1 是重做日志文件，当实例或介质失败时，重做日志文件能帮助恢复数据
 
