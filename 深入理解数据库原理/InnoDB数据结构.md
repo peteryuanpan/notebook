@@ -102,7 +102,7 @@ mysql> show variables like "long_query_time";
 
 日志文件有4种：错误日志（error log）、二进制日志（bin log）、慢查询日志（show query log）、查询日志（log）
 
-#### 错误日志
+#### 错误日志文件
 
 当出现MySQL数据库不能正常启动时，第一个必须查找的文件应该就是错误日志文件，该文件记录了错误信息，能很好的指导用户发现问题
 
@@ -130,11 +130,17 @@ mysql> SHOW VARIABLES LIKE "log_error";
 ...
 ```
 
-#### 慢查询文件
+#### 慢查询日志文件
 
 书中对这一块进行了大量的描述，主要都是针对DBA如何定位慢查询日志的基础知识，这里不做过多描述，只简单记录一些参数的含义
 
 slow_query_log 默认为OFF，设置为ON后，会默认将查询时间（单位ms）大于 long_query_time 的日志打印到 slow_query_log_file 中
+
+log_queries_not_using_indexes 默认为OFF，设置为ON后，会将没有走索引的日志打印到 slow_query_log_file 中
+
+log_throttle_queries_not_using_indexes 默认为0，表示无限制，设置为大于0后，表示每分钟允许记录到 slow_query_log_file 中且未使用索引的日志最大次数，用于控制日志过多 
+
+log_output 默认为FILE，若改为TABLE，慢查询日志不再输出到 slow_query_log_file 中，而是输出到 mysql.slow_log 表中
 
 ```
 mysql> show variables like "slow_query_log";
@@ -153,6 +159,14 @@ mysql> show variables like "slow_query_log_file";
 +---------------------+-----------------------------------------------------+
 1 row in set, 1 warning (0.00 sec)
 
+mysql> show variables like "log_output";
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_output    | FILE  |
++---------------+-------+
+1 row in set, 1 warning (0.00 sec)
+
 mysql> show variables like "long_query_time";
 +-----------------+-----------+
 | Variable_name   | Value     |
@@ -160,9 +174,25 @@ mysql> show variables like "long_query_time";
 | long_query_time | 10.000000 |
 +-----------------+-----------+
 1 row in set, 1 warning (0.00 sec)
+
+mysql> show variables like "log_queries%";
++-------------------------------+-------+
+| Variable_name                 | Value |
++-------------------------------+-------+
+| log_queries_not_using_indexes | OFF   |
++-------------------------------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> show variables like "log_throttle_queries%";
++----------------------------------------+-------+
+| Variable_name                          | Value |
++----------------------------------------+-------+
+| log_throttle_queries_not_using_indexes | 0     |
++----------------------------------------+-------+
+1 row in set, 1 warning (0.00 sec)
 ```
 
-尝试SET GLOBAL slow_query_log=ON; 并执行一条长SQL语句，查看 D:\mysql-5.7.30-winx64\data\PS2019PQMJKMWO-slow.log
+尝试 SET GLOBAL slow_query_log=ON; 并执行一条长SQL语句，查看 D:\mysql-5.7.30-winx64\data\PS2019PQMJKMWO-slow.log
 
 ```
 MySQL, Version: 5.7.30 (MySQL Community Server (GPL)). started with:
@@ -175,4 +205,10 @@ use peter;
 SET timestamp=1608710113;
 SELECT t1.b,t1.c,t2.b,t2.c FROM t1 LEFT JOIN t2 ON t1.b = t2.b AND t1.c = t2.c LIMIT 10000;
 ```
+
+### 表结构定义文件
+
+### InnoDB存储引擎文件
+
+### 重做日志文件
 
