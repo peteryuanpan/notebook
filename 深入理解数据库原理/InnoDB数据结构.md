@@ -413,3 +413,35 @@ ibdata1 是共享表空间文件，它存储回滚信息、插入缓冲索引页
 
 ib_logfile0 与 ib_logfile1 是重做日志文件，当实例或介质失败时，重做日志文件能帮助恢复数据
 
+### 索引组织表
+
+在InnoDB存储引擎中，表都是根据主键顺序组织存放的，这种存储方式的表称为索引组织表（index organized table）
+
+每张表都有个主键（Primary Key），如果没有显示的定义主键，InnoDB会优先判断是否存在唯一索引（UNIQUE NOT NULL），若有，选择最先定义的唯一索引列作为主键列，若无，会自动创建一个6字节大小的指针作为主键列
+
+创建一张表，插入数据，select中带上_rowid 即可查看主键（主键是多列时无法通过_rowid 查看）
+
+```
+mysql> create table test ( a INT NOT NULL, b INT NULL, c INT NOT NULL, d INT NOT NULL, UNIQUE KEY(b), UNIQUE KEY(d), UNIQUE KEY(c));
+mysql> insert into test select 1,2,3,4;
+mysql> SELECT a,b,c,d,_rowid FROM test;
++---+------+---+---+--------+
+| a | b    | c | d | _rowid |
++---+------+---+---+--------+
+| 1 |    2 | 3 | 4 |      4 |
++---+------+---+---+--------+
+1 row in set (0.00 sec)
+```
+
+可以发现上面，定义了三个UNIQUE KEY的列，但b是NULL，不能作为主键，d比c更早定义，因此选取d作为主键列
+
+也就是说，主键的选择是根据定义索引的顺序，而不是建表时列的顺序
+
+### InnoDB逻辑存储结构
+
+从InnoDB存储引擎的逻辑存储结构来看，所有数据都被逻辑地存放在一个空间中，称之为表空间（tablesapce）
+
+表空间又由段（segment）、区（extent）、页（page）组成（页有时也被称为块），页由行（row）组成，大致逻辑关系图如下
+
+![image](https://user-images.githubusercontent.com/10209135/103002911-c3471e80-456a-11eb-99ee-9a8f2e732ec3.png)
+
