@@ -1,7 +1,7 @@
 
 # InnoDB数据结构
 
-> 本文主要是对《MySQL技术内幕：InnoDB存储引擎》做笔记记录，以实战记录、核心理论记录为主
+> 本文主要是对《MySQL技术内幕：InnoDB存储引擎》第3章与第4章做笔记记录，以实战记录、核心理论记录为主
 
 ### 文件类型
 
@@ -444,4 +444,6 @@ mysql> SELECT a,b,c,d,_rowid FROM test;
 表空间又由段（segment）、区（extent）、页（page）组成（页有时也被称为块），页由行（row）组成，大致逻辑关系图如下
 
 ![image](https://user-images.githubusercontent.com/10209135/103002911-c3471e80-456a-11eb-99ee-9a8f2e732ec3.png)
+
+从 https://code.google.com/archive/p/david-mysql-tools/downloads 中可以下载 py_innodb_page_info 小工具，用于分析 .ibd 文件
 
