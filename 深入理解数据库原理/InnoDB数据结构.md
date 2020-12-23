@@ -560,9 +560,9 @@ innodb_page_type={
         '000b':u'1st compressed BLOB Page',
         '000c':u'Subsequent compressed BLOB Page',
         '45bf':u'B-tree Node'
-        }
+}
 innodb_page_direction={
-        '0000': 'Unknown(0x0000)',
+	'0000': 'Unknown(0x0000)',
         '0001': 'Page Left',
         '0002': 'Page Right',
         '0003': 'Page Same Rec',
