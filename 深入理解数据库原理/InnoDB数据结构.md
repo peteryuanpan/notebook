@@ -1,3 +1,13 @@
+- [InnoDB数据结构](#InnoDB数据结构)
+  - [文件类型](#文件类型)
+  - [参数文件](#参数文件)
+  - [日志文件](#日志文件)
+    - [错误日志文件](#错误日志文件)
+    - [慢查询日志文件](#慢查询日志文件)
+  - [InnoDB存储引擎文件](#InnoDB存储引擎文件)
+  - [py_innodb_page_info工具](#py_innodb_page_info工具)
+  - [索引组织表](#索引组织表)
+  - [InnoDB逻辑存储结构](#InnoDB逻辑存储结构)
 
 # InnoDB数据结构
 
@@ -316,7 +326,7 @@ mysql> show variables like "log_throttle_queries%";
 1 row in set, 1 warning (0.00 sec)
 ```
 
-尝试 SET GLOBAL slow_query_log=ON; 并执行一条长SQL语句，查看 D:\mysql-5.7.30-winx64\data\PS2019PQMJKMWO-slow.log
+尝试 SET GLOBAL slow_query_log=ON; 并执行一条长SQL语句，查看 /var/lib/mysql/VM-8-6-ubuntu-slow.log
 
 ```
 MySQL, Version: 5.7.30 (MySQL Community Server (GPL)). started with:
@@ -413,6 +423,185 @@ ibdata1 是共享表空间文件，它存储回滚信息、插入缓冲索引页
 
 ib_logfile0 与 ib_logfile1 是重做日志文件，当实例或介质失败时，重做日志文件能帮助恢复数据
 
+### py_innodb_page_info工具
+
+参考 [py_innodb_page_info工具使用](https://blog.csdn.net/dbLjy2015/article/details/52837374)
+
+touch 3份python文件到 /root/py_innodb_page_info 下
+
+py_innodb_page_info.py
+```python
+#! /usr/bin/env python 
+#encoding=utf-8
+import mylib
+from sys import argv
+from mylib import myargv
+ 
+if __name__ == '__main__':
+	myargv = myargv(argv)
+	if myargv.parse_cmdline() == 0:
+		pass
+	else:
+		mylib.get_innodb_page_type(myargv)
+```
+
+mylib.py
+```python
+#encoding=utf-8
+import os
+import include
+from include import *
+ 
+TABLESPACE_NAME='D:\\mysql_data\\test\\t.ibd'
+VARIABLE_FIELD_COUNT = 1
+NULL_FIELD_COUNT = 0
+ 
+class myargv(object):
+    def __init__(self, argv):
+        self.argv = argv
+        self.parms = {}
+        self.tablespace = ''
+ 
+    def parse_cmdline(self):
+        argv = self.argv
+        if len(argv) == 1:
+            print 'Usage: python py_innodb_page_info.py [OPTIONS] tablespace_file'
+            print 'For more options, use python py_innodb_page_info.py -h'
+            return 0 
+        while argv:
+            if argv[0][0] == '-':
+                if argv[0][1] == 'h':
+                    self.parms[argv[0]] = ''
+                    argv = argv[1:]
+                    break
+                if argv[0][1] == 'v':
+                    self.parms[argv[0]] = ''
+                    argv = argv[1:]
+                else:
+                    self.parms[argv[0]] = argv[1]
+                    argv = argv[2:]
+            else:
+                self.tablespace = argv[0]
+                argv = argv[1:]
+        if self.parms.has_key('-h'):
+            print 'Get InnoDB Page Info'
+            print 'Usage: python py_innodb_page_info.py [OPTIONS] tablespace_file\n'
+            print 'The following options may be given as the first argument:'
+            print '-h   help '
+            print '-o output put the result to file'
+            print '-t number thread to anayle the tablespace file'
+            print '-v   verbose mode'
+            return 0
+        return 1
+ 
+def mach_read_from_n(page,start_offset,length):
+    ret = page[start_offset:start_offset+length]
+    return ret.encode('hex')
+ 
+def get_innodb_page_type(myargv):
+    f=file(myargv.tablespace,'rb')
+    fsize = os.path.getsize(f.name)/INNODB_PAGE_SIZE
+    ret = {}
+    for i in range(fsize):
+        page = f.read(INNODB_PAGE_SIZE)
+        page_offset = mach_read_from_n(page,FIL_PAGE_OFFSET,4)
+        page_type = mach_read_from_n(page,FIL_PAGE_TYPE,2)
+        if myargv.parms.has_key('-v'):
+            if page_type == '45bf':
+                page_level = mach_read_from_n(page,FIL_PAGE_DATA+PAGE_LEVEL,2)
+                print "page offset %s, page type <%s>, page level <%s>"%(page_offset,innodb_page_type[page_type],page_level)
+            else:
+                print "page offset %s, page type <%s>"%(page_offset,innodb_page_type[page_type])
+        if not ret.has_key(page_type):
+            ret[page_type] = 1
+        else:
+            ret[page_type] = ret[page_type] + 1
+    print "Total number of page: %d:"%fsize
+    for type in ret:
+        print "%s: %s"%(innodb_page_type[type],ret[type])
+```
+
+include.py
+```
+#include.py
+#encoding=utf-8
+INNODB_PAGE_SIZE = 16*1024*1024
+ 
+# Start of the data on the page
+FIL_PAGE_DATA = 38
+ 
+ 
+FIL_PAGE_OFFSET = 4 # page offset inside space
+FIL_PAGE_TYPE = 24 # File page type
+ 
+# Types of an undo log segment */
+TRX_UNDO_INSERT = 1
+TRX_UNDO_UPDATE = 2
+ 
+# On a page of any file segment, data may be put starting from this offset
+FSEG_PAGE_DATA = FIL_PAGE_DATA
+ 
+# The offset of the undo log page header on pages of the undo log
+TRX_UNDO_PAGE_HDR = FSEG_PAGE_DATA
+ 
+PAGE_LEVEL = 26 #level of the node in an index tree; the leaf level is the level 0 */
+ 
+innodb_page_type={
+        '0000':u'Freshly Allocated Page',
+        '0002':u'Undo Log Page',
+        '0003':u'File Segment inode',
+        '0004':u'Insert Buffer Free List',
+        '0005':u'Insert Buffer Bitmap',
+        '0006':u'System Page',
+        '0007':u'Transaction system Page',
+        '0008':u'File Space Header',
+        '0009':u'扩展描述页',
+        '000a':u'Uncompressed BLOB Page',
+        '000b':u'1st compressed BLOB Page',
+        '000c':u'Subsequent compressed BLOB Page',
+        '45bf':u'B-tree Node'
+        }
+innodb_page_direction={
+        '0000': 'Unknown(0x0000)',
+        '0001': 'Page Left',
+        '0002': 'Page Right',
+        '0003': 'Page Same Rec',
+        '0004': 'Page Same Page',
+        '0005': 'Page No Direction',
+        'ffff': 'Unkown2(0xffff)'
+}
+INNODB_PAGE_SIZE=1024*16 # InnoDB Page 16K
+```
+
+然后 touch ibd 文件，chmod +x ibd 设置可执行权限
+
+```
+python /root/py_innodb_page_info/py_innodb_page_info.py $*
+```
+
+在 ~/.bashrc 文件末尾加上
+```
+export PATH=/root/py_innodb_page_info/:$PATH
+```
+
+此时就可以通过 ibd xxx.ibd -v 来分析 ibd 文件了
+
+```
+/var/lib/mysql/peter# ibd t1.ibd -v
+page offset 00000000, page type <File Space Header>
+page offset 00000001, page type <Insert Buffer Bitmap>
+page offset 00000002, page type <File Segment inode>
+page offset 00000003, page type <B-tree Node>, page level <0000>
+page offset 00000000, page type <Freshly Allocated Page>
+page offset 00000000, page type <Freshly Allocated Page>
+Total number of page: 6:
+Freshly Allocated Page: 2
+Insert Buffer Bitmap: 1
+File Space Header: 1
+B-tree Node: 1
+File Segment inode: 1
+```
+
 ### 索引组织表
 
 在InnoDB存储引擎中，表都是根据主键顺序组织存放的，这种存储方式的表称为索引组织表（index organized table）
@@ -444,6 +633,4 @@ mysql> SELECT a,b,c,d,_rowid FROM test;
 表空间又由段（segment）、区（extent）、页（page）组成（页有时也被称为块），页由行（row）组成，大致逻辑关系图如下
 
 ![image](https://user-images.githubusercontent.com/10209135/103002911-c3471e80-456a-11eb-99ee-9a8f2e732ec3.png)
-
-从 https://code.google.com/archive/p/david-mysql-tools/downloads 中可以下载 py_innodb_page_info 小工具，用于分析 .ibd 文件
 
