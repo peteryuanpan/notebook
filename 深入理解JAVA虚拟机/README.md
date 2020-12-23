@@ -30,7 +30,7 @@
 
 **声明**
 
-转载请注明出处：https://github.com/peteryuanpan/notebook/blob/master/深入理解JAVA虚拟机-第一至三层
+转载请注明出处：https://github.com/peteryuanpan/notebook/blob/master/深入理解JAVA虚拟机
 
 本文部分内容来自鲁班学院的课程，感谢老师们以及同学们对我的帮助，特别感谢一下子牙老师
 
