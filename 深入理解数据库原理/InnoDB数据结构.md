@@ -47,7 +47,7 @@ sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 查看innodb_buffer_pool_size参数（键值对）
 
 ```
-mysql> SHOW VARIABLES LIKE 'innodb_buffer%';
+mysql> SHOW VARIABLES LIKE "innodb_buffer%";
 +-------------------------------------+----------------+
 | Variable_name                       | Value          |
 +-------------------------------------+----------------+
@@ -67,7 +67,40 @@ mysql> SHOW VARIABLES LIKE 'innodb_buffer%';
 
 3.1.2 参数类型
 
-动态参数可通过SET X=Y修改，静态参数不可修改
+静态参数不可修改，动态参数可通过 SET X=Y 修改，但是通过 SET 方式修改后，再下一次实例启动时参数还会恢复为上一次的默认值，要想一直生效需要去改配置参数文件
+
+静态参数例子
+
+```
+mysql> SET GLOBAL datadir='db/mysql';
+ERROR 1238 (HY000): Variable 'datadir' is a read only variable
+```
+
+动态参数例子
+```
+mysql> show variables like "long_query_time";
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 10.000000 |
++-----------------+-----------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> set long_query_time=11;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> show variables like "long_query_time";
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 11.000000 |
++-----------------+-----------+
+1 row in set, 1 warning (0.00 sec)
+```
+
+官网所有动态参数： https://dev.mysql.com/doc/refman/8.0/en/dynamic-system-variables.html
+
+可以看出参数有一个字段是 Variable Scope，值为 Global 表示整个实例生命周期中都会生效，值为 Seesion 表示只能在会话中生效，值为 Both 表示两者皆可
 
 ### 日志文件
 
@@ -82,7 +115,7 @@ mysql> SHOW VARIABLES LIKE 'innodb_buffer%';
 查看错误日志
 
 ```
-mysql> SHOW VARIABLES LIKE 'log_error';
+mysql> SHOW VARIABLES LIKE "log_error";
 +---------------+------------------------------------------------+
 | Variable_name | Value                                          |
 +---------------+------------------------------------------------+
@@ -90,4 +123,18 @@ mysql> SHOW VARIABLES LIKE 'log_error';
 +---------------+------------------------------------------------+
 1 row in set, 1 warning (0.00 sec)
 ```
+
+查看这份文件
+```
+2020-12-22T07:42:29.744044Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
+2020-12-22T07:42:29.745707Z 0 [Warning] 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE' and 'ERROR_FOR_DIVISION_BY_ZERO' sql modes should be used with strict mode. They will be merged with strict mode in a future release.
+2020-12-22T07:42:29.745713Z 0 [Warning] 'NO_AUTO_CREATE_USER' sql mode was not set.
+2020-12-22T07:42:29.746776Z 0 [ERROR] Cannot open Windows EventLog; check privileges, or start server with --log_syslog=0
+2020-12-22T07:42:30.103683Z 0 [Warning] InnoDB: New log files created, LSN=45790
+2020-12-22T07:42:30.147218Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
+2020-12-22T07:42:30.219511Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 3ec223c9-4429-11eb-b2f4-04d9f509c207.
+...
+```
+
+#### 慢查询文件
 
