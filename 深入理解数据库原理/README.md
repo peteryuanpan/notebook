@@ -12,7 +12,7 @@
 
 ### 前言
 
-开始写本文时，已经是2020年12月了，在此之前，我写了两大篇幅文章：[深入理解JAVA虚拟机-第一至三层](https://github.com/peteryuanpan/notebook/tree/master/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JAVA%E8%99%9A%E6%8B%9F%E6%9C%BA-%E7%AC%AC%E4%B8%80%E8%87%B3%E4%B8%89%E5%B1%82)、[深入理解JAVA并发与集合](https://github.com/peteryuanpan/notebook/tree/master/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JAVA%E5%B9%B6%E5%8F%91%E4%B8%8E%E9%9B%86%E5%90%88)，这两篇文章都是JAVA基础，固然非常重要，但个人感觉十分缺少实战经验
+开始写本文时，已经是2020年12月了，在此之前，我写了两大篇幅文章：[深入理解JAVA虚拟机](https://github.com/peteryuanpan/notebook/tree/master/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JAVA%E8%99%9A%E6%8B%9F%E6%9C%BA)、[深入理解JAVA并发与集合](https://github.com/peteryuanpan/notebook/tree/master/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JAVA%E5%B9%B6%E5%8F%91%E4%B8%8E%E9%9B%86%E5%90%88)，这两篇文章都是JAVA基础，固然非常重要，但个人感觉十分缺少实战经验
 
 在不断学习的过程中，我接触到了数据库，一个是存储主要业务的关系型数据库MySQL，一个是主要负责缓存与分布式锁的非关系型数据库Redis，我相信以后还有更多的数据库等着我探索，如MongoDB。我希望把学习过程中的知识点记录下来，以后总会有用
 
