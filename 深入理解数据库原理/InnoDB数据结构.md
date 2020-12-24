@@ -531,7 +531,7 @@ include.py
 ```python
 #include.py
 #encoding=utf-8
-INNODB_PAGE_SIZE = 16*1024*1024
+INNODB_PAGE_SIZE=1024*16 # InnoDB Page 16K
  
 # Start of the data on the page
 FIL_PAGE_DATA = 38
@@ -576,7 +576,6 @@ innodb_page_direction={
         '0005': 'Page No Direction',
         'ffff': 'Unkown2(0xffff)'
 }
-INNODB_PAGE_SIZE=1024*16 # InnoDB Page 16K
 ```
 
 然后 touch ibd 文件，chmod +x ibd 设置可执行权限
