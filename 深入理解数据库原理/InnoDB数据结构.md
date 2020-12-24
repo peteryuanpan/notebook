@@ -528,7 +528,7 @@ def get_innodb_page_type(myargv):
 ```
 
 include.py
-```
+```python
 #include.py
 #encoding=utf-8
 INNODB_PAGE_SIZE = 16*1024*1024
