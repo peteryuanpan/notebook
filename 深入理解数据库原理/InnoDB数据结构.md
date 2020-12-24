@@ -458,7 +458,6 @@ import os
 import include
 from include import *
  
-TABLESPACE_NAME='D:\\mysql_data\\test\\t.ibd'
 VARIABLE_FIELD_COUNT = 1
 NULL_FIELD_COUNT = 0
  
