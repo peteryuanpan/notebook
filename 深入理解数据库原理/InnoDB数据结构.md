@@ -5,7 +5,9 @@
     - [错误日志文件](#错误日志文件)
     - [慢查询日志文件](#慢查询日志文件)
   - [InnoDB存储引擎文件](#InnoDB存储引擎文件)
-  - [py_innodb_page_info工具](#py_innodb_page_info工具)
+  - [分析工具]($分析工具)
+    - [py_innodb_page_info](#py_innodb_page_info)
+    - [hexdump](#hexdump)
   - [索引组织表](#索引组织表)
   - [InnoDB逻辑存储结构](#InnoDB逻辑存储结构)
 
@@ -423,7 +425,11 @@ ibdata1 是共享表空间文件，它存储回滚信息、插入缓冲索引页
 
 ib_logfile0 与 ib_logfile1 是重做日志文件，当实例或介质失败时，重做日志文件能帮助恢复数据
 
-### py_innodb_page_info工具
+### 分析工具
+
+#### py_innodb_page_info
+
+通过 py_innodb_page_info 可以分析 .ibd 文件
 
 参考 [py_innodb_page_info工具使用](https://blog.csdn.net/dbLjy2015/article/details/52837374)
 
@@ -580,6 +586,7 @@ python /root/py_innodb_page_info/py_innodb_page_info.py $*
 ```
 
 在 ~/.bashrc 文件末尾加上
+
 ```
 export PATH=/root/py_innodb_page_info/:$PATH
 ```
@@ -600,6 +607,26 @@ Insert Buffer Bitmap: 1
 File Space Header: 1
 B-tree Node: 1
 File Segment inode: 1
+```
+
+#### hexdump
+
+.ibd文件是二进制的，通过hexdump可以将其内容解析成十六进制形式
+
+命令形式：hexdump -C -v xxx.ibd
+
+```
+/var/lib/mysql/peter# hexdump -C -v t1.ibd | head
+00000000  f8 49 ca f7 00 00 00 00  00 00 00 00 00 00 00 00  |.I..............|
+00000010  00 00 00 00 00 29 fa 34  00 08 00 00 00 00 00 00  |.....).4........|
+00000020  00 00 00 00 00 1a 00 00  00 1a 00 00 00 00 00 00  |................|
+00000030  00 06 00 00 00 40 00 00  00 21 00 00 00 04 00 00  |.....@...!......|
+00000040  00 00 ff ff ff ff 00 00  ff ff ff ff 00 00 00 00  |................|
+00000050  00 01 00 00 00 00 00 9e  00 00 00 00 00 9e 00 00  |................|
+00000060  00 00 ff ff ff ff 00 00  ff ff ff ff 00 00 00 00  |................|
+00000070  00 00 00 00 00 03 00 00  00 00 ff ff ff ff 00 00  |................|
+00000080  ff ff ff ff 00 00 00 00  00 01 00 00 00 02 00 26  |...............&|
+00000090  00 00 00 02 00 26 00 00  00 00 00 00 00 00 ff ff  |.....&..........|
 ```
 
 ### 索引组织表
