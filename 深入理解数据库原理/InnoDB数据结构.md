@@ -531,7 +531,7 @@ include.py
 ```python
 #include.py
 #encoding=utf-8
-INNODB_PAGE_SIZE=1024*16 # InnoDB Page 16K
+INNODB_PAGE_SIZE = 1024 * 16 # InnoDB Page 16K
  
 # Start of the data on the page
 FIL_PAGE_DATA = 38
