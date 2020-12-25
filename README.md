@@ -2,13 +2,17 @@
 
 ## 欢迎你来到我的笔记本
 
-以下是我在学习过程中的笔记记录，主要包含JAVA虚拟机、JAVA并发与集合、数据库原理、数据结构与算法、设计模式等
+以下是我在学习过程中的心得笔记，主要包含JAVA虚拟机、JAVA并发与集合、数据库原理、数据结构与算法、设计模式等
+
+### 博文本
+
+笔记本中写的一般是笔记记录，不适合推广，而有些心得体会我会写在CSDN博文中，见：[CSDN博客](https://blog.csdn.net/UESTC_peterpan)
 
 ### 草稿本
 
 我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
 
-### 笔记导读
+### 笔记本
 
 <details close>
     <summary>深入理解JAVA虚拟机</summary>
