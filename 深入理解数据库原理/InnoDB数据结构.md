@@ -10,6 +10,11 @@
     - [hexdump](#hexdump)
   - [索引组织表](#索引组织表)
   - [InnoDB逻辑存储结构](#InnoDB逻辑存储结构)
+  - [InnoDB数据页结构](#InnoDB数据页结构)
+  - [InnoDB行记录格式](#InnoDB行记录格式)
+    - [Compact行记录格式](#Compact行记录格式)
+    - [Redundant行记录格式](#Redundant行记录格式)
+    - [Compressed与Dynamic行格式记录](#Compressed与Dynamic行格式记录)
 
 # InnoDB数据结构
 
@@ -680,6 +685,10 @@ InnoDB数据页由以下7个部分组成
 | Free Space | 空闲空间 | 不确定 | 页中尚未使用的空间 |
 | Page Directory | 页面目录 | 不确定 | 页中的某些记录的相对位置 |
 | File Trailer | 文件尾部 | 8字节 | 校验页是否完整 |
+
+其中 File Header、Page Header、File Trailer 的大小是固定的，分别为 38、56、8 字节，这些空间用来标记该页的一些信息，如 CheckSum，数据页所在 B+树索引的层数等
+
+User Records、Free Space、Page Directory 这些部分为实际的行记录存储空间，因此大小是动态的
 
 ### InnoDB行记录格式
 
