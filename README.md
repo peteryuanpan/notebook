@@ -10,7 +10,7 @@
 
 ### 草稿本
 
-我会通过ISSUE方式，为笔记打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
+我会通过ISSUE方式，为笔记本打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
 
 ### 笔记本
 
