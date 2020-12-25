@@ -6,7 +6,7 @@
 
 ### 博文本
 
-笔记本中写的一般是笔记记录，不适合推广，而有些心得体会我会写在CSDN博文中，见：[CSDN博客](https://blog.csdn.net/UESTC_peterpan)
+笔记本中写的一般是笔记记录，不适合推广，而有些学习心得我会写在CSDN博文中，见：[CSDN博客](https://blog.csdn.net/UESTC_peterpan)
 
 ### 草稿本
 
