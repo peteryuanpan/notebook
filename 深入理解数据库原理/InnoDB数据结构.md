@@ -5,7 +5,7 @@
     - [错误日志文件](#错误日志文件)
     - [慢查询日志文件](#慢查询日志文件)
   - [InnoDB存储引擎文件](#InnoDB存储引擎文件)
-  - [分析工具]($分析工具)
+  - [分析工具](#分析工具)
     - [py_innodb_page_info](#py_innodb_page_info)
     - [hexdump](#hexdump)
   - [索引组织表](#索引组织表)
