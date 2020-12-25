@@ -669,6 +669,18 @@ InnoDB存储引擎是row-oriented的，也就是按照行进行存放的
 
 ### InnoDB数据页结构
 
+InnoDB数据页由以下7个部分组成
+
+| 名称 | 中文名 | 占用空间 | 简单描述 |
+| -- | -- | -- | -- |
+| File Header | 文件头部 | 38字节 | 页的一些通用信息 |
+| Page Header | 页面头部 | 56字节 | 数据页专有的一些信息 |
+| Infimum + Supremum | 最小记录和最大记录 | 26字节 | 两个虚拟的行记录 |
+| User Records | 用户记录 | 不确定 | 实际存储的行记录内容 |
+| Free Space | 空闲空间 | 不确定 | 页中尚未使用的空间 |
+| Page Directory | 页面目录 | 不确定 | 页中的某些记录的相对位置 |
+| File Trailer | 文件尾部 | 8字节 | 校验页是否完整 |
+
 ### InnoDB行记录格式
 
 InnoDB中页保存着表中一行一行的数据，一般有Compact、Redundant、Compressed及Dynamic这几种格式
@@ -695,15 +707,17 @@ Compact行记录格式
 
 |列名|字节|作用|
 |--|--|--|
-|变长字段长度列表|2个字节|记录数据列中变长变量的长度|
-|NULL标志位|1个字节|记录数据列中长度为NULL的列|
-|记录头信息|5个字节|记录头信息|
+|变长字段长度列表|0-2|记录数据列中变长变量的长度|
+|NULL标志位|0-1|记录数据列中长度为NULL的列|
+|记录头信息|5|记录头信息|
 |列1数据|不定|真实数据|
 |列2数据|不定|真实数据|
 |..|不定|真实数据|
 
 Compact记录头信息
+
 |名称|字节|作用|
+|--|--|--|
 |()|1|未知|
 |()|1|未知|
 |deleted_flag|1|该行是否已被删除|
@@ -716,6 +730,58 @@ Compact记录头信息
 
 具体的例子解释见《MySQL技术内幕：InnoDB存储引擎》第二版P105
 
+记录的真实数据，除了我们自己定义的列的数据以外，还会有三个隐藏列
+
+|列名|是否必须|占用空间|描述|
+|--|--|--|--|
+|row_id|否|6字节|行ID，唯一标识一条记录|
+|transaction_id|是|6字节|事务ID|
+|roll_pointer|是|7字节|回滚指针|
+
 #### Redundant行记录格式
 
+Redundant是MySQL5.0版本之前InnoDB的行记录存储方式，MySQL5.0支持Redundant是为了兼容之前版本的页格式
+
+Redundant行记录格式
+
+|列名|字节|作用|
+|--|--|--|
+|字段长度偏移列表|0-2||
+|记录头信息|5|记录头信息|
+|列1数据|不定|真实数据|
+|列2数据|不定|真实数据|
+|..|不定|真实数据|
+
+Redundant记录头信息
+
+|名称|字节|作用|
+|--|--|--|
+|()|1|未知|
+|()|1|未知|
+|deleted_flag|1|该行是否已被删除|
+|min_rec_flag|1|为1，如果该记录是预先被定义为最小的记录|
+|n_owned|4|该记录拥有的记录数|
+|heap_no|13|索引堆中该条记录的排序记录|
+|n_fields|10|记录中列的数量|
+|1byte_offs_flag|1|偏移列表为1字节还是2字节|
+|next_record|16|页中下一条记录的相对位置|
+|Total|48||
+
 #### Compressed与Dynamic行格式记录
+
+来看一个行溢出数据的例子
+
+运行下面这一段sql
+```sql
+USE `mysql-learning`;
+CREATE TABLE `test` (
+	a VARCHAR(65535)
+) CHARSET=ascii ROW_FORMAT=Compact;
+```
+
+得到错误结果，意思是一行的最大字节数为65535，而其不仅仅是用户记录，还有变长字段长度列表、NULL值列表等
+Error Code: 1118. Row size too large. The maximum row size for the used table type, not counting BLOBs, is 65535. This includes storage overhead, check the manual. You have to change some columns to TEXT or BLOBs
+
+Dynamic和Compressed行格式
+
+这两种行格式类似于COMPACT行格式，只不过在处理行溢出数据时有点儿分歧，它们不会在记录的真实数据处存储一部分数据，而是把所有的数据都存储到其他页面中，只在记录的真实数据处存储其他页面的地址。另外，Compressed行格式会采用压缩算法对页面进行压缩
