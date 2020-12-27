@@ -69,6 +69,12 @@ P类问题、NP类问题、NPC问题
 |021|求指定条件下房子涂色的最小花费|[problem1473](Leetcode/problem1473_求指定条件下房子涂色的最小花费)|leetcode|动态规划|||
 |022|优雅的逆序一个栈|[problem1](FromBook/problem1_优雅的逆序一个栈)|frombook|数据结构|栈||
 
+### LeetCode思维导图
+
+下面图来自LeetCode公众号
+
+![image](leetcode思维导图.jpg)
+
 ### 标签与模板
 
 以下是ACM题目中的标签，很多数据结构和算法问题没有实际应用价值，我现在也不会了————无奈的摊手。但不妨列出来，方便给上面的题目打标签
