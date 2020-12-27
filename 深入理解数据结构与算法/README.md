@@ -78,6 +78,7 @@ P类问题、NP类问题、NPC问题
 |022|优雅的逆序一个栈|[problem1](FromBook/problem1_优雅的逆序一个栈)|frombook|数据结构|栈||
 |023|吃苹果的最大数目|[weekly-contest-221_problem2](Leetcode/weekly-contest-221_problem2_吃苹果的最大数目)|leetcode|数据结构|优先队列||
 |024|球会落何处|[weekly-contest-221_problem3](Leetcode/weekly-contest-221_problem3_球会落何处)|leetcode|白题|模拟||
+|025|离线求有条件的异或最大值|[weekly-contest-221_problem4](Leetcode/weekly-contest-221_problem4_离线求有条件的异或最大值)|leetcode|数据结构|字典树||
 
 ### LeetCode思维导图
 
@@ -108,13 +109,14 @@ P类问题、NP类问题、NPC问题
 |----队列、优先队列
 |----栈、单调栈
 |----堆
+|----字典树
 |----线段树
 |----树状数组
 |----主席树
 |----动态树
 
 字符串
-|----字典树(Trie)
+|----字典树
 |----KMP、拓展KMP
 |----AC自动机
 |----后缀数组、后缀树
