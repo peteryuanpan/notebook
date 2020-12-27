@@ -12,9 +12,9 @@
 
 ### 条件范围
 ```
-1 <= nums.length, queries.length <= 105
+1 <= nums.length, queries.length <= 10e5
 queries[i].length == 2
-0 <= nums[j], xi, mi <= 109
+0 <= nums[j], xi, mi <= 10e9
 ```
 
 ### 样例输入
