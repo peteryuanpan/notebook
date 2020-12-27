@@ -76,6 +76,8 @@ P类问题、NP类问题、NPC问题
 |020|求数组的一个极大值|[problem162](Leetcode/problem162_求数组的一个极大值)|leetcode|白题|二分||
 |021|求指定条件下房子涂色的最小花费|[problem1473](Leetcode/problem1473_求指定条件下房子涂色的最小花费)|leetcode|动态规划|||
 |022|优雅的逆序一个栈|[problem1](FromBook/problem1_优雅的逆序一个栈)|frombook|数据结构|栈||
+|023|吃苹果的最大数目|[weekly-contest-221_problem2](Leetcode/weekly-contest-221_problem2_吃苹果的最大数目)|leetcode|数据结构|优先队列||
+|024|球会落何处|[weekly-contest-221_problem3](Leetcode/weekly-contest-221_problem3_球会落何处)|leetcode|白题|模拟||
 
 ### LeetCode思维导图
 
@@ -91,9 +93,8 @@ P类问题、NP类问题、NPC问题
 白题
 |----数组、指针
 |----二分、三分
-|----构造
-|----排列
-|----暴力
+|----构造、排列
+|----模拟、暴力
 |----条件判断
 
 动态规划
@@ -104,7 +105,8 @@ P类问题、NP类问题、NPC问题
 |----动态规划与其他结构结合
 
 数据结构
-|----队列、栈
+|----队列、优先队列
+|----栈、单调栈
 |----堆
 |----线段树
 |----树状数组
