@@ -889,6 +889,6 @@ CPU占用过高、死循环、死锁问题，都可以用 VisualVM、Arthas 来�
 
 ### 亿级流量系统调优案例
 
-参考：https://github.com/peteryuanpan/notebook/issues/84
+参考：https://github.com/peteryuanpan/notebook/issues/140
 
 TODO
