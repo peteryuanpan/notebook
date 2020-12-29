@@ -300,7 +300,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.231-b11, mixed mode)
 jmap，Memory Map for Java，用于生成堆转储快照（一般称为 heapdump 或 dump 文件）
 
 还有其他办法也能生成 dump 文件
-- 通过参数 +XX:+HeapDumpOnOutOfMemoryError，让虚拟机在OOM异常出现之后自动生成 dump 文件
+- 通过参数 +XX:+HeapDumpOnOutOfMemoryError，让虚拟机在OOM异常出现之后自动生成 dump 文件，通过参数 -XX:HeapDumpPath= 可以指定 dump 文件生成目录
 - 通过参数 -XX:+HeapDumpOnCtrlBeak，可以使用 ctrl + break 键让虚拟机生成 dump 文件
 - Linux系统下，通过 kill -3 命令发送进程退出信号“吓唬”一下虚拟机，也能拿到 dump 文件
 
