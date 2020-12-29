@@ -783,9 +783,28 @@ Arthas
 
 ![image](https://user-images.githubusercontent.com/10209135/100404838-52146880-309d-11eb-82b5-e0926154ad78.png)
 
+MAT
+- 从 https://www.eclipse.org/mat/downloads.php 中下载对应操作系统版本的软件
+- 打开软件后，导入 dump 文件
+
 #### 生成与分析Dump文件
 
 解决问题：在线生成堆Dump和线程Dump进行分析，若可以，支持导入dump文件进行分析
+
+生成dump文件有多种方法
+- jmap、VisualVM、Arthas 都可以生成 dump 文件
+- 通过参数 +XX:+HeapDumpOnOutOfMemoryError，-XX:HeapDumpPath=，在程序OOM时生成 dump 文件
+- 通过参数 -XX:+HeapDumpOnCtrlBeak，加 ctrl + break 键，主动生成 dump 文件
+- Linux系统下，通过 kill -3 命令发送进程退出信号“吓唬”一下虚拟机，也能拿到 dump 文件
+
+分析dump文件一般用 MAT 或者 VisualVM
+
+MAT
+- 从 https://www.eclipse.org/mat/downloads.php 中下载对应操作系统版本的 MAT
+- （左上角点击 File - Open Heap Dump，导入dump文件）
+- 点击 Histogram、Dominator Tree、Leak Suspects 等可以进行进一步分析
+
+![image](https://user-images.githubusercontent.com/10209135/103257164-1554cd80-49cb-11eb-8a50-ed9af9cc79a2.png)
 
 VisualVM
 - 可以用来分析dump文件（可以通过jmap生成）
@@ -819,7 +838,20 @@ Arthas
 
 如果不存在泄漏，换句话说，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx与-Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗
 
-TODO：模拟一次
+下面我们来模拟一次
+
+- 引用 [运行时数据区域.md#例子1-创建过多对象导致堆区溢出](运行时数据区域.md#例子1-创建过多对象导致堆区溢出) 中的方法，生成了一份 dump 文件
+- 打开 MAT 工具，导入 dump 文件
+- 在 Overview 中点击 Leak Suspects，再点击 Details，可以看到许多分析点
+- （通过 All Accumulated Objects by Class 可以查看导致OOM的实例）
+- （通过 Thread Stack 可以查看导致OOM的代码堆栈信息）
+![image](https://user-images.githubusercontent.com/10209135/103257486-58637080-49cc-11eb-8bd3-c270d87500dc.png)
+![image](https://user-images.githubusercontent.com/10209135/103257496-60231500-49cc-11eb-828f-389582ac640f.png)
+![image](https://user-images.githubusercontent.com/10209135/103257479-53062600-49cc-11eb-828c-11553c41f154.png)
+- 回到 Overview，点击 dominator_tree，选择最多数量的实例
+- 右键选择 Path To GC Roots，选择不同的 exclude 可以查看 GC Roots 中强软弱虚引用的信息，从而进一步确认是内存泄漏还是内存溢出
+![image](https://user-images.githubusercontent.com/10209135/103257615-dd4e8a00-49cc-11eb-94cb-4332ca959f2a.png)
+![image](https://user-images.githubusercontent.com/10209135/103257692-34545f00-49cd-11eb-8030-edb8323d42ce.png)
 
 #### 线上业务日志切面
 
