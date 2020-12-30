@@ -1705,7 +1705,7 @@ Linux的架构中，很重要的一个能力就是操纵系统资源的能力。
 
 Intel x86架构使用了4个级别来标明不同的特权级权限。R0实际就是内核态，拥有最高权限。而一般应用程序处于R3状态--用户态。在Linux中，还存在R1和R2两个级别，一般归属驱动程序的级别。在Windows平台没有R1和R2两个级别，只用R0内核态和R3用户态。在权限约束上，使用的是高特权等级状态可以阅读低等级状态的数据，例如进程上下文、代码、数据等等，但是反之则不可。R0最高可以读取R0-3所有的内容，R1可以读R1-3的，R2以此类推，R3只能读自己的数据
 
-![1571294054467](https://tswork.peterpy.cn/并发编程基础.assets/1571294054467.png)
+![image](https://user-images.githubusercontent.com/10209135/103340755-d6ed0a80-4abf-11eb-98bb-d84088f1d6f3.png)
 
 应用程序一般会在以下几种情况下切换到内核态
 - 系统调用
@@ -1720,10 +1720,119 @@ Intel x86架构使用了4个级别来标明不同的特权级权限。R0实际�
 
 #### 多线程模型
 
-用户线程与内核线程、一对一模型、多对一模型、多对多模型
+摘自《深入理解JAVA虚拟机》第二版12.4节
 
-《操作系统概念》、《深入理解JAVA虚拟机》
+多线程模型有：一对一模型（1:1），一对多模型（1:N），多对多模型（N:M）
+
+线程是比进程更轻量级的调度执行单位，线程的引入，可以把一个进程的资源分配和执行调度分开，各个线程既可以共享进程资源（内存地址、文件I/O等），又可以独立调度（线程是CPU调度的基本单位）
+
+主流的操作系统，都提供了线程实现，Java语言则提供了在不同硬件和操作系统平台下对线程操作的统一处理，每个已经执行 start() 且还未结束的 java.lang.Thread 类的实例就代表了一个线程
+
+对于SunJDK来说，它的Windows版与Linux版都是使用的一对一模型实现的，一条Java线程就映射到一条轻量级进程中，因为Windows与Linux操作系统提供的线程模型就是一对一的（Windows下有纤程包Fiber Package，Linux下也有NGPT来实现N:M模型，但没有成为主流），而Solaris平台中，由于操作系统的线程特性可以同时支持一对一及多对多的线程模型，因此在Solaris版的JDK中也对应提供了两个平台专有的虚拟机参数：-XX:+UseLWPSynchronization（默认，多对多模型）和 -XX:+UseBoundThreas（一对一模型）来明确指定虚拟机使用哪种模型
 
 #### 轻量级线程之协程
 
-TODO
+谈到协程需要先谈一谈线程，CPU的调度执行是以线程为单位的，CPU核的时间片在同一时刻只能分配于一个线程上，那么当多线程在一个CPU核上执行时，就会涉及到了线程间的上下文切换，过于频繁的线程上下文切换是会消耗CPU资源的
+
+而协程不一样，多个协程作用于一个线程时，是不存在CPU给多个协程分配时间片的说法的，协程间切换调度执行是用户态层面的，不涉及到内核态层面
+
+协程是一个个过程，是更轻量级的线程，下面以一个伪代码与真实代码例子来进一步说明
+
+伪代码例子
+
+```ruby
+call_sombody = Fiber.new do
+  take_phone
+  receive_call
+  Fiber.yield
+  speaking
+  Fiber.yield
+  shutdown
+end
+
+eat_cake = Fiber.new do
+  take_cake
+  open_box
+  Fiber.yield
+  taste
+  Fiber.yield
+  drop_box
+end
+
+call_somebody.resume // take_phone and receive_call then pause
+eat_cake.resume // take_cake and open_box then pause
+call_somebody.resume // speaking then pause
+eat_cake.resume // taste then pause
+call_somebody.resume // shutdown then pause
+eat_cake.resume // dropbox then pause
+```
+
+执行起来大概是这样的：拿起电话、接听、拿蛋糕、开蛋糕盒、说话、吃蛋糕、挂机、扔蛋糕盒。多个协程协作好比就是你一个人其实同时只能做一件事，但是你把几个任务拆成几截来交叉执行
+
+协程就是一串比函数粒度还要小的可手动控制的过程，从 并发、并行、协程 的角度来看，协程的发明主要是为了解决并发的问题，而线程的发明主要解决的并行的问题
+
+Golang协程例子
+
+```golang
+package main
+
+
+import (
+        "fmt"
+        "runtime"
+        "strconv"
+        "time"
+
+        "golang.org/x/sys/unix"
+)
+
+func name(s string) {
+        time.Sleep(1 * time.Millisecond)
+        str := fmt.Sprint(unix.Gettid())
+        var t = "iqoo" + s + " belong thread " + str
+        fmt.Println(t)
+}
+
+func main() {
+        fmt.Println("逻辑cpu数量 " + strconv.Itoa(runtime.NumCPU()))
+        str := fmt.Sprint(unix.Gettid())
+        fmt.Println("主协程所属线程id " + str)
+        for i := 1; i <= 1000; i++ {
+                go name(strconv.Itoa(i))
+        }
+        time.Sleep(2 * time.Second)
+}
+```
+
+输出结果（部分）
+```
+逻辑cpu数量 2
+主协程所属线程id 1111
+iqoo9 belong thread 1115
+iqoo26 belong thread 1111
+iqoo10 belong thread 1111
+iqoo11 belong thread 1111
+iqoo17 belong thread 1111
+...
+iqoo891 belong thread 1114
+iqoo871 belong thread 1113
+iqoo870 belong thread 1113
+iqoo892 belong thread 1114
+iqoo872 belong thread 1114
+```
+
+解析结果
+
+```
+cat result_linux.txt | grep "belong" | awk -F 'belong thread ' '{a[$2]+=1}END{for(i in a){print i, a[i]}}'
+1111 629
+1113 124
+1114 237
+1115 10
+```
+
+上面的Ubuntu是2个CPU核，开启了1000个协程任务，CPU底层默认只用4个线程处理（有超核技术，一个CPU核可以处理2个线程）
+
+在Golang中，并发编程默认是走N协程:M线程模式的，M一般是CPU的核数，而Java中，JVM目前依然是以一个JAVA线程对应一个操作系统内核线程模式为主，社区一直在尝试协程的实现，比如协程库quasar
+
+项目的名字叫 loom，由Ron pressler主导的，在他加入Oracle之前，已经做了一个名为 quasar 的协程库。quasar的实现原理是做字节码注入，在字节码层面对当前被调用函数中的所有局部变量进行保存，这种做法一是对性能影响很大，对JIT编译器的影响也非常大。另外，还有一点很致命，就是它必须要用户手动标注每一个函数是否会在协程上下文被调用。关于quasar更多的信息，这里就不拓展了，后续了解了再补充。据说quasar非常容易使用，接口特别友好，这是它的优点
