@@ -1778,6 +1778,68 @@ package main
 
 
 import (
+	"fmt"
+	"runtime"
+	"strconv"
+	"time"
+
+	"golang.org/x/sys/windows"
+)
+
+func name(s string) {
+	time.Sleep(1 * time.Millisecond)
+	str := fmt.Sprint(windows.GetCurrentThreadId())
+	var t = "iqoo" + s + " belong thread " + str
+	fmt.Println(t)
+}
+
+func main() {
+	fmt.Println("逻辑cpu数量 " + strconv.Itoa(runtime.NumCPU()))
+	str := fmt.Sprint(windows.GetCurrentThreadId())
+	fmt.Println("主协程所属线程id " + str)
+	for i := 1; i <= 1000; i++ {
+		go name(strconv.Itoa(i))
+	}
+	time.Sleep(2 * time.Second)
+}
+```
+
+输出结果（部分）
+```
+逻辑cpu数量 6
+主协程所属线程id 1108
+iqoo116 belong thread 7136
+iqoo86 belong thread 11448
+iqoo132 belong thread 7136
+iqoo91 belong thread 11448
+iqoo10 belong thread 7136
+...
+iqoo1000 belong thread 12156
+iqoo947 belong thread 1108
+iqoo965 belong thread 12156
+iqoo960 belong thread 12392
+iqoo949 belong thread 15024
+```
+
+解析结果
+```
+cat result_windows.txt | grep "belong" | awk -F 'belong thread ' '{a[$2]+=1}END{for(i in a){print i, a[i]}}'
+1108 96
+7136 240
+11448 232
+12156 76
+12348 141
+12392 90
+15024 125
+```
+
+这是我的windows10电脑上的执行结果，CPU有6个核，开启了1000个协程任务，CPU底层默认只用6个线程处理
+
+```golang
+package main
+
+
+import (
         "fmt"
         "runtime"
         "strconv"
