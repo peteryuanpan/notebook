@@ -1833,7 +1833,9 @@ cat result_windows.txt | grep "belong" | awk -F 'belong thread ' '{a[$2]+=1}END{
 15024 125
 ```
 
-这是我的windows10电脑上的执行结果，CPU有6个核，开启了1000个协程任务，CPU底层默认只用6个线程处理
+上面是我的windows10电脑上的执行结果，CPU有6个核，开启了1000个协程任务，CPU底层默认只用6个线程处理
+
+下面来看Linux版本
 
 ```golang
 package main
