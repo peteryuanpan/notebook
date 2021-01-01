@@ -81,6 +81,8 @@ P类问题、NP类问题、NPC问题
 |025|离线求有条件的异或最大值|[weekly-contest-221_problem4](Leetcode/weekly-contest-221_problem4_离线求有条件的异或最大值)|leetcode|数据结构|字典树||
 |026|多线程爬虫程序|[problem1242](Leetcode/problem1242_多线程爬虫程序)|leetcode|白题|多线程||
 |027|经典模糊串匹配问题|[problem10](Leetcode/problem10_经典模糊串匹配问题)|leetcode|动态规划|||
+|028|求0到N中数字2出现的次数|[problem2](FromBook/problem2_求0到N中数字2出现的次数)|frombook|动态规划|数论统计||
+|029|求二叉搜索树的所有生成数组|[problem3](FromBook/problem3_求二叉搜索树的所有生成数组)|frombook|搜索|DFS||
 
 ### LeetCode思维导图
 
