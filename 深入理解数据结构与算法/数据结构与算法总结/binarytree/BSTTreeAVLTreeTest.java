@@ -89,6 +89,8 @@ public class BSTTreeAVLTreeTest {
         }
         long duration = System.currentTimeMillis() - begin;
         System.out.println("deep: " + deep);
+        System.out.println("size: " + tree.size());
+        System.out.println("height: " + tree.height());
         System.out.println("duration: " + duration + "ms");
     }
 
@@ -127,16 +129,28 @@ check done
 check done
 --------linearDataCheck(AVLTree)--------
 deep: 10000
-duration: 7ms
+size: 10000
+height: 14
+duration: 6ms
 deep: 50000
-duration: 17ms
+size: 50000
+height: 16
+duration: 16ms
 deep: 100000
+size: 100000
+height: 17
 duration: 15ms
 --------linearDataCheck(BSTTree)--------
 deep: 10000
-duration: 276ms
+size: 10000
+height: 10000
+duration: 298ms
 deep: 50000
-duration: 7232ms
+size: 50000
+height: 50000
+duration: 7594ms
 deep: 100000
-duration: 34885ms
+size: 100000
+height: 100000
+duration: 41069ms
 */
