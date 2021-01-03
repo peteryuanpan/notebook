@@ -50,7 +50,7 @@ P类问题、NP类问题、NPC问题
 |Lintcode|A Powerful Coding Training System|https://www.lintcode.com/|
 |Codeforces|A Programming competitions and contests, programming community|https://codeforces.com/|
 |UVA|UVA Online Judge|https://onlinejudge.org/index.php|
-|FromBook|《程序员代码面试指南》||
+|FromBook|《程序员代码面试指南》、《程序员面试金典》||
 
 ### 刷题记录
 
