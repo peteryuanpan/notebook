@@ -60,10 +60,16 @@ public interface BinarySearchTree<K, V> {
     void clear();
 
     /**
-     * Return size of nodes
+     * Return numbers of nodes
      * @return
      */
     int size();
+
+    /**
+     * Return height of tres
+     * @return
+     */
+    int height();
 
     /**
      * Return list of Entry K, V in Pre-order
