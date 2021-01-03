@@ -29,15 +29,16 @@ P类问题、NP类问题、NPC问题
 
 ### 数据结构与算法总结
 
-以下是我的个人总结，我希望以一篇文章说清楚一个数据结构或算法，因此要求简明扼要，总结中会包含应用场景、核心思想、演示图解、代码例子等
-
-- 线段树
-- 树状数组
-- [平衡二叉查找树](数据结构与算法总结/平衡二叉查找树.md)
-- [红黑树](数据结构与算法总结/红黑树.md)
-- [B+树](数据结构与算法总结/B+树.md)
-- KMP
-- AC自动机
+|名称|代码|测试|总结|
+|--|--|--|--|
+|线段树||||
+|树状数组||||
+|二叉查找树|[BSTTree](数据结构与算法总结/binarytree/BSTTree.java)|[BSTTreeAVLTreeTest](数据结构与算法总结/binarytree/BSTTreeAVLTreeTest.java)||
+|平衡二叉查找树|[AVLTree](数据结构与算法总结/binarytree/AVLTree.java)|[BSTTreeAVLTreeTest](数据结构与算法总结/binarytree/BSTTreeAVLTreeTest.java)||
+|红黑树||||
+|B+树||||
+|KMP算法||||
+|AC自动机||||
 
 ### OnlineJudge或书籍
 
