@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AVLTreeTest {
+public class BSTTreeAVLTreeTest {
 
     static BinarySearchTree<Integer, Integer> BSTTree = new BSTTree<>();
     static BinarySearchTree<Integer, Integer> AVLTree = new AVLTree<>();
