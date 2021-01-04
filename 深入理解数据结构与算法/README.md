@@ -33,8 +33,8 @@ P类问题、NP类问题、NPC问题
 |--|--|--|--|
 |线段树||||
 |树状数组||||
-|二叉查找树|[BSTTree](数据结构与算法总结/binarytree/BSTTree.java)|[BSTTreeAVLTreeTest](数据结构与算法总结/binarytree/BSTTreeAVLTreeTest.java)||
-|平衡二叉查找树|[AVLTree](数据结构与算法总结/binarytree/AVLTree.java)|[BSTTreeAVLTreeTest](数据结构与算法总结/binarytree/BSTTreeAVLTreeTest.java)||
+|二叉查找树|[BSTTree](数据结构与算法总结/binarytree/BSTTree.java)|[BinarySearchTreeTest](数据结构与算法总结/binarytree/BinarySearchTreeTest.java)||
+|平衡二叉查找树|[AVLTree](数据结构与算法总结/binarytree/AVLTree.java)|[BinarySearchTreeTest](数据结构与算法总结/binarytree/BinarySearchTreeTest.java)||
 |红黑树||||
 |B+树||||
 |KMP算法||||
