@@ -183,7 +183,7 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
         check(x);
         List<Entry<K, V>> list = new ArrayList<>();
         if (x != null) {
-            list.add(new Entry<>(x.key, x.value));
+            list.add(x);
             list.addAll(entryList(x.left));
             list.addAll(entryList(x.right));
         }
@@ -213,18 +213,50 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
 
     private Node root = null;
 
-    class Node {
+    class Node implements Entry<K, V> {
+
         private K key;
         private V value;
         private Node left;
         private Node right;
         private int size;
         private int height;
-        public Node(K key, V value) {
+
+        Node(K key, V value) {
             this.key = key;
             this.value = value;
             this.size = 1;
             this.height = 1;
+        }
+
+        @Override
+        public K key() {
+            return key;
+        }
+
+        @Override
+        public V value() {
+            return value;
+        }
+
+        @Override
+        public Entry<K, V> left() {
+            return left;
+        }
+
+        @Override
+        public Entry<K, V> right() {
+            return right;
+        }
+
+        @Override
+        public int size() {
+            return size;
+        }
+
+        @Override
+        public int height() {
+            return height;
         }
     }
 }
