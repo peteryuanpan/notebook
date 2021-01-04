@@ -35,25 +35,9 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
         return null;
     }
 
-    private int getSize(Node x) {
-        if (x == null)
-            return 0;
-        int ln = x.left == null ? 0 : x.left.size;
-        int rn = x.right == null ? 0 : x.right.size;
-        return 1 + ln + rn;
-    }
-
-    private int getHeight(Node x) {
-        if (x == null)
-            return 0;
-        int lh = x.left == null ? 0 : x.left.height;
-        int rh = x.right == null ? 0 : x.right.height;
-        return 1 + Integer.max(lh, rh);
-    }
-
     private void update(Node x) {
-        x.size = getSize(x);
-        x.height = getHeight(x);
+        x.size = 1 + getSize(x.left) + getSize(x.right);
+        x.height = 1 + Integer.max(getHeight(x.left), getHeight(x.right));
     }
 
     private void updateRoot(Node x) {
@@ -199,6 +183,11 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
         return entryList(null, root);
     }
 
+    @Override
+    public int rotateCount() {
+        return 0;
+    }
+
     private List<Entry<K, V>> entryList(Node f, Node x) {
         check(f, x);
         List<Entry<K, V>> list = new ArrayList<>();
@@ -242,6 +231,14 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
     }
 
     private Node root = null;
+
+    private int getSize(Node x) {
+        return x == null ? 0 : x.size;
+    }
+
+    private int getHeight(Node x) {
+        return x == null ? 0 : x.height;
+    }
 
     class Node implements Entry<K, V> {
 
