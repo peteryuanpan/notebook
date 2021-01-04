@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class BSTTreeAVLTreeTest {
+public class BinarySearchTreeTest {
 
-    private static BinarySearchTree<Integer, Integer> BSTTree = new BSTTree<>();
-    private static BinarySearchTree<Integer, Integer> AVLTree = new AVLTree<>();
+    private static final BinarySearchTree<Integer, Integer> BSTTree = new BSTTree<>();
+    private static final BinarySearchTree<Integer, Integer> AVLTree = new AVLTree<>();
+    private static final BinarySearchTree<Integer, Integer> RBTree = new RBTree<>();
 
     private static void print(List<Integer> list) {
         list.forEach(e -> System.out.print(e + " "));
@@ -82,10 +83,8 @@ public class BSTTreeAVLTreeTest {
         );
     }
 
-    private static int[] randomData;
-
     private static void randomDataCheck(BinarySearchTree<Integer, Integer> tree, int deep) {
-        randomData = new int[deep+1];
+        int[] randomData = new int[deep + 1];
         for (int i = 1; i <= deep; i ++) {
             randomData[i] = i;
         }
