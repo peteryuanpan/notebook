@@ -1,296 +1,152 @@
 package binarytree;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
-public class AVLTree<K, V> implements BinarySearchTree<K, V> {
+public class BSTTreeAVLTreeTest {
 
-    @Override
-    public V get(K key) {
-        return get(root, key);
+    private static BinarySearchTree<Integer, Integer> BSTTree = new BSTTree<>();
+    private static BinarySearchTree<Integer, Integer> AVLTree = new AVLTree<>();
+
+    private static void print(List<Integer> list) {
+        list.forEach(e -> System.out.print(e + " "));
+        System.out.println();
     }
 
-    @SuppressWarnings("unchecked")
-    private V get(Node x, K key) {
-        if (x != null) {
-            Comparable<? super K> k = (Comparable<? super K>) key;
-            int cmp = k.compareTo(x.key);
-            if (cmp == 0)
-                return x.value;
-            if (cmp < 0)
-                return get(x.left, key);
-            else
-                return get(x.right, key);
+    private static void print(List<Integer> putValues, List<Integer> removeValues, List<Integer> checkValues, List<Integer> keys) {
+        print(putValues);
+        print(removeValues);
+        print(checkValues);
+        print(keys);
+    }
+
+    private static void check(BinarySearchTree<Integer, Integer> tree, List<Integer> putValues, List<Integer> removeValues, List<Integer> checkValues) {
+        tree.clear();
+        putValues.forEach(tree::put);
+        removeValues.forEach(tree::remove);
+        List<BinarySearchTree.Entry<Integer, Integer>> entries = tree.entryList();
+        List<Integer> keys = entries.stream().map(BinarySearchTree.Entry::getKey).collect(Collectors.toList());
+        if (entries.size() != checkValues.size()) {
+            print(putValues, removeValues, checkValues, keys);
+            throw new RuntimeException("entries.size() " + entries.size() + " not equals checkValues.size() " + checkValues.size());
         }
-        return null;
-    }
-
-    private Node getMaxNode(Node x) {
-        if (x != null) {
-            if (x.right != null)
-                return getMaxNode(x.right);
-            else
-                return x;
+        if (tree.size() != checkValues.size()) {
+            print(putValues, removeValues, checkValues, keys);
+            throw new RuntimeException("tree.size() " + tree.size() + " not equals checkValues.size() " + checkValues.size());
         }
-        return null;
-    }
-
-    private int getSize(Node x) {
-        if (x == null)
-            return 0;
-        int ln = x.left == null ? 0 : x.left.size;
-        int rn = x.right == null ? 0 : x.right.size;
-        return 1 + ln + rn;
-    }
-
-    private int getHeight(Node x) {
-        if (x == null)
-            return 0;
-        int lh = x.left == null ? 0 : x.left.height;
-        int rh = x.right == null ? 0 : x.right.height;
-        return 1 + Integer.max(lh, rh);
-    }
-
-    private void update(Node x) {
-        x.size = getSize(x);
-        x.height = getHeight(x);
-    }
-
-    private void rotateLeft(Node f, Node x) {
-        Node right = x. right;
-        Node right_left = x.right.left;
-        if (f == null)
-            root = right;
-        else if (f.left == x)
-            f.left = right;
-        else
-            f.right = right;
-        right.left = x;
-        x.right = right_left;
-        update(x);
-        update(right);
-    }
-
-    private void rotateRight(Node f, Node x) {
-        Node left = x.left;
-        Node left_right = x.left.right;
-        if (f == null)
-            root = left;
-        else if (f.left == x)
-            f.left = left;
-        else
-            f.right = left;
-        left.right = x;
-        x.left = left_right;
-        x.size = getSize(x);
-        x.height = getHeight(x);
-        update(x);
-        update(left);
-    }
-
-    private void rotate(Node f, Node x) {
-        int lh = getHeight(x.left);
-        int rh = getHeight(x.right);
-        if (lh - rh > 1) {
-            int cmp = getHeight(x.left.left) - getHeight(x.left.right);
-            if (cmp >= 0)
-                rotateRight(f, x);
-            else {
-                rotateLeft(x, x.left);
-                rotateRight(f, x);
+        for (int i = 0; i < entries.size(); i ++) {
+            if (!checkValues.get(i).equals(entries.get(i).getKey())) {
+                print(putValues, removeValues, checkValues, keys);
+                throw new RuntimeException("i " + i + " checkValues.get(i) " + checkValues.get(i) + " not equals entries.get(i).getKey() " + entries.get(i).getKey());
             }
-        } else if (lh - rh < -1) {
-            int cmp = getHeight(x.right.right) - getHeight(x.right.left);
-            if (cmp >= 0)
-                rotateLeft(f, x);
-            else {
-                rotateRight(x, x.right);
-                rotateLeft(f, x);
-            }
-        } else
-            update(x);
-    }
-
-    @Override
-    public V put(K key, V value) {
-        if (key == null)
-            throw new NullPointerException("key can not be null");
-        if (root == null) {
-            root = new Node(key, value);
-            return root.value;
         }
-        return put(null, root, key, value, false);
+        System.out.println("check done");
     }
 
-    @Override
-    public V putIfAbsent(K key, V value) {
-        if (key == null)
-            throw new NullPointerException("key can not be null");
-        if (root == null) {
-            root = new Node(key, value);
-            return root.value;
+    public static void BSTTreeSimpleTest() {
+        System.out.println("--------BSTTreeSimpleTest--------");
+        check(BSTTree, Arrays.asList(3, 2, 1), Collections.emptyList(), Arrays.asList(3, 2, 1));
+        check(BSTTree, Arrays.asList(3, 1, 2), Collections.emptyList(), Arrays.asList(3, 1, 2));
+        check(BSTTree, Arrays.asList(1, 2, 3), Collections.emptyList(), Arrays.asList(1, 2, 3));
+        check(BSTTree, Arrays.asList(1, 3, 2), Collections.emptyList(), Arrays.asList(1, 3, 2));
+        check(BSTTree,
+            Arrays.asList(7, 4, 8, 9, 2, 1, 6, 5, 3),
+            Arrays.asList(4, 3),
+            Arrays.asList(7, 2, 1, 6, 5, 8, 9)
+        );
+        check(BSTTree,
+            Arrays.asList(7, 3, 5, 2, 1, 8, 6, 9, 10),
+            Arrays.asList(8, 2, 3, 7),
+            Arrays.asList(6, 1, 5, 9, 10)
+        );
+    }
+
+    public static void AVLTreeSimpleTest() {
+        System.out.println("--------AVLTreeSimpleTest--------");
+        check(AVLTree, Arrays.asList(3, 2, 1), Collections.emptyList(), Arrays.asList(2, 1, 3));
+        check(AVLTree, Arrays.asList(3, 1, 2), Collections.emptyList(), Arrays.asList(2, 1, 3));
+        check(AVLTree, Arrays.asList(1, 2, 3), Collections.emptyList(), Arrays.asList(2, 1, 3));
+        check(AVLTree, Arrays.asList(1, 3, 2), Collections.emptyList(), Arrays.asList(2, 1, 3));
+        check(AVLTree,
+            Arrays.asList(7, 4, 8, 9, 2, 1, 6, 5, 3),
+            Arrays.asList(4, 3),
+            Arrays.asList(7, 2, 1, 5, 6, 8, 9)
+        );
+        check(AVLTree,
+            Arrays.asList(7, 3, 5, 2, 1, 8, 6, 9, 10),
+            Arrays.asList(8, 2, 3, 7),
+            Arrays.asList(6, 5, 1, 9, 10)
+        );
+    }
+
+    private static void randomDataCheck(BinarySearchTree<Integer, Integer> tree, int deep) {
+        int a[] = new int[deep+1];
+        for (int i = 1; i <= deep; i ++) {
+            a[i] = i;
         }
-        return put(null, root, key, value, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    private V put(Node f, Node x, K key, V value, boolean onlyIfAbsent) {
-        Comparable<? super K> k = (Comparable<? super K>) key;
-        int cmp = k.compareTo(x.key);
-        if (cmp == 0) {
-            if (!onlyIfAbsent)
-                x.value = value;
-            return x.value;
+        Random random = new Random(new Random().nextInt(100));
+        for (int i = 1; i <= deep; i ++) {
+            int t1 = 1 + random.nextInt(deep);
+            int t2 = 1 + random.nextInt(deep);
+            int t = a[t1];
+            a[t1] = a[t2];
+            a[t2] = t;
         }
-        try {
-            if (cmp < 0) {
-                if (x.left != null)
-                    return put(x, x.left, key, value, onlyIfAbsent);
-                else {
-                    x.left = new Node(key, value);
-                    return x.left.value;
-                }
-            } else {
-                if (x.right != null)
-                    return put(x, x.right, key, value, onlyIfAbsent);
-                else {
-                    x.right = new Node(key, value);
-                    return x.right.value;
-                }
-            }
-        } finally {
-            rotate(f, x);
+        long begin = System.currentTimeMillis();
+        tree.clear();
+        for (int i = 1; i <= deep; i ++) {
+            tree.put(a[i]);
         }
+        long duration = System.currentTimeMillis() - begin;
+        System.out.println("deep: " + deep);
+        System.out.println("size: " + tree.size());
+        System.out.println("height: " + tree.height());
+        System.out.println("duration: " + duration + "ms");
     }
 
-    @Override
-    public V remove(K key) {
-        if (root == null)
-            return null;
-        return remove(null, root, key);
+    public static void randomDataTest() {
+        System.out.println("--------randomDataTest(BSTTree)--------");
+        randomDataCheck(BSTTree, 10000);
+        randomDataCheck(BSTTree, 50000);
+        randomDataCheck(BSTTree, 100000);
+        System.out.println("--------randomDataTest(AVLTree)--------");
+        randomDataCheck(AVLTree, 10000);
+        randomDataCheck(AVLTree, 50000);
+        randomDataCheck(AVLTree, 100000);
     }
 
-    @SuppressWarnings("unchecked")
-    private V remove(Node f, Node x, K key) {
-        try {
-            Comparable<? super K> k = (Comparable<? super K>) key;
-            int cmp = k.compareTo(x.key);
-            if (cmp == 0) {
-                if (x.left == null && x.right == null) {
-                    if (f == null)
-                        root = null;
-                    else if (f.left == x)
-                        f.left = null;
-                    else
-                        f.right = null;
-                } else if (x.left == null) { // x.right != null
-                    if (f == null)
-                        root = x.right;
-                    else if (f.left == x)
-                        f.left = x.right;
-                    else
-                        f.right = x.right;
-                } else if (x.right == null) { // x.left != null
-                    if (f == null)
-                        root = x.left;
-                    else if (f.left == x)
-                        f.left = x.left;
-                    else
-                        f.right = x.left;
-                } else { // x.left != null && x.right != null
-                    Node lmax = getMaxNode(x.left);
-                    remove(lmax.key);
-                    x.key = lmax.key;
-                    x.value = lmax.value;
-                }
-                return x.value;
-            }
-            if (cmp < 0)
-                return remove(x, x.left, key);
-            else
-                return remove(x, x.right, key);
-        } finally {
-            rotate(f, x);
+    private static void linearDataCheck(BinarySearchTree<Integer, Integer> tree, int deep) {
+        long begin = System.currentTimeMillis();
+        tree.clear();
+        for (int i = 1; i <= deep; i ++) {
+            tree.put(i);
         }
+        long duration = System.currentTimeMillis() - begin;
+        System.out.println("deep: " + deep);
+        System.out.println("size: " + tree.size());
+        System.out.println("height: " + tree.height());
+        System.out.println("duration: " + duration + "ms");
     }
 
-    @Override
-    public void clear() {
-        root = null;
+    public static void linearDataTest() {
+        System.out.println("--------linearDataCheck(BSTTree)--------");
+        linearDataCheck(BSTTree, 10000);
+        linearDataCheck(BSTTree, 50000);
+        linearDataCheck(BSTTree, 100000);
+        System.out.println("--------linearDataCheck(AVLTree)--------");
+        linearDataCheck(AVLTree, 10000);
+        linearDataCheck(AVLTree, 50000);
+        linearDataCheck(AVLTree, 100000);
     }
 
-    @Override
-    public int size() {
-        return root == null ? 0 : root.size;
-    }
-
-    @Override
-    public int height() {
-        return root == null ? 0 : root.height;
-    }
-
-    @Override
-    public List<Entry<K, V>> entryList() {
-        return entryList(root);
-    }
-
-    private List<Entry<K, V>> entryList(Node x) {
-        check(x);
-        List<Entry<K, V>> list = new ArrayList<>();
-        if (x != null) {
-            list.add(new Entry<>(x.key, x.value));
-            list.addAll(entryList(x.left));
-            list.addAll(entryList(x.right));
-        }
-        return list;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void check(Node x) {
-        if (x != null) {
-            Comparable<? super K> k = (Comparable<? super K>) x.key;
-            int ln = 0;
-            int lh = 0;
-            if (x.left != null) {
-                if (k.compareTo(x.left.key) < 0)
-                    throw new RuntimeException("leftKey.compareTo(x.key) > 0");
-                ln = x.left.size;
-                lh = x.left.height;
-            }
-            int rn = 0;
-            int rh = 0;
-            if (x.right != null) {
-                if (k.compareTo(x.right.key) > 0)
-                    throw new RuntimeException("rightKey.compareTo(x.key) < 0");
-                rn = x.right.size;
-                rh = x.right.height;
-            }
-            if (x.size != (1 + ln + rn))
-                throw new RuntimeException("x.size != (1 + ln + rn)");
-            if (x.height != (1 + Integer.max(lh, rh)))
-                throw new RuntimeException("x.height != (1 + Integer.max(lh, rh))");
-            if (lh - rh > 1)
-                throw new RuntimeException("lh - rh > 1");
-            if (lh - rh < -1)
-                throw new RuntimeException("lh - rh < -1");
-        }
-    }
-
-    private Node root = null;
-
-    class Node {
-        private K key;
-        private V value;
-        private Node left;
-        private Node right;
-        private int size;
-        private int height;
-        public Node(K key, V value) {
-            this.key = key;
-            this.value = value;
-            this.size = 1;
-            this.height = 1;
-        }
+    public static void main(String[] args) {
+        BSTTreeSimpleTest();
+        AVLTreeSimpleTest();
+        randomDataTest();
+        linearDataTest();
     }
 }
 
