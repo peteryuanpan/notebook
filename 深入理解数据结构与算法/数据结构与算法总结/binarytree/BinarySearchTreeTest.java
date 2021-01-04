@@ -8,6 +8,7 @@ public class BinarySearchTreeTest {
     private static final BinarySearchTree<Integer, Integer> BSTTree = new BSTTree<>();
     private static final BinarySearchTree<Integer, Integer> AVLTree = new AVLTree<>();
     private static final BinarySearchTree<Integer, Integer> RBTree = new RBTree<>();
+    private static final BinarySearchTree<Integer, Integer> treeMap = new TreeMapDecorator<>();
 
     private static void print(List<Integer> list) {
         list.forEach(e -> System.out.print(e + " "));
@@ -141,6 +142,15 @@ public class BinarySearchTreeTest {
         randomDataCheck(AVLTree, 10000000);
     }
 
+    public static void randomDataTestTreeMap() {
+        System.out.println("--------randomDataTest(TreeMap)--------");
+        randomDataCheck(treeMap, 10000);
+        randomDataCheck(treeMap, 50000);
+        randomDataCheck(treeMap, 100000);
+        randomDataCheck(treeMap, 1000000);
+        randomDataCheck(treeMap, 10000000);
+    }
+
     private static void linearDataCheck(BinarySearchTree<Integer, Integer> tree, int deep) {
         long begin = System.currentTimeMillis();
         tree.clear();
@@ -177,14 +187,25 @@ public class BinarySearchTreeTest {
         linearDataCheck(AVLTree, 10000000);
     }
 
+    public static void linearDataTestTreeMap() {
+        System.out.println("--------linearDataCheck(TreeMap)--------");
+        linearDataCheck(treeMap, 10000);
+        linearDataCheck(treeMap, 50000);
+        linearDataCheck(treeMap, 100000);
+        linearDataCheck(treeMap, 1000000);
+        linearDataCheck(treeMap, 10000000);
+    }
+
     public static void main(String[] args) {
         simpleTestBSTTree();
         simpleTestAVLTree();
         simpleTestRBTree();
         randomDataTestBSTree();
         randomDataTestAVLTree();
+        randomDataTestTreeMap();
         linearDataTestBSTTree();
         linearDataTestAVLTree();
+        linearDataTestTreeMap();
     }
 }
 
@@ -205,43 +226,65 @@ public class BinarySearchTreeTest {
  check done
  --------SimpleTest(RBTree)--------
  --------randomDataTest(BSTTree)--------
- Test put	[deep: 10000, size: 10000, height: 47, rotateCount: 0, duration: 6ms]
- Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 0, duration: 4ms]
- Test put	[deep: 50000, size: 50000, height: 50, rotateCount: 0, duration: 15ms]
- Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 0, duration: 16ms]
- Test put	[deep: 100000, size: 100000, height: 82, rotateCount: 0, duration: 42ms]
- Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 0, duration: 40ms]
- Test put	[deep: 1000000, size: 1000000, height: 194, rotateCount: 0, duration: 889ms]
- Test remove	[deep: 1000000, size: 0, height: 0, rotateCount: 0, duration: 668ms]
- Test put	[deep: 10000000, size: 10000000, height: 576, rotateCount: 0, duration: 11177ms]
- Test remove	[deep: 10000000, size: 0, height: 0, rotateCount: 0, duration: 9814ms]
+ Test put	[deep: 10000, size: 10000, height: 49, rotateCount: 0, duration: 6ms]
+ Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 0, duration: 6ms]
+ Test put	[deep: 50000, size: 50000, height: 55, rotateCount: 0, duration: 15ms]
+ Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 0, duration: 14ms]
+ Test put	[deep: 100000, size: 100000, height: 69, rotateCount: 0, duration: 40ms]
+ Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 0, duration: 41ms]
+ Test put	[deep: 1000000, size: 1000000, height: 245, rotateCount: 0, duration: 939ms]
+ Test remove	[deep: 1000000, size: 0, height: 0, rotateCount: 0, duration: 599ms]
+ Test put	[deep: 10000000, size: 10000000, height: 631, rotateCount: 0, duration: 11254ms]
+ Test remove	[deep: 10000000, size: 0, height: 0, rotateCount: 0, duration: 9288ms]
  --------randomDataTest(AVLTree)--------
- Test put	[deep: 10000, size: 10000, height: 16, rotateCount: 7161, duration: 7ms]
- Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 9221, duration: 5ms]
- Test put	[deep: 50000, size: 50000, height: 19, rotateCount: 44763, duration: 19ms]
- Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 54934, duration: 22ms]
- Test put	[deep: 100000, size: 100000, height: 20, rotateCount: 125976, duration: 32ms]
- Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 146519, duration: 39ms]
- Test put	[deep: 1000000, size: 1000000, height: 24, rotateCount: 858283, duration: 755ms]
- Test remove	[deep: 1000000, size: 0, height: 0, rotateCount: 1064521, duration: 613ms]
- Test put	[deep: 10000000, size: 10000000, height: 28, rotateCount: 8198214, duration: 13003ms]
- Test remove	[deep: 10000000, size: 0, height: 0, rotateCount: 10264706, duration: 10120ms]
+ Test put	[deep: 10000, size: 10000, height: 16, rotateCount: 7089, duration: 6ms]
+ Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 9197, duration: 5ms]
+ Test put	[deep: 50000, size: 50000, height: 19, rotateCount: 44819, duration: 20ms]
+ Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 55065, duration: 22ms]
+ Test put	[deep: 100000, size: 100000, height: 20, rotateCount: 126373, duration: 34ms]
+ Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 146896, duration: 36ms]
+ Test put	[deep: 1000000, size: 1000000, height: 24, rotateCount: 859172, duration: 712ms]
+ Test remove	[deep: 1000000, size: 0, height: 0, rotateCount: 1064669, duration: 788ms]
+ Test put	[deep: 10000000, size: 10000000, height: 28, rotateCount: 8195203, duration: 11614ms]
+ Test remove	[deep: 10000000, size: 0, height: 0, rotateCount: 10257501, duration: 9081ms]
+ --------randomDataTest(TreeMap)--------
+ Test put	[deep: 10000, size: 10000, height: -1, rotateCount: -1, duration: 5ms]
+ Test remove	[deep: 10000, size: 0, height: -1, rotateCount: -1, duration: 4ms]
+ Test put	[deep: 50000, size: 50000, height: -1, rotateCount: -1, duration: 14ms]
+ Test remove	[deep: 50000, size: 0, height: -1, rotateCount: -1, duration: 12ms]
+ Test put	[deep: 100000, size: 100000, height: -1, rotateCount: -1, duration: 21ms]
+ Test remove	[deep: 100000, size: 0, height: -1, rotateCount: -1, duration: 21ms]
+ Test put	[deep: 1000000, size: 1000000, height: -1, rotateCount: -1, duration: 546ms]
+ Test remove	[deep: 1000000, size: 0, height: -1, rotateCount: -1, duration: 538ms]
+ Test put	[deep: 10000000, size: 10000000, height: -1, rotateCount: -1, duration: 8521ms]
+ Test remove	[deep: 10000000, size: 0, height: -1, rotateCount: -1, duration: 6178ms]
  --------linearDataCheck(BSTTree)--------
- Test put	[deep: 10000, size: 10000, height: 10000, rotateCount: 0, duration: 307ms]
- Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 0, duration: 296ms]
- Test put	[deep: 50000, size: 50000, height: 50000, rotateCount: 0, duration: 8030ms]
- Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 0, duration: 7828ms]
- Test put	[deep: 100000, size: 100000, height: 100000, rotateCount: 0, duration: 45064ms]
- Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 0, duration: 44641ms]
+ Test put	[deep: 10000, size: 10000, height: 10000, rotateCount: 0, duration: 310ms]
+ Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 0, duration: 281ms]
+ Test put	[deep: 50000, size: 50000, height: 50000, rotateCount: 0, duration: 8169ms]
+ Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 0, duration: 8908ms]
+ Test put	[deep: 100000, size: 100000, height: 100000, rotateCount: 0, duration: 41518ms]
+ Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 0, duration: 43753ms]
  --------linearDataCheck(AVLTree)--------
- Test put	[deep: 10000, size: 10000, height: 14, rotateCount: 10274692, duration: 2ms]
- Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 10279679, duration: 3ms]
- Test put	[deep: 50000, size: 50000, height: 16, rotateCount: 10329663, duration: 11ms]
- Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 10354648, duration: 11ms]
- Test put	[deep: 100000, size: 100000, height: 17, rotateCount: 10454631, duration: 23ms]
- Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 10504615, duration: 17ms]
- Test put	[deep: 1000000, size: 1000000, height: 20, rotateCount: 11504595, duration: 231ms]
- Test remove	[deep: 1000000, size: 0, height: 0, rotateCount: 12004576, duration: 125ms]
- Test put	[deep: 10000000, size: 10000000, height: 24, rotateCount: 22004552, duration: 3037ms]
- Test remove	[deep: 10000000, size: 0, height: 0, rotateCount: 27004529, duration: 1528ms]
+ Test put	[deep: 10000, size: 10000, height: 14, rotateCount: 10267487, duration: 2ms]
+ Test remove	[deep: 10000, size: 0, height: 0, rotateCount: 10272474, duration: 1ms]
+ Test put	[deep: 50000, size: 50000, height: 16, rotateCount: 10322458, duration: 11ms]
+ Test remove	[deep: 50000, size: 0, height: 0, rotateCount: 10347443, duration: 7ms]
+ Test put	[deep: 100000, size: 100000, height: 17, rotateCount: 10447426, duration: 20ms]
+ Test remove	[deep: 100000, size: 0, height: 0, rotateCount: 10497410, duration: 13ms]
+ Test put	[deep: 1000000, size: 1000000, height: 20, rotateCount: 11497390, duration: 238ms]
+ Test remove	[deep: 1000000, size: 0, height: 0, rotateCount: 11997371, duration: 155ms]
+ Test put	[deep: 10000000, size: 10000000, height: 24, rotateCount: 21997347, duration: 3257ms]
+ Test remove	[deep: 10000000, size: 0, height: 0, rotateCount: 26997324, duration: 1503ms]
+ --------linearDataCheck(TreeMap)--------
+ Test put	[deep: 10000, size: 10000, height: -1, rotateCount: -1, duration: 1ms]
+ Test remove	[deep: 10000, size: 0, height: -1, rotateCount: -1, duration: 1ms]
+ Test put	[deep: 50000, size: 50000, height: -1, rotateCount: -1, duration: 6ms]
+ Test remove	[deep: 50000, size: 0, height: -1, rotateCount: -1, duration: 4ms]
+ Test put	[deep: 100000, size: 100000, height: -1, rotateCount: -1, duration: 12ms]
+ Test remove	[deep: 100000, size: 0, height: -1, rotateCount: -1, duration: 7ms]
+ Test put	[deep: 1000000, size: 1000000, height: -1, rotateCount: -1, duration: 219ms]
+ Test remove	[deep: 1000000, size: 0, height: -1, rotateCount: -1, duration: 104ms]
+ Test put	[deep: 10000000, size: 10000000, height: -1, rotateCount: -1, duration: 2706ms]
+ Test remove	[deep: 10000000, size: 0, height: -1, rotateCount: -1, duration: 731ms]
  */
