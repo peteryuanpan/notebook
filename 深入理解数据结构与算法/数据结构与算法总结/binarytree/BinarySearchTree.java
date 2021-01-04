@@ -82,22 +82,20 @@ public interface BinarySearchTree<K, V> {
      * @param <K>
      * @param <V>
      */
-    class Entry<K, V> {
+    interface Entry<K, V> {
 
-        private final K key;
-        private final V value;
+        K key();
 
-        public Entry(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
+        V value();
 
-        public K getKey() {
-            return key;
-        }
+        Entry<K, V> father();
 
-        public V getValue() {
-            return value;
-        }
+        Entry<K, V> left();
+
+        Entry<K, V> right();
+
+        int size();
+
+        int height();
     }
 }
