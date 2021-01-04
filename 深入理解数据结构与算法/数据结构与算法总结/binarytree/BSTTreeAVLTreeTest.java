@@ -101,6 +101,7 @@ public class BSTTreeAVLTreeTest {
             tree.put(a[i]);
         }
         long duration = System.currentTimeMillis() - begin;
+        tree.entryList(); // check
         System.out.println("deep: " + deep);
         System.out.println("size: " + tree.size());
         System.out.println("height: " + tree.height());
@@ -125,6 +126,7 @@ public class BSTTreeAVLTreeTest {
             tree.put(i);
         }
         long duration = System.currentTimeMillis() - begin;
+        tree.entryList(); // check
         System.out.println("deep: " + deep);
         System.out.println("size: " + tree.size());
         System.out.println("height: " + tree.height());
