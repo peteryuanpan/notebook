@@ -163,7 +163,7 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
                     else
                         updateRight(f, x.left);
                 } else { // x.left != null && x.right != null
-                    Node prev = getMaxNode(x.left); // prev.right must equals null
+                    Node prev = getMaxNode(x.left); // prev.right must be null
                     remove(prev.key);
                     x.key = prev.key;
                     x.value = prev.value;
