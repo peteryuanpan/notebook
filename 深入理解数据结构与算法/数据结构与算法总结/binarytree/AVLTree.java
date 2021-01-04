@@ -89,9 +89,9 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
     }
 
     private void rotate(Node f, Node x) {
-        int ln = getHeight(x.left);
-        int rn = getHeight(x.right);
-        if (ln - rn > 1) {
+        int lh = getHeight(x.left);
+        int rh = getHeight(x.right);
+        if (lh - rh > 1) {
             int cmp = getHeight(x.left.left) - getHeight(x.left.right);
             if (cmp >= 0)
                 rotateRight(f, x);
@@ -99,7 +99,7 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
                 rotateLeft(x, x.left);
                 rotateRight(f, x);
             }
-        } else if (ln - rn < -1) {
+        } else if (lh - rh < -1) {
             int cmp = getHeight(x.right.right) - getHeight(x.right.left);
             if (cmp >= 0)
                 rotateLeft(f, x);
