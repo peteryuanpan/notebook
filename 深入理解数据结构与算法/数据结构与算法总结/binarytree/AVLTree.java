@@ -76,54 +76,54 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
             x.father = f;
     }
 
-    private void rotateLeft(Node f, Node x) {
+    private void rotateLeft(Node x) {
         Node right = x.right;
         Node right_left = x.right.left;
-        if (f == null)
+        if (x.father == null)
             updateRoot(right);
-        else if (f.left == x)
-            updateLeft(f, right);
+        else if (x.father.left == x)
+            updateLeft(x.father, right);
         else
-            updateRight(f, right);
+            updateRight(x.father, right);
         updateLeft(right, x);
         updateRight(x, right_left);
         update(x);
         update(right);
     }
 
-    private void rotateRight(Node f, Node x) {
+    private void rotateRight(Node x) {
         Node left = x.left;
         Node left_right = x.left.right;
-        if (f == null)
+        if (x.father == null)
             updateRoot(left);
-        else if (f.left == x)
-            updateLeft(f, left);
+        else if (x.father.left == x)
+            updateLeft(x.father, left);
         else
-            updateRight(f, left);
+            updateRight(x.father, left);
         updateRight(left, x);
         updateLeft(x, left_right);
         update(x);
         update(left);
     }
 
-    private void rotate(Node f, Node x) {
+    private void rotate(Node x) {
         int lh = getHeight(x.left);
         int rh = getHeight(x.right);
         if (lh - rh > 1) {
             int cmp = getHeight(x.left.left) - getHeight(x.left.right);
             if (cmp >= 0)
-                rotateRight(f, x);
+                rotateRight(x);
             else {
-                rotateLeft(x, x.left);
-                rotateRight(f, x);
+                rotateLeft(x.left);
+                rotateRight(x);
             }
         } else if (lh - rh < -1) {
             int cmp = getHeight(x.right.right) - getHeight(x.right.left);
             if (cmp >= 0)
-                rotateLeft(f, x);
+                rotateLeft(x);
             else {
-                rotateRight(x, x.right);
-                rotateLeft(f, x);
+                rotateRight(x.right);
+                rotateLeft(x);
             }
         } else
             update(x);
@@ -137,7 +137,7 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
             root = new Node(key, value, null);
             return root.value;
         }
-        return put(null, root, key, value, false);
+        return put(root, key, value, false);
     }
 
     @Override
@@ -148,11 +148,11 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
             root = new Node(key, value, null);
             return root.value;
         }
-        return put(null, root, key, value, true);
+        return put(root, key, value, true);
     }
 
     @SuppressWarnings("unchecked")
-    private V put(Node f, Node x, K key, V value, boolean onlyIfAbsent) {
+    private V put(Node x, K key, V value, boolean onlyIfAbsent) {
         Comparable<? super K> k = (Comparable<? super K>) key;
         int cmp = k.compareTo(x.key);
         if (cmp == 0) {
@@ -163,21 +163,21 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
         try {
             if (cmp < 0) {
                 if (x.left != null)
-                    return put(x, x.left, key, value, onlyIfAbsent);
+                    return put(x.left, key, value, onlyIfAbsent);
                 else {
                     x.left = new Node(key, value, x);
                     return x.left.value;
                 }
             } else {
                 if (x.right != null)
-                    return put(x, x.right, key, value, onlyIfAbsent);
+                    return put(x.right, key, value, onlyIfAbsent);
                 else {
                     x.right = new Node(key, value, x);
                     return x.right.value;
                 }
             }
         } finally {
-            rotate(f, x);
+            rotate(x);
         }
     }
 
@@ -185,36 +185,36 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
     public V remove(K key) {
         if (root == null)
             return null;
-        return remove(null, root, key);
+        return remove(root, key);
     }
 
     @SuppressWarnings("unchecked")
-    private V remove(Node f, Node x, K key) {
+    private V remove(Node x, K key) {
         try {
             Comparable<? super K> k = (Comparable<? super K>) key;
             int cmp = k.compareTo(x.key);
             if (cmp == 0) {
                 if (x.left == null && x.right == null) {
-                    if (f == null)
+                    if (x.father == null)
                         updateRoot(null);
-                    else if (f.left == x)
-                        updateLeft(f, null);
+                    else if (x.father.left == x)
+                        updateLeft(x.father, null);
                     else
-                        updateRight(f, null);
+                        updateRight(x.father, null);
                 } else if (x.left == null) { // x.right != null
-                    if (f == null)
+                    if (x.father == null)
                         updateRoot(x.right);
-                    else if (f.left == x)
-                        updateLeft(f, x.right);
+                    else if (x.father.left == x)
+                        updateLeft(x.father, x.right);
                     else
-                        updateRight(f, x.right);
+                        updateRight(x.father, x.right);
                 } else if (x.right == null) { // x.left != null
-                    if (f == null)
+                    if (x.father == null)
                         updateRoot(x.left);
-                    else if (f.left == x)
-                        updateLeft(f, x.left);
+                    else if (x.father.left == x)
+                        updateLeft(x.father, x.left);
                     else
-                        updateRight(f, x.left);
+                        updateRight(x.father, x.left);
                 } else { // x.left != null && x.right != null
                     Node prev = getMaxNode(x.left); // prev.right must be null
                     remove(prev.key);
@@ -224,11 +224,11 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
                 return x.value;
             }
             if (cmp < 0)
-                return remove(x, x.left, key);
+                return remove(x.left, key);
             else
-                return remove(x, x.right, key);
+                return remove(x.right, key);
         } finally {
-            rotate(f, x);
+            rotate(x);
         }
     }
 
