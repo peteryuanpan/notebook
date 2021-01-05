@@ -10,11 +10,9 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
         return get(root, key);
     }
 
-    @SuppressWarnings("unchecked")
     private V get(Node x, K key) {
         if (x != null) {
-            Comparable<? super K> k = (Comparable<? super K>) key;
-            int cmp = k.compareTo(x.key);
+            int cmp = compare(key, x.key);
             if (cmp == 0)
                 return x.value;
             if (cmp < 0)
@@ -33,11 +31,6 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
                 return x;
         }
         return null;
-    }
-
-    private void update(Node x) {
-        x.size = 1 + getSize(x.left) + getSize(x.right);
-        x.height = 1 + Integer.max(getHeight(x.left), getHeight(x.right));
     }
 
     private void updateRoot(Node x) {
@@ -60,127 +53,137 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
             x.father = f;
     }
 
+    private void updateFather(Node x, Node v) {
+        if (x.father == null)
+            updateRoot(v);
+        else if (x.father.left == x)
+            updateLeft(x.father, v);
+        else
+            updateRight(x.father, v);
+    }
+
     @Override
     public V put(K key, V value) {
-        if (key == null)
-            throw new NullPointerException("key can not be null");
-        if (root == null) {
-            root = new Node(key, value, null);
-            return root.value;
-        }
-        return put(root, key, value, false);
+        return put(key, value, false);
     }
 
     @Override
     public V putIfAbsent(K key, V value) {
-        if (key == null)
-            throw new NullPointerException("key can not be null");
-        if (root == null) {
-            root = new Node(key, value, null);
-            return root.value;
-        }
-        return put(root, key, value, true);
+        return put(key, value, true);
     }
 
-    @SuppressWarnings("unchecked")
-    private V put(Node x, K key, V value, boolean onlyIfAbsent) {
-        Comparable<? super K> k = (Comparable<? super K>) key;
-        int cmp = k.compareTo(x.key);
-        if (cmp == 0) {
-            if (!onlyIfAbsent)
-                x.value = value;
-            return x.value;
+    private V put(K key, V value, boolean onlyIfAbsent) {
+        if (key == null)
+            throw new NullPointerException("key can not be null");
+        Node x = root;
+        if (x == null) {
+            root = new Node(key, value, null);
+            size ++;
+            return value;
         }
-        try {
-            if (cmp < 0) {
-                if (x.left != null)
-                    return put(x.left, key, value, onlyIfAbsent);
-                else {
-                    x.left = new Node(key, value, x);
-                    return x.left.value;
-                }
-            } else {
-                if (x.right != null)
-                    return put(x.right, key, value, onlyIfAbsent);
-                else {
-                    x.right = new Node(key, value, x);
-                    return x.right.value;
-                }
+        while (true) {
+            int cmp = compare(key, x.key);
+            if (cmp == 0) {
+                if (!onlyIfAbsent)
+                    x.value = value;
+                return value;
             }
-        } finally {
-            update(x);
+            if (cmp < 0) {
+                if (x.left == null) {
+                    x.left = new Node(key, value, x);
+                    size ++;
+                    return value;
+                }
+                x = x.left;
+            } else {
+                if (x.right == null) {
+                    x.right = new Node(key, value, x);
+                    size ++;
+                    return value;
+                }
+                x = x.right;
+            }
         }
     }
 
     @Override
     public V remove(K key) {
-        if (root == null)
-            return null;
-        return remove(root, key);
-    }
-
-    @SuppressWarnings("unchecked")
-    private V remove(Node x, K key) {
-        try {
-            Comparable<? super K> k = (Comparable<? super K>) key;
-            int cmp = k.compareTo(x.key);
+        Node x = root;
+        while (x != null) {
+            int cmp = compare(key, x.key);
             if (cmp == 0) {
-                if (x.left == null && x.right == null) {
-                    if (x.father == null)
-                        updateRoot(null);
-                    else if (x.father.left == x)
-                        updateLeft(x.father, null);
-                    else
-                        updateRight(x.father, null);
-                } else if (x.left == null) { // x.right != null
-                    if (x.father == null)
-                        updateRoot(x.right);
-                    else if (x.father.left == x)
-                        updateLeft(x.father, x.right);
-                    else
-                        updateRight(x.father, x.right);
-                } else if (x.right == null) { // x.left != null
-                    if (x.father == null)
-                        updateRoot(x.left);
-                    else if (x.father.left == x)
-                        updateLeft(x.father, x.left);
-                    else
-                        updateRight(x.father, x.left);
-                } else { // x.left != null && x.right != null
-                    Node prev = getMaxNode(x.left); // prev.right must be null
-                    remove(prev.key);
+                if (x.left == null && x.right == null)
+                    updateFather(x, null);
+                else if (x.left == null)
+                    updateFather(x, x.right);
+                else if (x.right == null)
+                    updateFather(x, x.left);
+                else {
+                    Node prev = getMaxNode(x.left);
+                    updateFather(prev, prev.left); // prev.right must be null
                     x.key = prev.key;
                     x.value = prev.value;
                 }
+                size --;
                 return x.value;
             }
             if (cmp < 0)
-                return remove(x.left, key);
+                x = x.left;
             else
-                return remove(x.right, key);
-        } finally {
-            update(x);
+                x = x.right;
         }
+        return null;
     }
 
     @Override
     public void clear() {
         root = null;
+        size = 0;
     }
 
     @Override
     public int size() {
-        return root == null ? 0 : root.size;
+        return size;
     }
 
     @Override
     public int height() {
-        return root == null ? 0 : root.height;
+        return root == null ? 0 : heightOf(root);
     }
+
+    private int heightOf(Node x) {
+        return x == null ? 0 : 1 + Integer.max(heightOf(x.left), heightOf(x.right));
+    }
+
+    private final List<Entry<K, V>> entryList = new ArrayList<>();
 
     @Override
     public List<Entry<K, V>> entryList() {
-        return entryList(null, root);
+        entryList.clear();
+        checkAll(null, root);
+        return new ArrayList<>(entryList);
+    }
+
+    private void checkAll(Node f, Node x) {
+        check(f, x);
+        if (x != null) {
+            entryList.add(x);
+            checkAll(x, x.left);
+            checkAll(x, x.right);
+        }
+    }
+
+    private void check(Node f, Node x) {
+        if (x != null) {
+            if (f == null && x.father != null)
+                throw new RuntimeException("f == null && x.father != null");
+            if (f != null && x.father != f)
+                throw new RuntimeException("f != null && x.father != f");
+            if (x.left != null && compare(x.key, x.left.key) < 0)
+                throw new RuntimeException("compare(x.key, x.left.key) < 0");
+            if (x.right != null && compare(x.key, x.right.key) > 0)
+                throw new RuntimeException("compare(x.key, x.right.key) > 0");
+        }
     }
 
     @Override
@@ -188,74 +191,26 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
         return 0;
     }
 
-    private List<Entry<K, V>> entryList(Node f, Node x) {
-        check(f, x);
-        List<Entry<K, V>> list = new ArrayList<>();
-        if (x != null) {
-            list.add(x);
-            list.addAll(entryList(x, x.left));
-            list.addAll(entryList(x, x.right));
-        }
-        return list;
-    }
+    private Node root = null;
+    private int size = 0;
 
     @SuppressWarnings("unchecked")
-    private void check(Node f, Node x) {
-        if (x != null) {
-            if (f == null && x.father != null)
-                throw new RuntimeException("f == null && x.father != null");
-            if (f != null && x.father != f)
-                throw new RuntimeException("f != null && x.father != f");
-            Comparable<? super K> k = (Comparable<? super K>) x.key;
-            int ln = 0;
-            int lh = 0;
-            if (x.left != null) {
-                if (k.compareTo(x.left.key) < 0)
-                    throw new RuntimeException("leftKey.compareTo(x.key) > 0");
-                ln = x.left.size;
-                lh = x.left.height;
-            }
-            int rn = 0;
-            int rh = 0;
-            if (x.right != null) {
-                if (k.compareTo(x.right.key) > 0)
-                    throw new RuntimeException("rightKey.compareTo(x.key) < 0");
-                rn = x.right.size;
-                rh = x.right.height;
-            }
-            if (x.size != (1 + ln + rn))
-                throw new RuntimeException("x.size != (1 + ln + rn)");
-            if (x.height != (1 + Integer.max(lh, rh)))
-                throw new RuntimeException("x.height != (1 + Integer.max(lh, rh))");
-        }
+    private int compare(Object k1, Object k2) {
+        return ((Comparable<? super K>) k1).compareTo((K)k2);
     }
 
-    private Node root = null;
-
-    private int getSize(Node x) {
-        return x == null ? 0 : x.size;
-    }
-
-    private int getHeight(Node x) {
-        return x == null ? 0 : x.height;
-    }
-
-    class Node implements Entry<K, V> {
+    public class Node implements Entry<K, V> {
 
         private K key;
         private V value;
-        private Node father;
         private Node left;
         private Node right;
-        private int size;
-        private int height;
+        private Node father;
 
         Node(K key, V value, Node father) {
             this.key = key;
             this.value = value;
             this.father = father;
-            this.size = 1;
-            this.height = 1;
         }
 
         @Override
@@ -269,11 +224,6 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
         }
 
         @Override
-        public Entry<K, V> father() {
-            return father;
-        }
-
-        @Override
         public Entry<K, V> left() {
             return left;
         }
@@ -284,13 +234,8 @@ public class BSTTree<K, V> implements BinarySearchTree<K, V> {
         }
 
         @Override
-        public int size() {
-            return size;
-        }
-
-        @Override
-        public int height() {
-            return height;
+        public Entry<K, V> father() {
+            return father;
         }
     }
 }
