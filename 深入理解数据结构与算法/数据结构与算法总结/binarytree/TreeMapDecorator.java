@@ -131,12 +131,13 @@ public class TreeMapDecorator<K, V> implements BinarySearchTree<K, V> {
     }
 
     private final TreeMap<K, V> treeMap = new TreeMap<>();
-    private Field rootField;
-    private Field keyField;
-    private Field valueField;
-    private Field leftField;
-    private Field rightField;
-    private Field colorField;
+    
+    private static Field rootField;
+    private static Field keyField;
+    private static Field valueField;
+    private static Field leftField;
+    private static Field rightField;
+    private static Field colorField;
 
     private Object root() {
         try {
@@ -194,7 +195,7 @@ public class TreeMapDecorator<K, V> implements BinarySearchTree<K, V> {
         return null;
     }
 
-    {
+    static {
         try {
             Class<?> treeMapClass = Class.forName("java.util.TreeMap");
             rootField = treeMapClass.getDeclaredField("root");
