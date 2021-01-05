@@ -10,11 +10,9 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
         return get(root, key);
     }
 
-    @SuppressWarnings("unchecked")
     private V get(Node x, K key) {
         if (x != null) {
-            Comparable<? super K> k = (Comparable<? super K>) key;
-            int cmp = k.compareTo(x.key);
+            int cmp = compare(key, x.key);
             if (cmp == 0)
                 return x.value;
             if (cmp < 0)
@@ -35,9 +33,8 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
         return null;
     }
 
-    private void update(Node x) {
-        x.size = 1 + getSize(x.left) + getSize(x.right);
-        x.height = 1 + Integer.max(getHeight(x.left), getHeight(x.right));
+    private void updateHeight(Node x) {
+        x.height = 1 + Integer.max(heightOf(x.left), heightOf(x.right));
     }
 
     private void updateRoot(Node x) {
@@ -60,226 +57,221 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
             x.father = f;
     }
 
+    private void updateFather(Node x, Node v) {
+        if (x.father == null)
+            updateRoot(v);
+        else if (x.father.left == x)
+            updateLeft(x.father, v);
+        else
+            updateRight(x.father, v);
+    }
+
     private void rotateLeft(Node x) {
         Node right = x.right;
         Node right_left = x.right.left;
-        if (x.father == null)
-            updateRoot(right);
-        else if (x.father.left == x)
-            updateLeft(x.father, right);
-        else
-            updateRight(x.father, right);
+        updateFather(x, right);
         updateLeft(right, x);
         updateRight(x, right_left);
-        update(x);
-        update(right);
+        updateHeight(x);
+        updateHeight(right);
         rotateCount ++;
     }
 
     private void rotateRight(Node x) {
         Node left = x.left;
         Node left_right = x.left.right;
-        if (x.father == null)
-            updateRoot(left);
-        else if (x.father.left == x)
-            updateLeft(x.father, left);
-        else
-            updateRight(x.father, left);
+        updateFather(x, left);
         updateRight(left, x);
         updateLeft(x, left_right);
-        update(x);
-        update(left);
+        updateHeight(x);
+        updateHeight(left);
         rotateCount ++;
-    }
-
-    private void rotate(Node x) {
-        int lh = getHeight(x.left);
-        int rh = getHeight(x.right);
-        if (lh - rh > 1) {
-            int cmp = getHeight(x.left.left) - getHeight(x.left.right);
-            if (cmp >= 0)
-                rotateRight(x);
-            else {
-                rotateLeft(x.left);
-                rotateRight(x);
-            }
-        } else if (lh - rh < -1) {
-            int cmp = getHeight(x.right.right) - getHeight(x.right.left);
-            if (cmp >= 0)
-                rotateLeft(x);
-            else {
-                rotateRight(x.right);
-                rotateLeft(x);
-            }
-        } else
-            update(x);
     }
 
     @Override
     public V put(K key, V value) {
-        if (key == null)
-            throw new NullPointerException("key can not be null");
-        if (root == null) {
-            root = new Node(key, value, null);
-            return root.value;
-        }
-        return put(root, key, value, false);
+        return put(key, value, false);
     }
 
     @Override
     public V putIfAbsent(K key, V value) {
-        if (key == null)
-            throw new NullPointerException("key can not be null");
-        if (root == null) {
-            root = new Node(key, value, null);
-            return root.value;
-        }
-        return put(root, key, value, true);
+        return put(key, value, true);
     }
 
-    @SuppressWarnings("unchecked")
-    private V put(Node x, K key, V value, boolean onlyIfAbsent) {
-        Comparable<? super K> k = (Comparable<? super K>) key;
-        int cmp = k.compareTo(x.key);
-        if (cmp == 0) {
-            if (!onlyIfAbsent)
-                x.value = value;
-            return x.value;
+    private V put(K key, V value, boolean onlyIfAbsent) {
+        if (key == null)
+            throw new NullPointerException("key can not be null");
+        Node x = root;
+        if (x == null) {
+            root = new Node(key, value, null);
+            size ++;
+            return value;
         }
-        try {
+        while (true) {
+            int cmp = compare(key, x.key);
+            if (cmp == 0) {
+                if (!onlyIfAbsent)
+                    x.value = value;
+                return value;
+            }
             if (cmp < 0) {
-                if (x.left != null)
-                    return put(x.left, key, value, onlyIfAbsent);
-                else {
+                if (x.left == null) {
                     x.left = new Node(key, value, x);
-                    return x.left.value;
+                    size ++;
+                    fixAfterPut(x);
+                    return value;
                 }
+                x = x.left;
             } else {
-                if (x.right != null)
-                    return put(x.right, key, value, onlyIfAbsent);
-                else {
+                if (x.right == null) {
                     x.right = new Node(key, value, x);
-                    return x.right.value;
+                    size ++;
+                    fixAfterPut(x);
+                    return value;
+                }
+                x = x.right;
+            }
+        }
+    }
+
+    private void fixAfterPut(Node x) {
+        while (x != null) {
+            int oldH = heightOf(x);
+            updateHeight(x);
+            if (oldH == heightOf(x))
+                break;
+            Node f = x.father;
+            int lh = heightOf(x.left);
+            int rh = heightOf(x.right);
+            if (lh - rh > 1) {
+                int cmp = heightOf(x.left.left) - heightOf(x.left.right);
+                if (cmp >= 0)
+                    rotateRight(x);
+                else {
+                    rotateLeft(x.left);
+                    rotateRight(x);
+                }
+            } else if (lh - rh < -1) {
+                int cmp = heightOf(x.right.right) - heightOf(x.right.left);
+                if (cmp >= 0)
+                    rotateLeft(x);
+                else {
+                    rotateRight(x.right);
+                    rotateLeft(x);
                 }
             }
-        } finally {
-            rotate(x);
+            x = f;
         }
     }
 
     @Override
     public V remove(K key) {
-        if (root == null)
-            return null;
-        return remove(root, key);
-    }
-
-    @SuppressWarnings("unchecked")
-    private V remove(Node x, K key) {
-        try {
-            Comparable<? super K> k = (Comparable<? super K>) key;
-            int cmp = k.compareTo(x.key);
+        Node x = root;
+        while (x != null) {
+            int cmp = compare(key, x.key);
             if (cmp == 0) {
-                if (x.left == null && x.right == null) {
-                    if (x.father == null)
-                        updateRoot(null);
-                    else if (x.father.left == x)
-                        updateLeft(x.father, null);
-                    else
-                        updateRight(x.father, null);
-                } else if (x.left == null) { // x.right != null
-                    if (x.father == null)
-                        updateRoot(x.right);
-                    else if (x.father.left == x)
-                        updateLeft(x.father, x.right);
-                    else
-                        updateRight(x.father, x.right);
-                } else if (x.right == null) { // x.left != null
-                    if (x.father == null)
-                        updateRoot(x.left);
-                    else if (x.father.left == x)
-                        updateLeft(x.father, x.left);
-                    else
-                        updateRight(x.father, x.left);
-                } else { // x.left != null && x.right != null
-                    Node prev = getMaxNode(x.left); // prev.right must be null
-                    remove(prev.key);
+                V v = x.value;
+                if (x.left == null && x.right == null)
+                    updateFather(x, null);
+                else if (x.left == null)
+                    updateFather(x, x.right);
+                else if (x.right == null)
+                    updateFather(x, x.left);
+                else {
+                    Node prev = getMaxNode(x.left);
+                    updateFather(prev, prev.left); // prev.right must be null
                     x.key = prev.key;
                     x.value = prev.value;
+                    x = prev;
                 }
-                return x.value;
+                size --;
+                fixAfterRemove(x.father);
+                return v;
             }
             if (cmp < 0)
-                return remove(x.left, key);
+                x = x.left;
             else
-                return remove(x.right, key);
-        } finally {
-            rotate(x);
+                x = x.right;
+        }
+        return null;
+    }
+
+    private void fixAfterRemove(Node x) {
+        while (x != null) {
+            int oldH = heightOf(x);
+            updateHeight(x);
+            Node f = x.father;
+            int lh = heightOf(x.left);
+            int rh = heightOf(x.right);
+            if (lh - rh > 1) {
+                int cmp = heightOf(x.left.left) - heightOf(x.left.right);
+                if (cmp >= 0)
+                    rotateRight(x);
+                else {
+                    rotateLeft(x.left);
+                    rotateRight(x);
+                }
+            } else if (lh - rh < -1) {
+                int cmp = heightOf(x.right.right) - heightOf(x.right.left);
+                if (cmp >= 0)
+                    rotateLeft(x);
+                else {
+                    rotateRight(x.right);
+                    rotateLeft(x);
+                }
+            } else if (oldH == heightOf(x))
+                break;
+            x = f;
         }
     }
 
     @Override
     public void clear() {
         root = null;
+        size = 0;
+        rotateCount = 0;
     }
 
     @Override
     public int size() {
-        return root == null ? 0 : root.size;
+        return size;
     }
 
     @Override
     public int height() {
-        return root == null ? 0 : root.height;
+        return heightOf(root);
     }
+
+    private final List<Entry<K, V>> entryList = new ArrayList<>();
 
     @Override
     public List<Entry<K, V>> entryList() {
-        return entryList(null, root);
+        entryList.clear();
+        checkAll(null, root);
+        return new ArrayList<>(entryList);
     }
 
-    @Override
-    public int rotateCount() {
-        return rotateCount;
-    }
-
-    private List<Entry<K, V>> entryList(Node f, Node x) {
+    private void checkAll(Node f, Node x) {
         check(f, x);
-        List<Entry<K, V>> list = new ArrayList<>();
         if (x != null) {
-            list.add(x);
-            list.addAll(entryList(x, x.left));
-            list.addAll(entryList(x, x.right));
+            entryList.add(x);
+            checkAll(x, x.left);
+            checkAll(x, x.right);
         }
-        return list;
     }
 
-    @SuppressWarnings("unchecked")
     private void check(Node f, Node x) {
         if (x != null) {
             if (f == null && x.father != null)
                 throw new RuntimeException("f == null && x.father != null");
             if (f != null && x.father != f)
                 throw new RuntimeException("f != null && x.father != f");
-            Comparable<? super K> k = (Comparable<? super K>) x.key;
-            int ln = 0;
-            int lh = 0;
-            if (x.left != null) {
-                if (k.compareTo(x.left.key) < 0)
-                    throw new RuntimeException("leftKey.compareTo(x.key) > 0");
-                ln = x.left.size;
-                lh = x.left.height;
-            }
-            int rn = 0;
-            int rh = 0;
-            if (x.right != null) {
-                if (k.compareTo(x.right.key) > 0)
-                    throw new RuntimeException("rightKey.compareTo(x.key) < 0");
-                rn = x.right.size;
-                rh = x.right.height;
-            }
-            if (x.size != (1 + ln + rn))
-                throw new RuntimeException("x.size != (1 + ln + rn)");
+            if (x.left != null && compare(x.key, x.left.key) < 0)
+                throw new RuntimeException("compare(x.key, x.left.key) < 0");
+            if (x.right != null && compare(x.key, x.right.key) > 0)
+                throw new RuntimeException("compare(x.key, x.right.key) > 0");
+            int lh = heightOf(x.left);
+            int rh = heightOf(x.right);
             if (x.height != (1 + Integer.max(lh, rh)))
                 throw new RuntimeException("x.height != (1 + Integer.max(lh, rh))");
             if (lh - rh > 1)
@@ -289,32 +281,37 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
         }
     }
 
-    private Node root = null;
-    private int rotateCount = 0;
-
-    private int getSize(Node x) {
-        return x == null ? 0 : x.size;
+    @Override
+    public int rotateCount() {
+        return rotateCount;
     }
 
-    private int getHeight(Node x) {
+    private Node root = null;
+    private int size = 0;
+    private int rotateCount = 0;
+
+    private int heightOf(Node x) {
         return x == null ? 0 : x.height;
     }
 
-    class Node implements Entry<K, V> {
+    @SuppressWarnings("unchecked")
+    private int compare(Object k1, Object k2) {
+        return ((Comparable<? super K>) k1).compareTo((K)k2);
+    }
+
+    public class Node implements Entry<K, V> {
 
         private K key;
         private V value;
-        private Node father;
         private Node left;
         private Node right;
-        private int size;
+        private Node father;
         private int height;
 
         Node(K key, V value, Node father) {
             this.key = key;
             this.value = value;
             this.father = father;
-            this.size = 1;
             this.height = 1;
         }
 
@@ -329,11 +326,6 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
         }
 
         @Override
-        public Entry<K, V> father() {
-            return father;
-        }
-
-        @Override
         public Entry<K, V> left() {
             return left;
         }
@@ -344,13 +336,8 @@ public class AVLTree<K, V> implements BinarySearchTree<K, V> {
         }
 
         @Override
-        public int size() {
-            return size;
-        }
-
-        @Override
-        public int height() {
-            return height;
+        public Entry<K, V> father() {
+            return father;
         }
     }
 }
