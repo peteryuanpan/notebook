@@ -78,6 +78,12 @@ public interface BinarySearchTree<K, V> {
     List<Entry<K, V>> entryList();
 
     /**
+     * number of rotation
+     * @return
+     */
+    int rotateCount();
+
+    /**
      * Entry K, V
      * @param <K>
      * @param <V>
@@ -88,14 +94,10 @@ public interface BinarySearchTree<K, V> {
 
         V value();
 
-        Entry<K, V> father();
-
         Entry<K, V> left();
 
         Entry<K, V> right();
 
-        int size();
-
-        int height();
+        Entry<K, V> father();
     }
 }
