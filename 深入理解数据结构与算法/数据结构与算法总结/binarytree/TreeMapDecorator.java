@@ -1,12 +1,11 @@
 package binarytree;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class TreeMapDecorator<K, V> implements BinarySearchTree<K, V> {
-
-    private final TreeMap<K, V> treeMap = new TreeMap<>();
 
     @Override
     public V get(K key) {
@@ -40,51 +39,183 @@ public class TreeMapDecorator<K, V> implements BinarySearchTree<K, V> {
 
     @Override
     public int height() {
-        return -1;
+        return heightOf(buildTree(root()));
     }
+
+    private int heightOf(Node x) {
+        return x == null ? 0 : 1 + Integer.max(heightOf(x.left), heightOf(x.right));
+    }
+
+    private final List<Entry<K, V>> entryList = new ArrayList<>();
 
     @Override
     public List<Entry<K, V>> entryList() {
-        return treeMap.entrySet().stream().map(entry -> new Entry<K, V>() {
-            @Override
-            public K key() {
-                return entry.getKey();
-            }
+        Node root = buildTree(root());
+        entryList.clear();
+        checkAll(root);
+        return new ArrayList<>(entryList);
+    }
 
-            @Override
-            public V value() {
-                return entry.getValue();
-            }
+    private void checkAll(Node x) {
+        if (x != null) {
+            entryList.add(x);
+            checkAll(x.left);
+            checkAll(x.right);
+        }
+    }
 
-            @Override
-            public Entry<K, V> father() {
-                return null;
-            }
-
-            @Override
-            public Entry<K, V> left() {
-                return null;
-            }
-
-            @Override
-            public Entry<K, V> right() {
-                return null;
-            }
-
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public int height() {
-                return 0;
-            }
-        }).collect(Collectors.toList());
+    private Node buildTree(Object x) {
+        if (x != null) {
+            Node now = new Node(keyOf(x), valueOf(x), colorOf(x));
+            Node left = buildTree(leftOf(x));
+            Node right = buildTree(rightOf(x));
+            now.left = left;
+            now.right = right;
+            if (left != null)
+                left.father = now;
+            if (right != null)
+                right.father = now;
+            return now;
+        }
+        return null;
     }
 
     @Override
     public int rotateCount() {
         return -1;
+    }
+
+    public class Node implements Entry<K, V> {
+
+        private K key;
+        private V value;
+        private Node left;
+        private Node right;
+        private Node father;
+        private boolean color;
+
+        Node(K key, V value, Boolean color) {
+            this.key = key;
+            this.value = value;
+            this.color = color;
+        }
+
+        @Override
+        public K key() {
+            return key;
+        }
+
+        @Override
+        public V value() {
+            return value;
+        }
+
+        @Override
+        public Entry<K, V> left() {
+            return left;
+        }
+
+        @Override
+        public Entry<K, V> right() {
+            return right;
+        }
+
+        @Override
+        public Entry<K, V> father() {
+            return father;
+        }
+
+        public boolean getColor() {
+            return color;
+        }
+    }
+
+    private final TreeMap<K, V> treeMap = new TreeMap<>();
+    private Field rootField;
+    private Field keyField;
+    private Field valueField;
+    private Field leftField;
+    private Field rightField;
+    private Field colorField;
+
+    private Object root() {
+        try {
+            return rootField.get(treeMap);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private K keyOf(Object x) {
+        try {
+            return (K) keyField.get(x);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private V valueOf(Object x) {
+        try {
+            return (V) valueField.get(x);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Object leftOf(Object x) {
+        try {
+            return leftField.get(x);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Object rightOf(Object x) {
+        try {
+            return rightField.get(x);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private Boolean colorOf(Object x) {
+        try {
+            return (Boolean) colorField.get(x);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    {
+        try {
+            Class<?> treeMapClass = Class.forName("java.util.TreeMap");
+            rootField = treeMapClass.getDeclaredField("root");
+            rootField.setAccessible(true);
+            Class<?>[] declaredClasses = treeMapClass.getDeclaredClasses();
+            for (Class<?> clazz : declaredClasses) {
+                if ("java.util.TreeMap$Entry".equals(clazz.getName())) {
+                    keyField = clazz.getDeclaredField("key");
+                    keyField.setAccessible(true);
+                    valueField = clazz.getDeclaredField("value");
+                    valueField.setAccessible(true);
+                    leftField = clazz.getDeclaredField("left");
+                    leftField.setAccessible(true);
+                    rightField = clazz.getDeclaredField("right");
+                    rightField.setAccessible(true);
+                    colorField = clazz.getDeclaredField("color");
+                    colorField.setAccessible(true);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
