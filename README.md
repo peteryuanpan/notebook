@@ -2,13 +2,11 @@
 
 ## 欢迎你来到我的笔记本
 
-### 博文本
+本github中写的都是笔记记录，其中内容大部分来源于网上优秀博文或者经典书籍，因此不推荐阅读我的笔记，只是我个人使用为主
 
-笔记本中写的一般是笔记记录，不适合推广，而有些学习心得我会写在CSDN博文中，见：[CSDN博客](https://blog.csdn.net/UESTC_peterpan)
+但我的心得体会将写在CSDN中，见：[CSDN博客](https://blog.csdn.net/UESTC_peterpan)，推荐你来阅读
 
-### 草稿本
-
-我会通过ISSUE方式，为笔记本打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
+同时，我会通过ISSUE方式，为笔记本打草稿，见 [issues](https://github.com/peteryuanpan/notebook/issues)
 
 ### 笔记本
 
