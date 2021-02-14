@@ -85,6 +85,7 @@ P类问题、NP类问题、NPC问题
 |027|经典模糊串匹配问题|[problem10](Leetcode/problem10_经典模糊串匹配问题)|leetcode|动态规划|||
 |028|求0到N中数字2出现的次数|[problem2](FromBook/problem2_求0到N中数字2出现的次数)|frombook|动态规划|数论统计||
 |029|求二叉搜索树的所有生成数组|[problem3](FromBook/problem3_求二叉搜索树的所有生成数组)|frombook|搜索|DFS||
+|030|旋转字符串匹配|[problem514](Leetcode/problem514_旋转字符串匹配)|leetcode|动态规划|||
 
 ### LeetCode思维导图
 
